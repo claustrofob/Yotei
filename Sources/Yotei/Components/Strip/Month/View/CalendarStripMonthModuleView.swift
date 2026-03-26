@@ -28,15 +28,15 @@ struct CalendarStripMonthModuleView: View {
     var body: some View {
         let monthDays = CalendarDaysSequence(
             startDate: startDate,
-            days: numberOfWeeks * CalendarStripMonthModule.Constants.numberOfDaysPerWeek
+            days: numberOfWeeks * Constants.numberOfDaysPerWeek
         )
 
         TimelineView(.everyMinute) { context in
             Grid(horizontalSpacing: 10, verticalSpacing: 8) {
                 ForEach(0 ..< numberOfWeeks, id: \.self) { row in
                     GridRow {
-                        ForEach(0 ..< CalendarStripMonthModule.Constants.numberOfDaysPerWeek, id: \.self) { col in
-                            let date = monthDays[row * CalendarStripMonthModule.Constants.numberOfDaysPerWeek + col]
+                        ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                            let date = monthDays[row * Constants.numberOfDaysPerWeek + col]
                             // monthInterval.end equals the start date of the next day
                             let isEnabled = monthInterval.contains(date) && monthInterval.end != date
                             Button(action: {

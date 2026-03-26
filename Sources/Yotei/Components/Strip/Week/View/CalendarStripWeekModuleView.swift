@@ -28,7 +28,6 @@ struct CalendarStripWeekModuleView: View {
                                 date: date,
                                 todayDate: context.date,
                                 focusedDate: focusedDate,
-                                eventCounts: 0,
                                 isEnabled: true
                             )
                         })

@@ -1,23 +1,23 @@
 import Foundation
 
-public struct CalendarEvent: Equatable, Identifiable {
+public struct CalendarEvent: Equatable, Identifiable, Sendable {
     public let id: String
     public let title: String
-    public let startTimestamp: Int64
-    public let endTimestamp: Int64
+    public let start: Date
+    public let end: Date
     public let isAllDay: Bool
 
     public init(
         id: String,
         title: String,
-        startTimestamp: Int64,
-        endTimestamp: Int64,
+        start: Date,
+        end: Date,
         isAllDay: Bool
     ) {
         self.id = id
         self.title = title
-        self.startTimestamp = startTimestamp
-        self.endTimestamp = endTimestamp
+        self.start = start
+        self.end = end
         self.isAllDay = isAllDay
     }
 }
@@ -44,12 +44,12 @@ extension CalendarEvent {
 
         // transform UTC date into current timezone with preserved day, month and year
         let startDate = startOfDay(
-            from: startTimestamp.date,
+            from: start,
             inputCalendar: utcCalendar,
             outputCalendar: calendar
         )
         var endDate = startOfDay(
-            from: endTimestamp.date,
+            from: end,
             inputCalendar: utcCalendar,
             outputCalendar: calendar
         )
@@ -72,7 +72,7 @@ extension CalendarEvent {
     }
 
     public var dateInterval: DateInterval {
-        DateInterval(start: startTimestamp.date, end: endTimestamp.date)
+        DateInterval(start: start, end: end)
     }
 }
 
@@ -80,5 +80,5 @@ extension CalendarEvent {
 
 public extension CalendarEvent {
     var isAllDaySortable: Int { isAllDay ? 0 : 1 }
-    var durationSortable: Int64 { endTimestamp - startTimestamp }
+    var durationSortable: Double { end.timeIntervalSince1970 - start.timeIntervalSince1970 }
 }

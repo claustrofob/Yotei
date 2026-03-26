@@ -1,4 +1,3 @@
-import Media
 import SwiftUI
 
 struct SUDatePicker: View {
@@ -94,7 +93,7 @@ struct SUDatePicker: View {
             HStack(spacing: 16) {
                 Text(selectedPageDate.formatted(monthYearFormatStyle).capitalizedFirstLetter)
                     .font(.system(.body))
-                Media.Calendar.calendarAddEventRight.swiftUIImage
+                Image(systemName: "chevron.right")
                     .foregroundStyle(.blue)
                     .rotationEffect(.degrees(isMonthYearPickerExpanded ? 90 : 0))
             }
@@ -111,9 +110,8 @@ struct SUDatePicker: View {
                     to: selectedPageDate
                 )!
             }) {
-                Media.Calendar.calendarPickerRightArrow.swiftUIImage
+                Image(systemName: "chevron.left")
                     .foregroundStyle(.blue)
-                    .rotationEffect(.degrees(180))
             }
             .frame(width: 32, height: 44)
 
@@ -124,7 +122,7 @@ struct SUDatePicker: View {
                     to: selectedPageDate
                 )!
             }) {
-                Media.Calendar.calendarPickerRightArrow.swiftUIImage
+                Image(systemName: "chevron.right")
                     .foregroundStyle(.blue)
             }
             .frame(width: 32, height: 44)

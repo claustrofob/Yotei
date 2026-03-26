@@ -1,4 +1,3 @@
-import Media
 import SwiftUI
 
 struct CalendarStripContainerModuleView: View {
@@ -51,11 +50,11 @@ struct CalendarStripContainerModuleView: View {
                 ScrollView(.vertical) {
                     ZStack(alignment: .top) {
                         Group {
-                            if presenter.isExpanded {
+                            if isExpanded {
                                 tabView(selection: $selectedMonthPageDate, component: .month) { date in
                                     CalendarStripMonthModuleBuilder(date: date).view(focusedDate: $focusedDate)
                                         .frame(maxHeight: .infinity, alignment: .top)
-                                        .animation(.default, value: presenter.focusedDate)
+                                        .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)
                                 }
                                 .zIndex(1)
@@ -63,14 +62,14 @@ struct CalendarStripContainerModuleView: View {
                                 tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
                                     CalendarStripWeekModuleBuilder(date: date).view(focusedDate: $focusedDate)
                                         .frame(maxHeight: .infinity, alignment: .top)
-                                        .animation(.default, value: presenter.focusedDate)
+                                        .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)
                                 }
                             }
                         }
                         .transition(.offset(CGSize(
                             width: 0,
-                            height: presenter.isExpanded ? -weekOffset() : weekOffset()
+                            height: isExpanded ? -weekOffset() : weekOffset()
                         )).combined(with: .modifier(
                             // This transition is required for the case, when selected date is in the first week.
                             // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
@@ -91,7 +90,7 @@ struct CalendarStripContainerModuleView: View {
                 expandStripButton()
 
                 // cover the rest of the screen
-                if presenter.isExpanded {
+                if isExpanded {
                     PassthroughTouchDetectorView {
                         withAnimation {
                             viewDidSelectCollapse()
@@ -189,7 +188,7 @@ struct CalendarStripContainerModuleView: View {
     }
 
     private func expandStripButton() -> some View {
-        Media.Calendar.calendarOpenStrip.swiftUIImage
+        Image(systemName: "chevron.compact.down")
             .tint(.black)
             .rotationEffect(.degrees(isExpanded ? 180 : 0))
             .frame(maxWidth: .infinity)

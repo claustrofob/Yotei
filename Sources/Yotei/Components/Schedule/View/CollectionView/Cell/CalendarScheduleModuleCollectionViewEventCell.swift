@@ -19,7 +19,7 @@ struct CalendarScheduleModuleCollectionViewEventCell: View {
         .minute()
 
     var body: some View {
-        let isPast = viewModel.endTimestamp.date < nowDate || (cellDate < nowDate.startOfDay())
+        let isPast = viewModel.end < nowDate || (cellDate < nowDate.startOfDay())
         Group {
             if viewModel.isAllDay {
                 allDayEventView()

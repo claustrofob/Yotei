@@ -44,6 +44,7 @@ struct SUTimePicker: UIViewRepresentable {
 }
 
 extension SUTimePicker {
+    @MainActor
     class Coordinator: NSObject {
         @Binding private var date: Date
 

@@ -6,11 +6,7 @@ final class CalendarScheduleModuleSectionHeaderView: UICollectionReusableView {
         .day()
         .weekday(.wide)
 
-    private let titleLabel = Label(
-        fontStyle: .subhead1,
-        textColorStyle: .base80,
-        backgroundColorStyle: .clear
-    )
+    private let titleLabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,13 +21,16 @@ final class CalendarScheduleModuleSectionHeaderView: UICollectionReusableView {
 
     private func setupLayout() {
         titleLabel.numberOfLines = 1
-        backgroundColorStyle = .base
-
-        pinSubview(titleLabel, with: .init(top: 0, left: 16, bottom: 0, right: 16))
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: -16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 16),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0),
+        ])
     }
 
     func apply(date: Date) {
         titleLabel.text = date.formatted(dateFormatStyle).capitalizedFirstLetter
-        titleLabel.textColorStyle = date.isInSameDay(as: .now) ? .base110 : .base80
+        titleLabel.textColor = date.isInSameDay(as: .now) ? UIColor.black : UIColor.black.withAlphaComponent(0.8)
     }
 }

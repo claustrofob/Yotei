@@ -26,7 +26,7 @@ final class CalendarAllDayEventsTopModulePresenter: ObservableObject {
             viewData = []
             return
         }
-        var processedEventIDs = Set<CalendarEvent.ServerID>()
+        var processedEventIDs = Set<CalendarEvent.ID>()
         viewData = (0 ..< 2).map { _ in
             var day = 0
             var data = [CalendarAllDayEventsTopModuleViewModel]()
@@ -38,7 +38,7 @@ final class CalendarAllDayEventsTopModulePresenter: ObservableObject {
                 {
                     let eventDateInterval = event.displayableDateInterval()
                     if
-                        processedEventIDs.contains(event.serverID) ||
+                        processedEventIDs.contains(event.id) ||
                         (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date))
                     {
                         continue
@@ -47,7 +47,7 @@ final class CalendarAllDayEventsTopModulePresenter: ObservableObject {
                     let durationInDays = min(dateInterval.durationInDays + 1, numberOfDays - day)
                     data.append(.event(event: event, cols: durationInDays))
                     day += durationInDays
-                    processedEventIDs.insert(event.serverID)
+                    processedEventIDs.insert(event.id)
                 } else {
                     data.append(.empty(index: day))
                     day += 1

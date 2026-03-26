@@ -45,7 +45,7 @@ struct SUDatePickerMonth: View {
             ForEach(0 ..< numberOfWeeks, id: \.self) { row in
                 GridRow {
                     ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                        let date = days[row * CalendarStripMonthModule.Constants.numberOfDaysPerWeek + col]
+                        let date = days[row * Constants.numberOfDaysPerWeek + col]
                         if monthInterval.contains(date) && monthInterval.end != date {
                             Button(action: {
                                 let selectedDateComponents = calendar.dateComponents(

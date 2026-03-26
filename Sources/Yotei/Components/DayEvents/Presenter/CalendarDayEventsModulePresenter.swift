@@ -43,7 +43,7 @@ extension CalendarDayEventsModulePresenter {
             end: Date(timeIntervalSince1970: endTimestamp)
         )
         placeholderEvent = CalendarDayEventsModulePlaceholderEvent(dateInterval: dateInterval)
-        router.show(CalendarEventFormModuleRoute(kind: .create(dateInterval: dateInterval)))
+        delegate?.calendarDidSelect(dateInterval: dateInterval)
     }
 
     func viewDidSelectEvent(with id: CalendarEvent.ID) {

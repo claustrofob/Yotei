@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 
+@MainActor
 struct CalendarScheduleModuleCollectionViewFactory {
     func layout() -> CalendarScheduleModuleCollectionViewLayout {
         CalendarScheduleModuleCollectionViewLayout()

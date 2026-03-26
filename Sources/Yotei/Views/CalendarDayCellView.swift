@@ -1,4 +1,3 @@
-import Media
 import SwiftUI
 
 struct CalendarDayCellView: View {
@@ -46,11 +45,11 @@ struct CalendarDayCellView: View {
         if date.isInSameDay(as: todayDate) {
             (Color.blue, .white, false)
         } else if !isEnabled {
-            (.clear, .base80, false)
+            (.clear, .black.opacity(0.2), false)
         } else if let focusedDate, date.isInSameDay(as: focusedDate) {
             (Color.blue.opacity(0.2), .blue, false)
         } else {
-            (.clear, .base110, true)
+            (.clear, .black, true)
         }
     }
 }

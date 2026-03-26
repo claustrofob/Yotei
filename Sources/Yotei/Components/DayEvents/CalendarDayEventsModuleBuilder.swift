@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct CalendarDayEventsModuleBuilder {
     private struct Input: Hashable {
         let startDate: Date

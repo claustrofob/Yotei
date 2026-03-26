@@ -17,7 +17,7 @@ extension CalendarScheduleModulePresenter {
             prevFocusedDate != focusedDate,
             // Updated focusedDate comes before corresponding dateInterval is loaded.
             // This may cause invalid scrolling behavour
-            data.monthInterval.flatMap { $0.contains(focusedDate) } != false,
+            data.monthInterval.flatMap({ $0.contains(focusedDate) }) != false,
             let dateInterval = data.dateInterval
         else {
             return
@@ -30,7 +30,7 @@ extension CalendarScheduleModulePresenter {
             } else if let events = data.events[date], !events.isEmpty {
                 events.sorted(using: [
                     KeyPathComparator(\CalendarEvent.isAllDaySortable),
-                    KeyPathComparator(\CalendarEvent.startTimestamp),
+                    KeyPathComparator(\CalendarEvent.start),
                     KeyPathComparator(\CalendarEvent.durationSortable),
                 ]).map { .init(date: date, kind: .event($0)) }
             } else {
@@ -54,7 +54,7 @@ extension CalendarScheduleModulePresenter: CalendarScheduleModuleCollectionViewD
     func calendarCollectionView(didSelect viewModel: CalendarScheduleModuleViewModel) {
         switch viewModel.kind {
         case let .event(item):
-            delegate?.calendarScheduleModuleDidSelectEvent(with: item.serverID)
+            delegate?.calendarDidSelectEvent(with: item.id)
         case .empty, .loading:
             ()
         }

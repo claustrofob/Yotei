@@ -12,7 +12,7 @@ import UIKit
  For more info on how to properly work with snapshots see
  https://developer.apple.com/documentation/uikit/views_and_controls/collection_views/updating_collection_views_using_diffable_data_sources
  */
-final class DiffableDataStorage<Section: Identifiable, Item: Identifiable & Equatable> {
+final class DiffableDataStorage<Section: Identifiable, Item: Identifiable & Equatable> where Item.ID: Sendable, Section.ID: Sendable {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section.ID, Item.ID>
 
     private var items = [Item.ID: Item]()

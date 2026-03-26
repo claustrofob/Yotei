@@ -51,11 +51,14 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        autoUpdateTimer?.invalidate()
+    }
+
     private func setup() {
         scrollsToTop = false
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
-        backgroundColorStyle = .base
         delegate = self
 
         let eventCellRegistration = factory.eventCellRegistration()
@@ -156,7 +159,8 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
     private func startCollectionAutoupdate() {
         // redraw visible cells every minute so reflect time change on screen
         autoUpdateTimer?.invalidate()
-        autoUpdateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+        autoUpdateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            guard let self else { return }
             diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
         }
     }

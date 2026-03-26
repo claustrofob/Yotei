@@ -1,4 +1,3 @@
-import DomainCommon
 import Foundation
 
 struct CalendarScheduleModuleViewModel: Identifiable, Equatable {
@@ -14,7 +13,7 @@ struct CalendarScheduleModuleViewModel: Identifiable, Equatable {
     var id: String {
         switch kind {
         case let .event(item):
-            "event_\(date.timeIntervalSince1970)_\(item.serverID)"
+            "event_\(date.timeIntervalSince1970)_\(item.id)"
         case .empty:
             "empty_\(date.timeIntervalSince1970)"
         case .loading:

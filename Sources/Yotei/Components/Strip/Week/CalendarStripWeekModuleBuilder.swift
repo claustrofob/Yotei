@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct CalendarStripWeekModuleBuilder {
     let date: Date
 
