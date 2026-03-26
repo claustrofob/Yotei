@@ -59,7 +59,6 @@ struct SUDatePicker: View {
                                 minDate: minDate,
                                 calendar: calendar
                             )
-                            .themeBackground(.base)
                         },
                         previousDate: { date in
                             calendar.date(byAdding: .month, value: -1, to: date)!
@@ -94,10 +93,9 @@ struct SUDatePicker: View {
         }) {
             HStack(spacing: 16) {
                 Text(selectedPageDate.formatted(monthYearFormatStyle).capitalizedFirstLetter)
-                    .themeFont(.body4)
-                    .themeTextColor(.base110)
+                    .font(.system(.body))
                 Media.Calendar.calendarAddEventRight.swiftUIImage
-                    .themeForegroundStyle(.brandPrimary40)
+                    .foregroundStyle(.blue)
                     .rotationEffect(.degrees(isMonthYearPickerExpanded ? 90 : 0))
             }
         }
@@ -114,7 +112,7 @@ struct SUDatePicker: View {
                 )!
             }) {
                 Media.Calendar.calendarPickerRightArrow.swiftUIImage
-                    .themeForegroundStyle(.brandPrimary40)
+                    .foregroundStyle(.blue)
                     .rotationEffect(.degrees(180))
             }
             .frame(width: 32, height: 44)
@@ -127,7 +125,7 @@ struct SUDatePicker: View {
                 )!
             }) {
                 Media.Calendar.calendarPickerRightArrow.swiftUIImage
-                    .themeForegroundStyle(.brandPrimary40)
+                    .foregroundStyle(.blue)
             }
             .frame(width: 32, height: 44)
         }

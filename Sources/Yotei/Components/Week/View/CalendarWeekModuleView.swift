@@ -10,13 +10,22 @@ struct CalendarWeekModuleView: View {
         }
     }
 
-    private let calendarDateService = CalendarDateService()
     @Binding var focusedDate: Date
-    @State var selectedPageDate: Date
+    @Binding var data: CalendarEventsInterval
+    let delegate: CalendarDelegate?
 
-    init(focusedDate: Binding<Date>) {
-        self._focusedDate = focusedDate
-        self.selectedPageDate = Calendar.current.dateInterval(
+    private let calendarDateService = CalendarDateService()
+    @State private var selectedPageDate: Date
+
+    init(
+        focusedDate: Binding<Date>,
+        data: Binding<CalendarEventsInterval>,
+        delegate: CalendarDelegate?
+    ) {
+        _focusedDate = focusedDate
+        _data = data
+        self.delegate = delegate
+        selectedPageDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
             for: focusedDate.wrappedValue
         )!.start
@@ -34,12 +43,17 @@ struct CalendarWeekModuleView: View {
                         weekDaysView(startDate: date)
                             .padding(Constants.weekTitlesViewInsets)
                             .padding(.bottom, 4)
-                        CalendarAllDayEventsTopModuleRoute(startDate: date, numberOfDays: 7).view(container)
-                            .padding(Constants.weekTitlesViewInsets)
+                        CalendarAllDayEventsTopModuleBuilder(startDate: date, numberOfDays: 7).view(
+                            data: $data,
+                            delegate: delegate
+                        )
+                        .padding(Constants.weekTitlesViewInsets)
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsModuleRoute(startDate: date, numberOfDays: 7).view(container)
+                        CalendarDayEventsModuleBuilder(startDate: date, numberOfDays: 7).view(
+                            data: $data,
+                            delegate: delegate
+                        )
                     }
-                    .themeBackground(.base)
                     // Keep the navigation bar explicitly visible
                     // This view is hosted inside a UIPageViewController, and during some
                     // page transitions the navigation bar may be hidden unexpectedly
@@ -53,7 +67,6 @@ struct CalendarWeekModuleView: View {
                 }
             )
         }
-        .themeBackground(.base)
         .onChange(of: selectedPageDate) { value in
             focusedDate = calendarDateService.weekFocusedDate(for: value, currentFocusedDate: focusedDate)
         }

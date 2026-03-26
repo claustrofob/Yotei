@@ -11,11 +11,11 @@ struct PassthroughTouchDetectorView: UIViewRepresentable {
         }
 
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
-        override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        override func hitTest(_: CGPoint, with _: UIEvent?) -> UIView? {
             onTap()
             return nil
         }
@@ -27,9 +27,9 @@ struct PassthroughTouchDetectorView: UIViewRepresentable {
         self.onTap = onTap
     }
 
-    func makeUIView(context: Context) -> UIView {
+    func makeUIView(context _: Context) -> UIView {
         PassthroughView(onTap: onTap)
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_: UIView, context _: Context) {}
 }

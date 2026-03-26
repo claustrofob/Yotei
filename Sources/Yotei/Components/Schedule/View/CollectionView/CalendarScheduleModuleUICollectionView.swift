@@ -47,7 +47,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -194,7 +194,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
             return
         }
 
-        self._focusedDate = focusedDate
+        _focusedDate = focusedDate
         sectionPosition = (focusedDate.wrappedValue, 0)
 
         if
@@ -202,14 +202,15 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
             let sectionFrame = layout.absoluteLayoutAttributesForSupplementaryView(
                 ofKind: UICollectionView.elementKindSectionHeader,
                 at: IndexPath(row: 0, section: sectionIndex)
-            )?.frame {
+            )?.frame
+        {
             setContentOffset(CGPoint(x: 0, y: sectionFrame.minY), animated: true)
         }
     }
 
     func apply(data: CalendarScheduleModule.ViewData, focusedDate: Binding<Date>) {
         if self.focusedDate == nil {
-            self._focusedDate = focusedDate
+            _focusedDate = focusedDate
         }
 
         apply(data: data)
@@ -218,7 +219,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
 }
 
 extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+    func collectionView(_: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         guard let viewModel = diffableDataStorage.item(
             in: diffableDataSource.snapshot(),
             for: indexPath
@@ -229,7 +230,7 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
         return collectionViewDelegate.calendarCollectionView(shouldSelect: viewModel)
     }
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let viewModel = diffableDataStorage.item(
             in: diffableDataSource.snapshot(),
             for: indexPath
@@ -241,7 +242,7 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
+        _: UICollectionView,
         targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint
     ) -> CGPoint {
         let snapshot = diffableDataSource.snapshot()
@@ -269,7 +270,8 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
             let sectionFrame = layout.absoluteLayoutAttributesForSupplementaryView(
                 ofKind: UICollectionView.elementKindSectionHeader,
                 at: IndexPath(row: 0, section: sectionIndex)
-            )?.frame {
+            )?.frame
+        {
             return CGPoint(
                 x: proposedContentOffset.x,
                 y: sectionFrame.minY - sectionPosition.verticalOffset
@@ -297,8 +299,8 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         guard let viewModel = diffableDataStorage.item(
@@ -319,33 +321,33 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        referenceSizeForHeaderInSection _: Int
     ) -> CGSize {
         return CGSize(width: bounds.width, height: 28)
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        insetForSectionAt _: Int
     ) -> UIEdgeInsets {
         Constants.sectionInsets
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt _: Int
     ) -> CGFloat {
         8
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt _: Int
     ) -> CGFloat {
         8
     }

@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct CalendarScheduleModuleCollectionViewEventCell: View {
-    @Environment(\.theme) private var theme
-
     private let nowDate = Date.now
     let cellDate: Date
     let viewModel: CalendarEvent
@@ -44,26 +42,26 @@ struct CalendarScheduleModuleCollectionViewEventCell: View {
                         Circle()
                             .frame(width: 6, height: 6)
                         Text(String.localized_calendar_now)
-                            .themeFont(.caption1)
+                            .font(.system(.caption))
                     }
-                    .foregroundStyle(theme.palette.auxillary40.suColor)
+                    .foregroundStyle(.purple)
                 }
 
                 let dateStyle = dateInterval.start.isInSameDay(as: dateInterval.end)
                     ? timeIntervalShortFormatStyle
                     : timeIntervalLongFormatStyle
                 Text(dateRange.formatted(dateStyle))
-                    .themeFont(.caption2)
-                    .foregroundStyle(theme.palette.brandSecondary70.suColor)
+                    .font(.system(.caption2))
+                    .foregroundStyle(.blue.opacity(0.5))
             }
             eventTitle()
-                .themeFont(.subhead4)
+                .font(.system(.subheadline))
         }
         .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-                .fill(theme.palette.brandSecondary70.suColor.opacity(0.1))
+                .fill(.blue.opacity(0.1))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
@@ -71,13 +69,13 @@ struct CalendarScheduleModuleCollectionViewEventCell: View {
     @ViewBuilder
     private func allDayEventView() -> some View {
         eventTitle()
-            .themeFont(.caption2)
+            .font(.system(.caption2))
             .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             .frame(height: 16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background {
                 RoundedRectangle(cornerSize: CGSize(width: 4, height: 4))
-                    .fill(theme.palette.brandSecondary70.suColor.opacity(0.1))
+                    .fill(.blue.opacity(0.1))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
     }
@@ -86,6 +84,6 @@ struct CalendarScheduleModuleCollectionViewEventCell: View {
         Text(viewModel.title)
             .lineLimit(1)
             .truncationMode(.tail)
-            .foregroundStyle(theme.palette.brandSecondary70.suColor)
+            .foregroundStyle(.blue.opacity(0.5))
     }
 }

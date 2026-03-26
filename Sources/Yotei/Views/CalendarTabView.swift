@@ -1,5 +1,4 @@
 import SwiftUI
-import Themes
 
 struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
     @Binding var selection: Date
@@ -20,7 +19,7 @@ struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
         return vc
     }
 
-    func updateUIViewController(_ uiViewController: UIPageViewController, context: Context) {
+    func updateUIViewController(_ uiViewController: UIPageViewController, context _: Context) {
         guard
             let pageController = uiViewController.viewControllers?.first as? PageController,
             pageController.date != selection
@@ -82,7 +81,7 @@ extension CalendarTabView {
         }
 
         func pageViewController(
-            _ pageViewController: UIPageViewController,
+            _: UIPageViewController,
             viewControllerBefore viewController: UIViewController
         ) -> UIViewController? {
             guard let pageController = viewController as? PageController else {
@@ -91,9 +90,9 @@ extension CalendarTabView {
             let date = previousDate(pageController.date)
             return PageController(date: date, content: content(date))
         }
-        
+
         func pageViewController(
-            _ pageViewController: UIPageViewController,
+            _: UIPageViewController,
             viewControllerAfter viewController: UIViewController
         ) -> UIViewController? {
             guard let pageController = viewController as? PageController else {
@@ -103,7 +102,7 @@ extension CalendarTabView {
             return PageController(date: date, content: content(date))
         }
 
-        func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        func pageViewController(_: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
             pendingViewControllers.compactMap {
                 $0 as? PageController
             }.forEach {
@@ -113,9 +112,9 @@ extension CalendarTabView {
 
         func pageViewController(
             _ pageViewController: UIPageViewController,
-            didFinishAnimating finished: Bool,
-            previousViewControllers: [UIViewController],
-            transitionCompleted completed: Bool
+            didFinishAnimating _: Bool,
+            previousViewControllers _: [UIViewController],
+            transitionCompleted _: Bool
         ) {
             guard let pageController = pageViewController.viewControllers?.first as? PageController else {
                 return
@@ -126,24 +125,17 @@ extension CalendarTabView {
 }
 
 extension CalendarTabView {
-    final class PageController: UIHostingController<Content>, ThemeTrackable {
+    final class PageController: UIHostingController<Content> {
         let date: Date
-
-        public var (themeLifetime, themeToken) = Lifetime.make()
 
         init(date: Date, content: Content) {
             self.date = date
             super.init(rootView: content)
-            setupTheme()
-        }
-        
-        @available(*, unavailable)
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
         }
 
-        func apply(_ theme: any ThemeProtocol) {
-            view.backgroundColor = theme.palette.base0
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
     }
 }

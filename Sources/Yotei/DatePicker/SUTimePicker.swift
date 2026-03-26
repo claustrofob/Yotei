@@ -31,7 +31,7 @@ struct SUTimePicker: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIDatePicker, context: Context) {
+    func updateUIView(_ uiView: UIDatePicker, context _: Context) {
         uiView.date = date
         uiView.minuteInterval = minuteInterval
         uiView.calendar = calendar

@@ -5,7 +5,7 @@ struct CalendarStripContainerModuleView: View {
     private struct DummyModifier: ViewModifier {
         let isActive: Bool
 
-        public func body(content: Content) -> some View {
+        func body(content: Content) -> some View {
             content.padding(.bottom, isActive ? 1 : 0)
         }
     }
@@ -30,7 +30,7 @@ struct CalendarStripContainerModuleView: View {
     @Binding private var focusedDate: Date
 
     init(focusedDate: Binding<Date>) {
-        self._focusedDate = focusedDate
+        _focusedDate = focusedDate
         selectedWeekPageDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
             for: focusedDate.wrappedValue
@@ -53,7 +53,7 @@ struct CalendarStripContainerModuleView: View {
                         Group {
                             if presenter.isExpanded {
                                 tabView(selection: $selectedMonthPageDate, component: .month) { date in
-                                    CalendarStripMonthModuleRoute(date: date).view(container)
+                                    CalendarStripMonthModuleBuilder(date: date).view(focusedDate: $focusedDate)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: presenter.focusedDate)
                                         .ignoresSafeArea(edges: .all)
@@ -61,7 +61,7 @@ struct CalendarStripContainerModuleView: View {
                                 .zIndex(1)
                             } else {
                                 tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
-                                    CalendarStripWeekModuleRoute(date: date).view(container)
+                                    CalendarStripWeekModuleBuilder(date: date).view(focusedDate: $focusedDate)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: presenter.focusedDate)
                                         .ignoresSafeArea(edges: .all)
@@ -104,7 +104,6 @@ struct CalendarStripContainerModuleView: View {
             }
             .frame(height: Constants.weekStripHeight + Constants.expandButtonHeight, alignment: .top)
         }
-        .themeBackground(.base)
         .onFirstAppear {
             generateSelectedWeekPageDate()
             generateSelectedMonthPageDate()
@@ -191,11 +190,10 @@ struct CalendarStripContainerModuleView: View {
 
     private func expandStripButton() -> some View {
         Media.Calendar.calendarOpenStrip.swiftUIImage
-            .themeTint(.base120)
+            .tint(.black)
             .rotationEffect(.degrees(isExpanded ? 180 : 0))
             .frame(maxWidth: .infinity)
             .frame(height: 24)
-            .themeBackground(.base)
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()

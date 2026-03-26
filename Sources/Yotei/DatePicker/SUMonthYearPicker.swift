@@ -24,7 +24,7 @@ struct SUMonthYearPicker: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIPickerView, context: Context) {
+    func updateUIView(_ uiView: UIPickerView, context _: Context) {
         selectCurrentDate(uiView: uiView, animated: true)
     }
 
@@ -50,12 +50,12 @@ extension SUMonthYearPicker {
             self.calendar = calendar
         }
 
-        func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        func numberOfComponents(in _: UIPickerView) -> Int {
             2
         }
 
         func pickerView(
-            _ pickerView: UIPickerView,
+            _: UIPickerView,
             numberOfRowsInComponent component: Int
         ) -> Int {
             switch component {
@@ -66,7 +66,7 @@ extension SUMonthYearPicker {
         }
 
         func pickerView(
-            _ pickerView: UIPickerView,
+            _: UIPickerView,
             titleForRow row: Int,
             forComponent component: Int
         ) -> String? {
@@ -77,7 +77,7 @@ extension SUMonthYearPicker {
             }
         }
 
-        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        func pickerView(_: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
             var dateComponents = calendar.dateComponents(
                 [.year, .month, .day, .hour, .minute, .second],
                 from: date

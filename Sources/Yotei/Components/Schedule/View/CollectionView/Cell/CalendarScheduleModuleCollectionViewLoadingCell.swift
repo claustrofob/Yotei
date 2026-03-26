@@ -3,7 +3,7 @@ import SwiftUI
 struct CalendarScheduleModuleCollectionViewLoadingCell: View {
     var body: some View {
         RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-            .themeFill(.base20)
+            .fill(.black.opacity(0.8))
             .opacity(0.5)
             .frame(maxWidth: .infinity)
             .frame(height: 52)

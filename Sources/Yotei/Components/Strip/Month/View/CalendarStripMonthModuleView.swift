@@ -5,8 +5,6 @@ struct CalendarStripMonthModuleView: View {
         static var numberOfDaysPerWeek: Int { 7 }
     }
 
-    @Environment(\.theme) private var theme
-
     private let startDate: Date
     private let monthInterval: DateInterval
     private let numberOfWeeks: Int
@@ -14,7 +12,7 @@ struct CalendarStripMonthModuleView: View {
     @Binding var focusedDate: Date
 
     init(focusedDate: Binding<Date>, date: Date) {
-        self._focusedDate = focusedDate
+        _focusedDate = focusedDate
         monthInterval = Calendar.current.dateInterval(of: .month, for: date)!
         numberOfWeeks = Calendar.current.range(
             of: .weekOfMonth,

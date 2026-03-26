@@ -16,16 +16,14 @@ struct CalendarScheduleModuleView: View {
         data: Binding<CalendarEventsInterval>,
         delegate: CalendarDelegate?
     ) {
-        self._focusedDate = focusedDate
-        self._data = data
-        self._presenter = .init(wrappedValue: {
-            CalendarScheduleModulePresenter(delegate: delegate)
-        }())
+        _focusedDate = focusedDate
+        _data = data
+        _presenter = .init(wrappedValue: CalendarScheduleModulePresenter(delegate: delegate))
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerModuleRoute().view(container)
+            CalendarStripContainerModuleBuilder().view(focusedDate: $focusedDate)
             CalendarScheduleModuleCollectionView(
                 focusedDate: $focusedDate,
                 data: presenter.viewData,
@@ -33,9 +31,5 @@ struct CalendarScheduleModuleView: View {
             )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .themeBackground(.base)
-        .onFirstAppear {
-            presenter.onFirstAppear()
-        }
     }
 }

@@ -2,29 +2,35 @@ import SwiftUI
 
 struct CalendarDayModuleView: View {
     @Binding var focusedDate: Date
+    @Binding var data: CalendarEventsInterval
+    let delegate: CalendarDelegate?
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerModuleRoute().view(container)
+            CalendarStripContainerModuleBuilder().view(focusedDate: $focusedDate)
             CalendarTabView(
                 selection: $focusedDate,
                 content: { date in
                     VStack(spacing: 0) {
-                        CalendarAllDayEventsTopModuleRoute(startDate: date, numberOfDays: 1).view(container)
-                            .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
-                            .background {
-                                Text(String.localized_calendar_event_all_day)
-                                    .themeFont(.subcaption)
-                                    .themeTextColor(.base80)
-                                    .padding(.horizontal, 4)
-                                    .frame(width: 50)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .clipped()
+                        CalendarAllDayEventsTopModuleBuilder(startDate: date, numberOfDays: 1).view(
+                            data: $data,
+                            delegate: delegate
+                        )
+                        .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
+                        .background {
+                            Text(String.localized_calendar_event_all_day)
+                                .font(.system(.caption))
+                                .padding(.horizontal, 4)
+                                .frame(width: 50)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .clipped()
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsModuleRoute(startDate: date, numberOfDays: 1).view(container)
+                        CalendarDayEventsModuleBuilder(startDate: date, numberOfDays: 1).view(
+                            data: $data,
+                            delegate: delegate
+                        )
                     }
-                    .themeBackground(.base)
                     // Keep the navigation bar explicitly visible
                     // This view is hosted inside a UIPageViewController, and during some
                     // page transitions the navigation bar may be hidden unexpectedly
@@ -38,6 +44,5 @@ struct CalendarDayModuleView: View {
                 }
             )
         }
-        .themeBackground(.base)
     }
 }

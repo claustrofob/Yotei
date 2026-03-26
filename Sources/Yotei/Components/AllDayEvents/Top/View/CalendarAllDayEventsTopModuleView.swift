@@ -2,8 +2,6 @@ import Foundation
 import SwiftUI
 
 struct CalendarAllDayEventsTopModuleView: View {
-    @Environment(\.theme) private var theme
-
     @StateObject var presenter: CalendarAllDayEventsTopModulePresenter
     @Binding var data: CalendarEventsInterval
 
@@ -14,13 +12,11 @@ struct CalendarAllDayEventsTopModuleView: View {
         delegate: CalendarDelegate?
     ) {
         _data = data
-        _presenter = .init(wrappedValue: {
-            return CalendarAllDayEventsTopModulePresenter(
-                startDate: startDate,
-                numberOfDays: numberOfDays,
-                delegate: delegate
-            )
-        }())
+        _presenter = .init(wrappedValue: CalendarAllDayEventsTopModulePresenter(
+            startDate: startDate,
+            numberOfDays: numberOfDays,
+            delegate: delegate
+        ))
     }
 
     var body: some View {
@@ -88,14 +84,14 @@ struct CalendarAllDayEventsTopModuleView: View {
         Text(event.title)
             .lineLimit(1)
             .truncationMode(.tail)
-            .foregroundStyle(theme.palette.brandSecondary70.suColor)
-            .themeFont(.caption2)
+            .foregroundStyle(.blue.opacity(0.5))
+            .font(.system(.caption2))
             .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             .frame(height: 16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background {
                 RoundedRectangle(cornerSize: CGSize(width: 4, height: 4))
-                    .fill(theme.palette.brandSecondary70.suColor.opacity(0.1))
+                    .fill(.blue.opacity(0.1))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
@@ -104,14 +100,14 @@ struct CalendarAllDayEventsTopModuleView: View {
     private func moreItemsView(count: Int) -> some View {
         Text("+\(count)")
             .lineLimit(1)
-            .foregroundStyle(theme.palette.base90.suColor)
-            .themeFont(.caption2)
+            .foregroundStyle(.black.opacity(0.1))
+            .font(.system(.caption2))
             .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             .frame(height: 16)
             .frame(maxWidth: .infinity, alignment: .center)
             .background {
                 RoundedRectangle(cornerSize: CGSize(width: 4, height: 4))
-                    .fill(theme.palette.base20.suColor)
+                    .fill(.black.opacity(0.8))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))

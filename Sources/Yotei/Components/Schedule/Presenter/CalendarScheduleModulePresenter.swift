@@ -50,7 +50,7 @@ extension CalendarScheduleModulePresenter: CalendarScheduleModuleCollectionViewD
             false
         }
     }
-    
+
     func calendarCollectionView(didSelect viewModel: CalendarScheduleModuleViewModel) {
         switch viewModel.kind {
         case let .event(item):

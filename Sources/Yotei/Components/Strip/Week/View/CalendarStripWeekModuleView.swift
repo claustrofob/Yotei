@@ -2,15 +2,13 @@ import SwiftUI
 import Swinject
 
 struct CalendarStripWeekModuleView: View {
-    @Environment(\.theme) private var theme
-
     private let weekInterval: DateInterval
     private let startDate: Date
 
     @Binding var focusedDate: Date
 
     init(focusedDate: Binding<Date>, date: Date) {
-        self._focusedDate = focusedDate
+        _focusedDate = focusedDate
         weekInterval = Calendar.current.dateInterval(of: .weekOfMonth, for: date)!
         startDate = Calendar.current.dateInterval(
             of: .weekOfMonth,

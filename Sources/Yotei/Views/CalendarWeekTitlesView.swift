@@ -8,8 +8,8 @@ struct CalendarWeekTitlesView: View {
             ForEach(Calendar.current.weekdayIndices, id: \.self) { index in
                 Text("\(Calendar.current.veryShortStandaloneWeekdaySymbols[index - 1])")
                     .frame(maxWidth: .infinity)
-                    .themeFont(.subcaption)
-                    .themeForegroundStyle(.base80)
+                    .font(.system(.caption))
+                    .foregroundStyle(.black.opacity(0.2))
             }
         }
         .frame(height: 24)

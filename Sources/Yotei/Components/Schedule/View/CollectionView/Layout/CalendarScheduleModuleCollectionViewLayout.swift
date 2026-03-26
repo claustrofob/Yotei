@@ -37,7 +37,6 @@ final class CalendarScheduleModuleCollectionViewLayout: UICollectionViewLayout {
 
         let numberOfSections = collectionView.numberOfSections
         for sectionIndex in 0 ..< numberOfSections {
-
             attributeSectionIndexOffset.append(layoutAttributes.count)
 
             let numberOfItems = collectionView.numberOfItems(inSection: sectionIndex)
@@ -120,13 +119,13 @@ final class CalendarScheduleModuleCollectionViewLayout: UICollectionViewLayout {
         return adjustedAttributes
     }
 
-    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    override func layoutAttributesForElements(in _: CGRect) -> [UICollectionViewLayoutAttributes]? {
         layoutAttributes + sectionLayoutAttributes.map {
             stickyLayoutAttributesForSupplementaryView(basedOn: $0)
         }
     }
 
-    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+    override func layoutAttributesForSupplementaryView(ofKind _: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         stickyLayoutAttributesForSupplementaryView(basedOn: sectionLayoutAttributes[indexPath.section])
     }
 
@@ -178,7 +177,7 @@ final class CalendarScheduleModuleCollectionViewLayout: UICollectionViewLayout {
     // `layoutAttributesForSupplementaryView` returns sticky header position, which may differ from the absolute section position
     // Absolute position is required for setting proper contentOffset when focusedDate is updated.
     func absoluteLayoutAttributesForSupplementaryView(
-        ofKind elementKind: String,
+        ofKind _: String,
         at indexPath: IndexPath
     ) -> UICollectionViewLayoutAttributes? {
         sectionLayoutAttributes[safe: indexPath.section]

@@ -1,15 +1,13 @@
 import SwiftUI
 
 struct CalendarDayEventsModuleEventView: View {
-    @Environment(\.theme) private var theme
-
     let event: CalendarEvent
 
     var body: some View {
         VStack(alignment: .leading) {
             Text(event.title)
-                .foregroundStyle(theme.palette.brandSecondary70.suColor)
-                .themeFont(.caption2)
+                .foregroundStyle(.blue.opacity(0.5))
+                .font(.system(.caption2))
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(height: 16)
@@ -22,7 +20,7 @@ struct CalendarDayEventsModuleEventView: View {
             maxHeight: .infinity,
             alignment: .topLeading
         )
-        .background(theme.palette.brandSecondary60.suColor.opacity(0.2))
+        .background(.blue.opacity(0.2))
         .cornerRadius(4)
     }
 }

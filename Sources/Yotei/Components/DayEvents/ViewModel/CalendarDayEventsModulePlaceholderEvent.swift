@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 struct CalendarDayEventsModulePlaceholderEvent {
-    public let dateInterval: DateInterval
+    let dateInterval: DateInterval
 
     func frame(
         hourSlotHeight: CGFloat,

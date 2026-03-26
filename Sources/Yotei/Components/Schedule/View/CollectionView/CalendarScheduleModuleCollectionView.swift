@@ -6,14 +6,14 @@ struct CalendarScheduleModuleCollectionView: UIViewRepresentable {
     let data: CalendarScheduleModule.ViewData
     let delegate: CalendarScheduleModuleCollectionViewDelegate
 
-    func makeUIView(context: Context) -> CalendarScheduleModuleUICollectionView {
+    func makeUIView(context _: Context) -> CalendarScheduleModuleUICollectionView {
         CalendarScheduleModuleUICollectionView(
             factory: CalendarScheduleModuleCollectionViewFactory(),
             delegate: delegate
         )
     }
 
-    func updateUIView(_ uiView: CalendarScheduleModuleUICollectionView, context: Context) {
+    func updateUIView(_ uiView: CalendarScheduleModuleUICollectionView, context _: Context) {
         guard let focusedDate else {
             return
         }

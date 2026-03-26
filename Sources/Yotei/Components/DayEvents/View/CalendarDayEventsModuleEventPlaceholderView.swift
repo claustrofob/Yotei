@@ -5,15 +5,13 @@ struct CalendarDayEventsModuleEventPlaceholderView: View {
         static var paddingCoefficient: CGFloat { 0.033 }
     }
 
-    @Environment(\.theme) private var theme
-
     let coordinateSpace: CoordinateSpace
 
     var body: some View {
         GeometryReader { proxy in
             let indicatorPadding: CGFloat = Constants.paddingCoefficient * proxy.size.width
             RoundedRectangle(cornerSize: .init(width: 4, height: 4))
-                .themeStroke(.brandPrimary40, lineWidth: 2)
+                .stroke(.blue, lineWidth: 2)
                 .overlay(alignment: .topTrailing) {
                     dragIndicator()
                         .alignmentGuide(.top) { $0.height / 2 }
@@ -38,8 +36,8 @@ struct CalendarDayEventsModuleEventPlaceholderView: View {
 
     private func dragIndicator() -> some View {
         Circle()
-            .stroke(theme.palette.brandPrimary10.suColor, lineWidth: 2)
-            .background(Circle().foregroundColor(theme.palette.brandPrimary40.suColor))
+            .stroke(.blue.opacity(0.1), lineWidth: 2)
+            .background(Circle().foregroundColor(.blue))
             .frame(width: 10, height: 10)
     }
 }

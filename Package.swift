@@ -22,4 +22,3 @@ let package = Package(
         ),
     ]
 )
-

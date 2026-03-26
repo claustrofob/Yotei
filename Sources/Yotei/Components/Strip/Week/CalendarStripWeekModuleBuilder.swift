@@ -6,7 +6,7 @@ struct CalendarStripWeekModuleBuilder {
 
     @ViewBuilder
     func view(focusedDate: Binding<Date>) -> some View {
-        CalendarStripWeekModuleBuilder(focusedDate: focusedDate, date: date)
+        CalendarStripWeekModuleView(focusedDate: focusedDate, date: date)
             .id(date)
     }
 }

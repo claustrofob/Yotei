@@ -1,5 +1,5 @@
-import SwiftUI
 import Eventually
+import SwiftUI
 
 struct CalendarDayEventsModuleView: View {
     private enum Constants {
@@ -23,7 +23,6 @@ struct CalendarDayEventsModuleView: View {
     @StateObject var presenter: CalendarDayEventsModulePresenter
     @Binding var data: CalendarEventsInterval
     @Binding var contentOffset: CGPoint?
-    @Environment(\.theme) private var theme
 
     private let scrollCoordinateSpaceName = "scrollViewContent"
     @State private var hourSlotHeight: CGFloat = 60
@@ -45,13 +44,11 @@ struct CalendarDayEventsModuleView: View {
         delegate: CalendarDelegate?
     ) {
         _data = data
-        self._presenter = .init(wrappedValue: {
-            CalendarDayEventsModulePresenter(
-                startDate: startDate,
-                numberOfDays: numberOfDays,
-                delegate: delegate
-            )
-        }())
+        _presenter = .init(wrappedValue: CalendarDayEventsModulePresenter(
+            startDate: startDate,
+            numberOfDays: numberOfDays,
+            delegate: delegate
+        ))
     }
 
     var body: some View {
@@ -97,10 +94,8 @@ struct CalendarDayEventsModuleView: View {
         } action: { newValue in
             scrollViewHeight = newValue.height
         }
-        .onChange(of: data, initial: true) { _, value in
-
+        .onChange(of: data, initial: true) { _, _ in
         }
-        .themeBackground(.base)
     }
 
     private func tapGesture() -> some Gesture {
@@ -149,7 +144,7 @@ struct CalendarDayEventsModuleView: View {
                 }
 
                 if (presenter.numberOfDays - 1) != index {
-                    Color(uiColor: theme.palette.base20)
+                    Color.black.opacity(0.8)
                         .frame(maxHeight: .infinity)
                         .frame(width: 1)
                 }
@@ -173,11 +168,10 @@ struct CalendarDayEventsModuleView: View {
             let x = TimeInterval(3600 * Double(index))
             let date = presenter.startOfDay.addingTimeInterval(x)
             Text(date.formatted(timeFormatStyle))
-                .themeFont(.subcaption)
-                .themeTextColor(.base80)
+                .font(.system(.caption))
                 .fixedSize()
                 .frame(width: 32, alignment: .trailing)
-            Color(uiColor: theme.palette.base20)
+            Color.black.opacity(0.8)
                 .frame(maxWidth: .infinity)
                 .frame(height: 1)
         }
@@ -190,10 +184,10 @@ struct CalendarDayEventsModuleView: View {
         let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
         let offsetY = minutesFromMidnight * pointsPerMinute
         ZStack(alignment: .leading) {
-            Color(uiColor: theme.palette.brandPrimary40)
+            Color.blue
                 .frame(height: 1)
             Circle()
-                .themeFill(.primary40)
+                .fill(.blue)
                 .frame(width: 8, height: 8)
                 .offset(x: -4)
         }

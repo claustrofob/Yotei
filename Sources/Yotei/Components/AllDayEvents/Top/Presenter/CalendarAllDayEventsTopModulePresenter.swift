@@ -34,11 +34,13 @@ final class CalendarAllDayEventsTopModulePresenter: ObservableObject {
                 let date = dateSequence[day]
                 if
                     !events[date, default: []].isEmpty,
-                    let event = events[date]?.removeFirst() {
+                    let event = events[date]?.removeFirst()
+                {
                     let eventDateInterval = event.displayableDateInterval()
                     if
                         processedEventIDs.contains(event.serverID) ||
-                        (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date)) {
+                        (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date))
+                    {
                         continue
                     }
                     let dateInterval = DateInterval(start: date, end: eventDateInterval.end)
