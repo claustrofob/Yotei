@@ -1,7 +1,4 @@
-import ReactiveSwift
 import SwiftUI
-import Swinject
-import Utilities
 
 struct CalendarWeekModuleView: View {
     private enum Constants {

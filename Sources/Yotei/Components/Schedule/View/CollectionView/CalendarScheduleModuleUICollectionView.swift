@@ -25,7 +25,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
     private var isScrollDetectionDisabled = false
-    private var dataTimeDisposable: Disposable?
+    private var autoUpdateTimer: Timer?
 
     private var diffableDataSource: CalendarScheduleModuleDataSource!
 
@@ -155,16 +155,10 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
 
     private func startCollectionAutoupdate() {
         // redraw visible cells every minute so reflect time change on screen
-        dataTimeDisposable?.dispose()
-        dataTimeDisposable = SignalProducer.timer(interval: .seconds(60), on: QueueScheduler())
-            .take(duringLifetimeOf: self)
-            .observe(on: UIScheduler())
-            .startWithValues { [weak self] _ in
-                guard let self else {
-                    return
-                }
-                diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
-            }
+        autoUpdateTimer?.invalidate()
+        autoUpdateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
+        }
     }
 
     private func apply(data: CalendarScheduleModule.ViewData) {
