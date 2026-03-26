@@ -18,7 +18,7 @@ struct CalendarDayModuleView: View {
                         )
                         .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
                         .background {
-                            Text(String.localized_calendar_event_all_day)
+                            Text("All day")
                                 .font(.system(.caption))
                                 .padding(.horizontal, 4)
                                 .frame(width: 50)

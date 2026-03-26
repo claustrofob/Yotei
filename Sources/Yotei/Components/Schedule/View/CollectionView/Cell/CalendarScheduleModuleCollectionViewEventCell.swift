@@ -41,7 +41,7 @@ struct CalendarScheduleModuleCollectionViewEventCell: View {
                     HStack(alignment: .center, spacing: 4) {
                         Circle()
                             .frame(width: 6, height: 6)
-                        Text(String.localized_calendar_now)
+                        Text("Now")
                             .font(.system(.caption))
                     }
                     .foregroundStyle(.purple)
