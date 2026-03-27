@@ -4,7 +4,7 @@ import UIKit
 struct CalendarScheduleModuleCollectionView: UIViewRepresentable {
     @Binding var focusedDate: Date
     let data: CalendarScheduleModule.ViewData
-    let delegate: CalendarScheduleModuleCollectionViewDelegate
+    let delegate: CalendarDelegate?
 
     func makeUIView(context _: Context) -> CalendarScheduleModuleUICollectionView {
         CalendarScheduleModuleUICollectionView(

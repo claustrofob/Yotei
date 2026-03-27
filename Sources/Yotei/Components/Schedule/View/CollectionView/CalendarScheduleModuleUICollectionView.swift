@@ -20,7 +20,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
 
     @Binding private var focusedDate: Date
     private let factory: CalendarScheduleModuleCollectionViewFactory
-    private let collectionViewDelegate: CalendarScheduleModuleCollectionViewDelegate
+    private weak var calendarDelegate: CalendarDelegate?
     private var items: [CalendarScheduleModuleViewModel] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
@@ -36,11 +36,11 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
 
     init(
         factory: CalendarScheduleModuleCollectionViewFactory,
-        delegate: CalendarScheduleModuleCollectionViewDelegate,
+        delegate: CalendarDelegate?,
         focusedDate: Binding<Date>
     ) {
         self.factory = factory
-        collectionViewDelegate = delegate
+        calendarDelegate = delegate
         _focusedDate = focusedDate
         layout = factory.layout()
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -223,7 +223,10 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
             return false
         }
 
-        return collectionViewDelegate.calendarCollectionView(shouldSelect: viewModel)
+        return switch viewModel.kind {
+        case .empty, .loading: false
+        case .event: true
+        }
     }
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -234,7 +237,12 @@ extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLa
             return
         }
 
-        return collectionViewDelegate.calendarCollectionView(didSelect: viewModel)
+        switch viewModel.kind {
+        case let .event(item):
+            calendarDelegate?.calendarDidSelectEvent(with: item.id)
+        case .empty, .loading:
+            ()
+        }
     }
 
     func collectionView(

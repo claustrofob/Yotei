@@ -27,7 +27,7 @@ struct CalendarScheduleModuleView: View {
             CalendarScheduleModuleCollectionView(
                 focusedDate: $focusedDate,
                 data: presenter.viewData,
-                delegate: presenter
+                delegate: presenter.delegate
             )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
