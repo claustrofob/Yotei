@@ -20,16 +20,21 @@ struct CalendarDayEventsModuleView: View {
         }
     }
 
-    @StateObject var presenter: CalendarDayEventsModulePresenter
-    @Binding var data: CalendarEventsInterval
-    @Binding var contentOffset: CGPoint?
+    private let startOfDay: Date
+    private let numberOfDays: Int
+    @Binding private var data: CalendarEventsInterval
+    @Binding private var contentOffset: CGPoint?
+    private weak var delegate: CalendarDelegate?
 
+    private let dateSequence: CalendarDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
+    @State var events: [Date: [CalendarEvent]] = [:]
+    @State var placeholderEvent: CalendarDayEventsModulePlaceholderEvent?
     @State private var hourSlotHeight: CGFloat = 60
     @State private var timelineWidth: CGFloat = 0
     @State private var scrollViewHeight: CGFloat = 0
     private var daySlotWidth: CGFloat {
-        timelineWidth / CGFloat(presenter.numberOfDays)
+        timelineWidth / CGFloat(numberOfDays)
     }
 
     private let timeFormatStyle = Date.FormatStyle()
@@ -41,14 +46,15 @@ struct CalendarDayEventsModuleView: View {
         startDate: Date,
         numberOfDays: Int,
         data: Binding<CalendarEventsInterval>,
+        contentOffset: Binding<CGPoint?>,
         delegate: CalendarDelegate?
     ) {
+        startOfDay = startDate
+        self.numberOfDays = numberOfDays
         _data = data
-        _presenter = .init(wrappedValue: CalendarDayEventsModulePresenter(
-            startDate: startDate,
-            numberOfDays: numberOfDays,
-            delegate: delegate
-        ))
+        _contentOffset = contentOffset
+        self.delegate = delegate
+        dateSequence = CalendarDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
     var body: some View {
@@ -57,12 +63,12 @@ struct CalendarDayEventsModuleView: View {
                 hoursGridView()
                 eventsLayoutView()
                     .overlay(alignment: .topLeading) {
-                        if let event = presenter.placeholderEvent {
+                        if let event = placeholderEvent {
                             let frame = event.frame(
                                 hourSlotHeight: hourSlotHeight,
                                 daySlotWidth: daySlotWidth,
                                 insets: UIEdgeInsets(from: Constants.eventsDayViewInsets),
-                                initialDate: presenter.startOfDay
+                                initialDate: startOfDay
                             )
                             CalendarDayEventsModuleEventPlaceholderView(
                                 coordinateSpace: .named(scrollCoordinateSpaceName)
@@ -94,7 +100,10 @@ struct CalendarDayEventsModuleView: View {
         } action: { newValue in
             scrollViewHeight = newValue.height
         }
-        .onChange(of: data, initial: true) { _, _ in
+        .onChange(of: data, initial: true) {
+            events = dateSequence.reduce(into: [:]) { result, date in
+                result[date] = data.events[date]?.filter { !$0.isAllDay } ?? []
+            }
         }
     }
 
@@ -106,7 +115,7 @@ struct CalendarDayEventsModuleView: View {
             let centerTimeInterval = yPosition * secondsPerPoint
             let halfAnHourInterval: TimeInterval = 1800
             let startTimeInterval = CGFloat(Int(centerTimeInterval / halfAnHourInterval)) * halfAnHourInterval
-            presenter.viewDidSelectTimeSlot(
+            didSelectTimeSlot(
                 dayIndex: dayIndex,
                 startTimeInterval: startTimeInterval,
                 duration: 3600
@@ -116,16 +125,16 @@ struct CalendarDayEventsModuleView: View {
 
     private func eventsLayoutView() -> some View {
         HStack(spacing: 0) {
-            let data = Array(CalendarDaysSequence(startDate: presenter.startOfDay, days: presenter.numberOfDays).enumerated())
+            let data = Array(dateSequence.enumerated())
             ForEach(data, id: \.element) { index, date in
                 EventuallyLayout(
                     startOfDay: date,
                     hourSlotHeight: hourSlotHeight
                 ) {
-                    if let events = presenter.events[date] {
+                    if let events = events[date] {
                         ForEach(events, id: \.id) { event in
                             Button(action: {
-                                presenter.viewDidSelectEvent(with: event.id)
+                                delegate?.calendarDidSelectEvent(with: event.id)
                             }) {
                                 CalendarDayEventsModuleEventView(event: event)
                             }
@@ -142,7 +151,7 @@ struct CalendarDayEventsModuleView: View {
                     }
                 }
 
-                if (presenter.numberOfDays - 1) != index {
+                if (numberOfDays - 1) != index {
                     Color.black.opacity(0.8)
                         .frame(maxHeight: .infinity)
                         .frame(width: 1)
@@ -165,7 +174,7 @@ struct CalendarDayEventsModuleView: View {
     private func timeSlotView(index: Int) -> some View {
         HStack(spacing: 6) {
             let x = TimeInterval(3600 * Double(index))
-            let date = presenter.startOfDay.addingTimeInterval(x)
+            let date = startOfDay.addingTimeInterval(x)
             Text(date.formatted(timeFormatStyle))
                 .font(.system(.caption))
                 .fixedSize()
@@ -204,5 +213,23 @@ struct CalendarDayEventsModuleView: View {
             x: 0,
             y: min(max(currentDateOffsetY - scrollViewHeight / 3, 0), maxScrollOffsetY)
         )
+    }
+
+    func didSelectTimeSlot(
+        dayIndex: Int,
+        startTimeInterval: TimeInterval,
+        duration: TimeInterval
+    ) {
+        guard let date = Calendar.current.date(byAdding: .day, value: dayIndex, to: startOfDay) else {
+            return
+        }
+        let startTimestamp = date.timeIntervalSince1970 + startTimeInterval
+        let endTimestamp = startTimestamp + duration
+        let dateInterval = DateInterval(
+            start: Date(timeIntervalSince1970: startTimestamp),
+            end: Date(timeIntervalSince1970: endTimestamp)
+        )
+        placeholderEvent = CalendarDayEventsModulePlaceholderEvent(dateInterval: dateInterval)
+        delegate?.calendarDidSelect(dateInterval: dateInterval)
     }
 }

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		48C87F2D2F76B77200262F6A /* Yotei in Frameworks */ = {isa = PBXBuildFile; productRef = 48C87F2C2F76B77200262F6A /* Yotei */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		48C87D602F72E00B00262F6A /* YoteiAppExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YoteiAppExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		48C87D742F72E0FD00262F6A /* Yotei */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Yotei; path = ..; sourceTree = SOURCE_ROOT; };
@@ -24,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48C87F2D2F76B77200262F6A /* Yotei in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35,6 +40,7 @@
 			children = (
 				48C87D742F72E0FD00262F6A /* Yotei */,
 				48C87D622F72E00B00262F6A /* YoteiAppExample */,
+				48C87F2B2F76B77200262F6A /* Frameworks */,
 				48C87D612F72E00B00262F6A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,6 +51,13 @@
 				48C87D602F72E00B00262F6A /* YoteiAppExample.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		48C87F2B2F76B77200262F6A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -67,6 +80,7 @@
 			);
 			name = YoteiAppExample;
 			packageProductDependencies = (
+				48C87F2C2F76B77200262F6A /* Yotei */,
 			);
 			productName = YoteiAppExample;
 			productReference = 48C87D602F72E00B00262F6A /* YoteiAppExample.app */;
@@ -263,6 +277,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -295,6 +310,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -334,6 +350,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		48C87F2C2F76B77200262F6A /* Yotei */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Yotei;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 48C87D582F72E00B00262F6A /* Project object */;
 }
