@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarStripContainerModuleView: View {
+struct CalendarStripContainerView: View {
     private struct DummyModifier: ViewModifier {
         let isActive: Bool
 
@@ -52,7 +52,7 @@ struct CalendarStripContainerModuleView: View {
                         Group {
                             if isExpanded {
                                 tabView(selection: $selectedMonthPageDate, component: .month) { date in
-                                    CalendarStripMonthModuleView(focusedDate: $focusedDate, date: date)
+                                    CalendarStripMonthView(focusedDate: $focusedDate, date: date)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)
@@ -60,7 +60,7 @@ struct CalendarStripContainerModuleView: View {
                                 .zIndex(1)
                             } else {
                                 tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
-                                    CalendarStripWeekModuleView(focusedDate: $focusedDate, date: date)
+                                    CalendarStripWeekView(focusedDate: $focusedDate, date: date)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)

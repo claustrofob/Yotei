@@ -1,7 +1,7 @@
 import Eventually
 import SwiftUI
 
-struct CalendarDayEventsModuleView: View {
+struct CalendarDayEventsView: View {
     private enum Constants {
         static var scrollViewInsets: EdgeInsets {
             EdgeInsets(top: 16, leading: 12, bottom: 16, trailing: 0)
@@ -29,7 +29,7 @@ struct CalendarDayEventsModuleView: View {
     private let dateSequence: CalendarDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
     @State var events: [Date: [CalendarEvent]] = [:]
-    @State var placeholderEvent: CalendarDayEventsModulePlaceholderEvent?
+    @State var placeholderEvent: CalendarDayEventsPlaceholderEvent?
     @State private var hourSlotHeight: CGFloat = 60
     @State private var timelineWidth: CGFloat = 0
     @State private var scrollViewHeight: CGFloat = 0
@@ -70,7 +70,7 @@ struct CalendarDayEventsModuleView: View {
                                 insets: UIEdgeInsets(from: Constants.eventsDayViewInsets),
                                 initialDate: startOfDay
                             )
-                            CalendarDayEventsModuleEventPlaceholderView(
+                            CalendarDayEventsEventPlaceholderView(
                                 coordinateSpace: .named(scrollCoordinateSpaceName)
                             )
                             .frame(width: frame.width, height: frame.height)
@@ -136,7 +136,7 @@ struct CalendarDayEventsModuleView: View {
                             Button(action: {
                                 delegate?.calendarDidSelectEvent(with: event.id)
                             }) {
-                                CalendarDayEventsModuleEventView(event: event)
+                                CalendarDayEventsEventView(event: event)
                             }
                             .eventuallyDateIntervalLayout(event.dateInterval)
                         }
@@ -229,7 +229,7 @@ struct CalendarDayEventsModuleView: View {
             start: Date(timeIntervalSince1970: startTimestamp),
             end: Date(timeIntervalSince1970: endTimestamp)
         )
-        placeholderEvent = CalendarDayEventsModulePlaceholderEvent(dateInterval: dateInterval)
+        placeholderEvent = CalendarDayEventsPlaceholderEvent(dateInterval: dateInterval)
         delegate?.calendarDidSelect(dateInterval: dateInterval)
     }
 }

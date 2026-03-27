@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarScheduleModuleCollectionViewEventCell: View {
+struct CalendarScheduleCollectionViewEventCell: View {
     private let nowDate = Date.now
     let cellDate: Date
     let viewModel: CalendarEvent

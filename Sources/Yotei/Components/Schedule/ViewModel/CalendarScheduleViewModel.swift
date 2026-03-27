@@ -1,6 +1,6 @@
 import Foundation
 
-struct CalendarScheduleModuleViewModel: Identifiable, Equatable {
+struct CalendarScheduleViewModel: Identifiable, Equatable {
     enum Kind: Equatable {
         case event(CalendarEvent)
         case empty

@@ -2,15 +2,15 @@ import SwiftUI
 import UIKit
 
 @MainActor
-struct CalendarScheduleModuleCollectionViewFactory {
-    func layout() -> CalendarScheduleModuleCollectionViewLayout {
-        CalendarScheduleModuleCollectionViewLayout()
+struct CalendarScheduleCollectionViewFactory {
+    func layout() -> CalendarScheduleCollectionViewLayout {
+        CalendarScheduleCollectionViewLayout()
     }
 
     func eventCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, (Date, CalendarEvent)> {
         .init { cell, _, viewModel in
             cell.contentConfiguration = UIHostingConfiguration {
-                CalendarScheduleModuleCollectionViewEventCell(cellDate: viewModel.0, viewModel: viewModel.1)
+                CalendarScheduleCollectionViewEventCell(cellDate: viewModel.0, viewModel: viewModel.1)
             }.margins(.all, 0)
         }
     }
@@ -18,7 +18,7 @@ struct CalendarScheduleModuleCollectionViewFactory {
     func emptyCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Date> {
         .init { cell, _, _ in
             cell.contentConfiguration = UIHostingConfiguration {
-                CalendarScheduleModuleCollectionViewEmptyCell()
+                CalendarScheduleCollectionViewEmptyCell()
             }.margins(.all, 0)
         }
     }
@@ -26,12 +26,12 @@ struct CalendarScheduleModuleCollectionViewFactory {
     func loadingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Date> {
         .init { cell, _, _ in
             cell.contentConfiguration = UIHostingConfiguration {
-                CalendarScheduleModuleCollectionViewLoadingCell()
+                CalendarScheduleCollectionViewLoadingCell()
             }.margins(.all, 0)
         }
     }
 
-    func headerRegistration() -> UICollectionView.SupplementaryRegistration<CalendarScheduleModuleSectionHeaderView> {
+    func headerRegistration() -> UICollectionView.SupplementaryRegistration<CalendarScheduleSectionHeaderView> {
         .init(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in }
     }
 }

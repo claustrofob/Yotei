@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-final class CalendarScheduleModuleUICollectionView: UICollectionView {
+final class CalendarScheduleUICollectionView: UICollectionView {
     private enum Constants {
         static var sectionInsets: UIEdgeInsets {
             .init(top: 6, left: 16, bottom: 8, right: 16)
@@ -13,29 +13,29 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
         case down
     }
 
-    private let layout: CalendarScheduleModuleCollectionViewLayout
+    private let layout: CalendarScheduleCollectionViewLayout
 
     private var lastUserScrollOffset: CGFloat = 0
     private var lastUserScrollDirection: ScrollDirection = .down
 
     @Binding private var focusedDate: Date
-    private let factory: CalendarScheduleModuleCollectionViewFactory
+    private let factory: CalendarScheduleCollectionViewFactory
     private weak var calendarDelegate: CalendarDelegate?
-    private var items: [CalendarScheduleModuleViewModel] = []
+    private var items: [CalendarScheduleViewModel] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
     private var isScrollDetectionDisabled = false
     private var autoUpdateTask: Task<Void, Never>?
 
-    private var diffableDataSource: CalendarScheduleModuleDataSource!
+    private var diffableDataSource: CalendarScheduleDataSource!
 
     private let diffableDataStorage = DiffableDataStorage<
         Date,
-        CalendarScheduleModuleViewModel
+        CalendarScheduleViewModel
     >()
 
     init(
-        factory: CalendarScheduleModuleCollectionViewFactory,
+        factory: CalendarScheduleCollectionViewFactory,
         delegate: CalendarDelegate?,
         focusedDate: Binding<Date>
     ) {
@@ -68,7 +68,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
         let loadingCellRegistration = factory.loadingCellRegistration()
         let headerRegistration = factory.headerRegistration()
 
-        diffableDataSource = CalendarScheduleModuleDataSource(
+        diffableDataSource = CalendarScheduleDataSource(
             collectionView: self
         ) { [unowned self] collectionView, indexPath, id -> UICollectionViewCell in
             guard let viewModel = diffableDataStorage.item(for: id) else {
@@ -167,7 +167,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
         }
     }
 
-    private func apply(data: CalendarScheduleModule.ViewData) {
+    private func apply(data: CalendarSchedule.ViewData) {
         let sections = data.map { $0.section }
         let items = data.map { $0.items }.flatMap { $0 }
         guard sections != self.sections || items != self.items else {
@@ -208,13 +208,13 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
         }
     }
 
-    func apply(data: CalendarScheduleModule.ViewData, focusedDate: Binding<Date>) {
+    func apply(data: CalendarSchedule.ViewData, focusedDate: Binding<Date>) {
         apply(data: data)
         apply(focusedDate: focusedDate)
     }
 }
 
-extension CalendarScheduleModuleUICollectionView: UICollectionViewDelegateFlowLayout {
+extension CalendarScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         guard let viewModel = diffableDataStorage.item(
             in: diffableDataSource.snapshot(),

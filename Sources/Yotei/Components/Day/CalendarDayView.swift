@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarDayModuleView: View {
+struct CalendarDayView: View {
     @Binding var focusedDate: Date
     @Binding var data: CalendarEventsInterval
     @Binding var contentOffset: CGPoint?
@@ -8,12 +8,12 @@ struct CalendarDayModuleView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerModuleView(focusedDate: $focusedDate)
+            CalendarStripContainerView(focusedDate: $focusedDate)
             CalendarTabView(
                 selection: $focusedDate,
                 content: { date in
                     VStack(spacing: 0) {
-                        CalendarAllDayEventsTopModuleView(
+                        CalendarAllDayEventsTopView(
                             startDate: date,
                             numberOfDays: 1,
                             data: $data,
@@ -29,7 +29,7 @@ struct CalendarDayModuleView: View {
                         }
                         .clipped()
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsModuleView(
+                        CalendarDayEventsView(
                             startDate: date,
                             numberOfDays: 1,
                             data: $data,

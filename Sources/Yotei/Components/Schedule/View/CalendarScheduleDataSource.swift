@@ -1,12 +1,12 @@
 import UIKit
 
-final class CalendarScheduleModuleDataSource: UICollectionViewDiffableDataSource<
+final class CalendarScheduleDataSource: UICollectionViewDiffableDataSource<
     Date.ID,
-    CalendarScheduleModuleViewModel.ID
+    CalendarScheduleViewModel.ID
 > {
     private(set) var isUpdating = false
 
-    func apply(snapshot: NSDiffableDataSourceSnapshot<Date.ID, CalendarScheduleModuleViewModel.ID>, animatingDifferences: Bool) {
+    func apply(snapshot: NSDiffableDataSourceSnapshot<Date.ID, CalendarScheduleViewModel.ID>, animatingDifferences: Bool) {
         // `targetContentOffsetForProposedContentOffset` requires `animatingDifferences = true`,
         let applySnapshot = {
             self.isUpdating = true

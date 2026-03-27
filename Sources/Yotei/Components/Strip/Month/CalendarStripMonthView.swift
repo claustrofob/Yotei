@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarStripMonthModuleView: View {
+struct CalendarStripMonthView: View {
     private enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
     }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarScheduleModuleCollectionViewEmptyCell: View {
+struct CalendarScheduleCollectionViewEmptyCell: View {
     var body: some View {
         Text("No events")
             .font(.system(.subheadline))

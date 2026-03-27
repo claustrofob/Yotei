@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarDayEventsModuleEventView: View {
+struct CalendarDayEventsEventView: View {
     let event: CalendarEvent
 
     var body: some View {

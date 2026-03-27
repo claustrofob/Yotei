@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct CalendarAllDayEventsTopModuleView: View {
+struct CalendarAllDayEventsTopView: View {
     private let numberOfDays: Int
     @Binding private var data: CalendarEventsInterval
     private weak var delegate: CalendarDelegate?
@@ -9,7 +9,7 @@ struct CalendarAllDayEventsTopModuleView: View {
     private let dateSequence: CalendarDaysSequence
 
     @State private var otherEventsCount: [Date: Int] = [:]
-    @State private var viewData: [[CalendarAllDayEventsTopModuleViewModel]] = []
+    @State private var viewData: [[CalendarAllDayEventsTopViewModel]] = []
 
     init(
         startDate: Date,
@@ -136,7 +136,7 @@ struct CalendarAllDayEventsTopModuleView: View {
         var processedEventIDs = Set<CalendarEvent.ID>()
         viewData = (0 ..< 2).map { _ in
             var day = 0
-            var data = [CalendarAllDayEventsTopModuleViewModel]()
+            var data = [CalendarAllDayEventsTopViewModel]()
             while day < numberOfDays {
                 let date = dateSequence[day]
                 if

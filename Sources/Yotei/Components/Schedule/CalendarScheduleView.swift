@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarScheduleModuleView: View {
+struct CalendarScheduleView: View {
     private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()
@@ -10,7 +10,7 @@ struct CalendarScheduleModuleView: View {
     @Binding private var data: CalendarEventsInterval
     private weak var delegate: CalendarDelegate?
 
-    @State private var viewData: CalendarScheduleModule.ViewData = []
+    @State private var viewData: CalendarSchedule.ViewData = []
 
     init(
         focusedDate: Binding<Date>,
@@ -24,8 +24,8 @@ struct CalendarScheduleModuleView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerModuleView(focusedDate: $focusedDate)
-            CalendarScheduleModuleCollectionView(
+            CalendarStripContainerView(focusedDate: $focusedDate)
+            CalendarScheduleCollectionView(
                 focusedDate: $focusedDate,
                 data: viewData,
                 delegate: delegate
@@ -51,7 +51,7 @@ struct CalendarScheduleModuleView: View {
         }
 
         viewData = CalendarDaysSequence(interval: dateInterval).map { date in
-            let items: [CalendarScheduleModuleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
+            let items: [CalendarScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
                 [.init(date: date, kind: .loading)]
             } else if let events = data.events[date], !events.isEmpty {
                 events.sorted(using: [

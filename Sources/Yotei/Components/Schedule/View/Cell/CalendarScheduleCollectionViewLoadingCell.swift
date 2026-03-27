@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarScheduleModuleCollectionViewLoadingCell: View {
+struct CalendarScheduleCollectionViewLoadingCell: View {
     var body: some View {
         RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
             .fill(.black.opacity(0.8))

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarStripWeekModuleView: View {
+struct CalendarStripWeekView: View {
     private let weekInterval: DateInterval
     private let startDate: Date
 

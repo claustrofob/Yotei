@@ -1,6 +1,6 @@
 import UIKit
 
-final class CalendarScheduleModuleSectionHeaderView: UICollectionReusableView {
+final class CalendarScheduleSectionHeaderView: UICollectionReusableView {
     private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()
@@ -16,7 +16,7 @@ final class CalendarScheduleModuleSectionHeaderView: UICollectionReusableView {
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented for HomeListModuleSectionHeaderView")
+        fatalError("init(coder:) has not been implemented for CalendarScheduleSectionHeaderView")
     }
 
     private func setupLayout() {

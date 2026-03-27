@@ -1,6 +1,6 @@
 import Foundation
 
-enum CalendarAllDayEventsTopModuleViewModel: Equatable, Identifiable {
+enum CalendarAllDayEventsTopViewModel: Equatable, Identifiable {
     var id: String {
         switch self {
         case .event(event: let event, cols: _):

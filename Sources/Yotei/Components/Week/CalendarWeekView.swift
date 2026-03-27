@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarWeekModuleView: View {
+struct CalendarWeekView: View {
     private enum Constants {
         static var weekTitlesViewInsets: EdgeInsets {
             EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 0)
@@ -43,7 +43,7 @@ struct CalendarWeekModuleView: View {
                         weekDaysView(startDate: date)
                             .padding(Constants.weekTitlesViewInsets)
                             .padding(.bottom, 4)
-                        CalendarAllDayEventsTopModuleView(
+                        CalendarAllDayEventsTopView(
                             startDate: date,
                             numberOfDays: 7,
                             data: $data,
@@ -51,7 +51,7 @@ struct CalendarWeekModuleView: View {
                         )
                         .padding(Constants.weekTitlesViewInsets)
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsModuleView(
+                        CalendarDayEventsView(
                             startDate: date,
                             numberOfDays: 7,
                             data: $data,
