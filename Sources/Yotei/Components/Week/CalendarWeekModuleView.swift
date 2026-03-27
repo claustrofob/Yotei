@@ -7,9 +7,10 @@ struct CalendarWeekModuleView: View {
         }
     }
 
-    @Binding var focusedDate: Date
-    @Binding var data: CalendarEventsInterval
-    let delegate: CalendarDelegate?
+    @Binding private var focusedDate: Date
+    @Binding private var data: CalendarEventsInterval
+    @Binding private var contentOffset: CGPoint?
+    private let delegate: CalendarDelegate?
 
     private let calendarDateService = CalendarDateService()
     @State private var selectedPageDate: Date
@@ -17,10 +18,12 @@ struct CalendarWeekModuleView: View {
     init(
         focusedDate: Binding<Date>,
         data: Binding<CalendarEventsInterval>,
+        contentOffset: Binding<CGPoint?>,
         delegate: CalendarDelegate?
     ) {
         _focusedDate = focusedDate
         _data = data
+        _contentOffset = contentOffset
         self.delegate = delegate
         selectedPageDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
@@ -40,14 +43,19 @@ struct CalendarWeekModuleView: View {
                         weekDaysView(startDate: date)
                             .padding(Constants.weekTitlesViewInsets)
                             .padding(.bottom, 4)
-                        CalendarAllDayEventsTopModuleBuilder(startDate: date, numberOfDays: 7).view(
+                        CalendarAllDayEventsTopModuleView(
+                            startDate: date,
+                            numberOfDays: 7,
                             data: $data,
                             delegate: delegate
                         )
                         .padding(Constants.weekTitlesViewInsets)
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsModuleBuilder(startDate: date, numberOfDays: 7).view(
+                        CalendarDayEventsModuleView(
+                            startDate: date,
+                            numberOfDays: 7,
                             data: $data,
+                            contentOffset: $contentOffset,
                             delegate: delegate
                         )
                     }

@@ -7,7 +7,9 @@ struct OnChangeModifier<Value: Equatable>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .onChange(of: value, action)
+            .onChange(of: value) { _ in
+                action()
+            }
             .onAppear {
                 if initial {
                     action()

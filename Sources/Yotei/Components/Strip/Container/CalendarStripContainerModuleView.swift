@@ -52,7 +52,7 @@ struct CalendarStripContainerModuleView: View {
                         Group {
                             if isExpanded {
                                 tabView(selection: $selectedMonthPageDate, component: .month) { date in
-                                    CalendarStripMonthModuleBuilder(date: date).view(focusedDate: $focusedDate)
+                                    CalendarStripMonthModuleView(focusedDate: $focusedDate, date: date)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)
@@ -60,7 +60,7 @@ struct CalendarStripContainerModuleView: View {
                                 .zIndex(1)
                             } else {
                                 tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
-                                    CalendarStripWeekModuleBuilder(date: date).view(focusedDate: $focusedDate)
+                                    CalendarStripWeekModuleView(focusedDate: $focusedDate, date: date)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)

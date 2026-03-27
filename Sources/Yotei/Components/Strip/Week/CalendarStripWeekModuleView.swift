@@ -4,7 +4,7 @@ struct CalendarStripWeekModuleView: View {
     private let weekInterval: DateInterval
     private let startDate: Date
 
-    @Binding var focusedDate: Date
+    @Binding private var focusedDate: Date
 
     init(focusedDate: Binding<Date>, date: Date) {
         _focusedDate = focusedDate

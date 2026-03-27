@@ -2,15 +2,14 @@ import Foundation
 import SwiftUI
 
 struct CalendarAllDayEventsTopModuleView: View {
-    private let startDate: Date
     private let numberOfDays: Int
     @Binding private var data: CalendarEventsInterval
     private weak var delegate: CalendarDelegate?
 
     private let dateSequence: CalendarDaysSequence
 
-    @State var otherEventsCount: [Date: Int] = [:]
-    @State var viewData: [[CalendarAllDayEventsTopModuleViewModel]] = []
+    @State private var otherEventsCount: [Date: Int] = [:]
+    @State private var viewData: [[CalendarAllDayEventsTopModuleViewModel]] = []
 
     init(
         startDate: Date,
@@ -19,7 +18,6 @@ struct CalendarAllDayEventsTopModuleView: View {
         delegate: CalendarDelegate?
     ) {
         _data = data
-        self.startDate = startDate
         self.numberOfDays = numberOfDays
         self.delegate = delegate
         dateSequence = CalendarDaysSequence(startDate: startDate, days: numberOfDays)

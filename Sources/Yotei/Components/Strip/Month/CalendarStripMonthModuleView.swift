@@ -9,7 +9,7 @@ struct CalendarStripMonthModuleView: View {
     private let monthInterval: DateInterval
     private let numberOfWeeks: Int
 
-    @Binding var focusedDate: Date
+    @Binding private var focusedDate: Date
 
     init(focusedDate: Binding<Date>, date: Date) {
         _focusedDate = focusedDate

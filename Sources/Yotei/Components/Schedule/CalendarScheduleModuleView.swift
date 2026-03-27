@@ -24,7 +24,7 @@ struct CalendarScheduleModuleView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerModuleBuilder().view(focusedDate: $focusedDate)
+            CalendarStripContainerModuleView(focusedDate: $focusedDate)
             CalendarScheduleModuleCollectionView(
                 focusedDate: $focusedDate,
                 data: viewData,
