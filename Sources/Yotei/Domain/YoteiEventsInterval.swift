@@ -1,18 +1,18 @@
 import Foundation
 
-public struct CalendarEventsInterval: Equatable {
+public struct YoteiEventsInterval: Equatable {
     // full interval: [a few prev days + monthInterval + a few next days]
     public let dateInterval: DateInterval?
     public let dateLoadingInterval: DateInterval?
     // active month interval
     public let monthInterval: DateInterval?
-    public let events: [Date: [CalendarEvent]]
+    public let events: [Date: [YoteiEvent]]
 
     public init(
         dateInterval: DateInterval? = nil,
         dateLoadingInterval: DateInterval? = nil,
         monthInterval: DateInterval? = nil,
-        events: [Date: [CalendarEvent]] = [:]
+        events: [Date: [YoteiEvent]] = [:]
     ) {
         self.dateInterval = dateInterval
         self.dateLoadingInterval = dateLoadingInterval

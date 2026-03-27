@@ -2,7 +2,7 @@ import Eventually
 import Internal
 import SwiftUI
 
-struct CalendarDayEventsView: View {
+struct YoteiDayEventsView: View {
     private enum Constants {
         static var scrollViewInsets: EdgeInsets {
             EdgeInsets(top: 16, leading: 12, bottom: 16, trailing: 0)
@@ -23,14 +23,14 @@ struct CalendarDayEventsView: View {
 
     private let startOfDay: Date
     private let numberOfDays: Int
-    @Binding private var data: CalendarEventsInterval
+    @Binding private var data: YoteiEventsInterval
     @Binding private var contentOffset: CGPoint?
-    private weak var delegate: CalendarDelegate?
+    private weak var delegate: YoteiDelegate?
 
     private let dateSequence: CalendarDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
-    @State var events: [Date: [CalendarEvent]] = [:]
-    @State var placeholderEvent: CalendarDayEventsPlaceholderEvent?
+    @State var events: [Date: [YoteiEvent]] = [:]
+    @State var placeholderEvent: YoteiDayEventsPlaceholderEvent?
     @State private var hourSlotHeight: CGFloat = 60
     @State private var timelineWidth: CGFloat = 0
     @State private var scrollViewHeight: CGFloat = 0
@@ -46,9 +46,9 @@ struct CalendarDayEventsView: View {
     init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<CalendarEventsInterval>,
+        data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
-        delegate: CalendarDelegate?
+        delegate: YoteiDelegate?
     ) {
         startOfDay = startDate
         self.numberOfDays = numberOfDays
@@ -71,7 +71,7 @@ struct CalendarDayEventsView: View {
                                 insets: UIEdgeInsets(from: Constants.eventsDayViewInsets),
                                 initialDate: startOfDay
                             )
-                            CalendarDayEventsEventPlaceholderView(
+                            YoteiDayEventsEventPlaceholderView(
                                 coordinateSpace: .named(scrollCoordinateSpaceName)
                             )
                             .frame(width: frame.width, height: frame.height)
@@ -137,7 +137,7 @@ struct CalendarDayEventsView: View {
                             Button(action: {
                                 delegate?.calendarDidSelectEvent(with: event.id)
                             }) {
-                                CalendarDayEventsEventView(event: event)
+                                YoteiDayEventsEventView(event: event)
                             }
                             .eventuallyDateIntervalLayout(event.dateInterval)
                         }
@@ -230,7 +230,7 @@ struct CalendarDayEventsView: View {
             start: Date(timeIntervalSince1970: startTimestamp),
             end: Date(timeIntervalSince1970: endTimestamp)
         )
-        placeholderEvent = CalendarDayEventsPlaceholderEvent(dateInterval: dateInterval)
+        placeholderEvent = YoteiDayEventsPlaceholderEvent(dateInterval: dateInterval)
         delegate?.calendarDidSelect(dateInterval: dateInterval)
     }
 }

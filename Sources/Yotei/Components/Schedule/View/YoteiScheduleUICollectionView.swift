@@ -2,7 +2,7 @@ import Internal
 import SwiftUI
 import UIKit
 
-final class CalendarScheduleUICollectionView: UICollectionView {
+final class YoteiScheduleUICollectionView: UICollectionView {
     private enum Constants {
         static var sectionInsets: UIEdgeInsets {
             .init(top: 6, left: 16, bottom: 8, right: 16)
@@ -14,30 +14,30 @@ final class CalendarScheduleUICollectionView: UICollectionView {
         case down
     }
 
-    private let layout: CalendarScheduleCollectionViewLayout
+    private let layout: YoteiScheduleCollectionViewLayout
 
     private var lastUserScrollOffset: CGFloat = 0
     private var lastUserScrollDirection: ScrollDirection = .down
 
     @Binding private var focusedDate: Date
-    private let factory: CalendarScheduleCollectionViewFactory
-    private weak var calendarDelegate: CalendarDelegate?
-    private var items: [CalendarScheduleViewModel] = []
+    private let factory: YoteiScheduleCollectionViewFactory
+    private weak var calendarDelegate: YoteiDelegate?
+    private var items: [YoteiScheduleViewModel] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
     private var isScrollDetectionDisabled = false
     private var autoUpdateTask: Task<Void, Never>?
 
-    private var diffableDataSource: CalendarScheduleDataSource!
+    private var diffableDataSource: YoteiScheduleDataSource!
 
     private let diffableDataStorage = DiffableDataStorage<
         Date,
-        CalendarScheduleViewModel
+        YoteiScheduleViewModel
     >()
 
     init(
-        factory: CalendarScheduleCollectionViewFactory,
-        delegate: CalendarDelegate?,
+        factory: YoteiScheduleCollectionViewFactory,
+        delegate: YoteiDelegate?,
         focusedDate: Binding<Date>
     ) {
         self.factory = factory
@@ -69,7 +69,7 @@ final class CalendarScheduleUICollectionView: UICollectionView {
         let loadingCellRegistration = factory.loadingCellRegistration()
         let headerRegistration = factory.headerRegistration()
 
-        diffableDataSource = CalendarScheduleDataSource(
+        diffableDataSource = YoteiScheduleDataSource(
             collectionView: self
         ) { [unowned self] collectionView, indexPath, id -> UICollectionViewCell in
             guard let viewModel = diffableDataStorage.item(for: id) else {
@@ -168,7 +168,7 @@ final class CalendarScheduleUICollectionView: UICollectionView {
         }
     }
 
-    private func apply(data: CalendarSchedule.ViewData) {
+    private func apply(data: YoteiSchedule.ViewData) {
         let sections = data.map { $0.section }
         let items = data.map { $0.items }.flatMap { $0 }
         guard sections != self.sections || items != self.items else {
@@ -209,13 +209,13 @@ final class CalendarScheduleUICollectionView: UICollectionView {
         }
     }
 
-    func apply(data: CalendarSchedule.ViewData, focusedDate: Binding<Date>) {
+    func apply(data: YoteiSchedule.ViewData, focusedDate: Binding<Date>) {
         apply(data: data)
         apply(focusedDate: focusedDate)
     }
 }
 
-extension CalendarScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
+extension YoteiScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         guard let viewModel = diffableDataStorage.item(
             in: diffableDataSource.snapshot(),

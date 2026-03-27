@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-struct CalendarDayEventsPlaceholderEvent {
+struct YoteiDayEventsPlaceholderEvent {
     let dateInterval: DateInterval
 
     func frame(

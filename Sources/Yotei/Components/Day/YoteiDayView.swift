@@ -1,20 +1,20 @@
 import Internal
 import SwiftUI
 
-struct CalendarDayView: View {
+struct YoteiDayView: View {
     @Binding var focusedDate: Date
-    @Binding var data: CalendarEventsInterval
+    @Binding var data: YoteiEventsInterval
     @Binding var contentOffset: CGPoint?
-    let delegate: CalendarDelegate?
+    let delegate: YoteiDelegate?
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerView(focusedDate: $focusedDate)
+            YoteiStripContainerView(focusedDate: $focusedDate)
             CalendarTabView(
                 selection: $focusedDate,
                 content: { date in
                     VStack(spacing: 0) {
-                        CalendarAllDayEventsTopView(
+                        YoteiAllDayEventsTopView(
                             startDate: date,
                             numberOfDays: 1,
                             data: $data,
@@ -30,7 +30,7 @@ struct CalendarDayView: View {
                         }
                         .clipped()
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsView(
+                        YoteiDayEventsView(
                             startDate: date,
                             numberOfDays: 1,
                             data: $data,

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CalendarEvent: Equatable, Identifiable, Sendable {
+public struct YoteiEvent: Equatable, Identifiable, Sendable {
     public let id: String
     public let title: String
     public let start: Date
@@ -28,7 +28,7 @@ public struct CalendarEvent: Equatable, Identifiable, Sendable {
 // - endDate can be equal to startDate or be greater. If it is greater we must not count the last day.
 //   E.g. `18.01.2026 00:00:00 UTC` - `19.01.2026 00:00:00 UTC` - this interval represents just one day `18.01.2026`
 //        `18.01.2026 00:00:00 UTC` - `20.01.2026 00:00:00 UTC` - this interval represents 2 days `18.01.2026` and `19.01.2026`
-extension CalendarEvent {
+extension YoteiEvent {
     // preserve day when converting to other timezone
     private func startOfDay(
         from date: Date,
@@ -78,7 +78,7 @@ extension CalendarEvent {
 
 // MARK: Sortable
 
-public extension CalendarEvent {
+public extension YoteiEvent {
     var isAllDaySortable: Int { isAllDay ? 0 : 1 }
     var durationSortable: Double { end.timeIntervalSince1970 - start.timeIntervalSince1970 }
 }

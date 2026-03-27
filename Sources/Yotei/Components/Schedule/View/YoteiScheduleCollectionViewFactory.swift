@@ -2,15 +2,15 @@ import SwiftUI
 import UIKit
 
 @MainActor
-struct CalendarScheduleCollectionViewFactory {
-    func layout() -> CalendarScheduleCollectionViewLayout {
-        CalendarScheduleCollectionViewLayout()
+struct YoteiScheduleCollectionViewFactory {
+    func layout() -> YoteiScheduleCollectionViewLayout {
+        YoteiScheduleCollectionViewLayout()
     }
 
-    func eventCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, (Date, CalendarEvent)> {
+    func eventCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, (Date, YoteiEvent)> {
         .init { cell, _, viewModel in
             cell.contentConfiguration = UIHostingConfiguration {
-                CalendarScheduleCollectionViewEventCell(cellDate: viewModel.0, viewModel: viewModel.1)
+                YoteiScheduleCollectionViewEventCell(cellDate: viewModel.0, viewModel: viewModel.1)
             }.margins(.all, 0)
         }
     }
@@ -18,7 +18,7 @@ struct CalendarScheduleCollectionViewFactory {
     func emptyCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Date> {
         .init { cell, _, _ in
             cell.contentConfiguration = UIHostingConfiguration {
-                CalendarScheduleCollectionViewEmptyCell()
+                YoteiScheduleCollectionViewEmptyCell()
             }.margins(.all, 0)
         }
     }
@@ -26,12 +26,12 @@ struct CalendarScheduleCollectionViewFactory {
     func loadingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Date> {
         .init { cell, _, _ in
             cell.contentConfiguration = UIHostingConfiguration {
-                CalendarScheduleCollectionViewLoadingCell()
+                YoteiScheduleCollectionViewLoadingCell()
             }.margins(.all, 0)
         }
     }
 
-    func headerRegistration() -> UICollectionView.SupplementaryRegistration<CalendarScheduleSectionHeaderView> {
+    func headerRegistration() -> UICollectionView.SupplementaryRegistration<YoteiScheduleSectionHeaderView> {
         .init(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in }
     }
 }

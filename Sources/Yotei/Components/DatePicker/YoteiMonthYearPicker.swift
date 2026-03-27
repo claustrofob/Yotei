@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SUMonthYearPicker: UIViewRepresentable {
+struct YoteiMonthYearPicker: UIViewRepresentable {
     private enum Constants {
         // imitate infinite scrollable list of months (as Apple does in its )
         static var numberOfMonths: Int { 12000 }
@@ -40,7 +40,7 @@ struct SUMonthYearPicker: UIViewRepresentable {
     }
 }
 
-extension SUMonthYearPicker {
+extension YoteiMonthYearPicker {
     class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         @Binding private var date: Date
         private let calendar: Calendar

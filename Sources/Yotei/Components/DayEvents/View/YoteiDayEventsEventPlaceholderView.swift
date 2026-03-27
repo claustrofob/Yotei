@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarDayEventsEventPlaceholderView: View {
+struct YoteiDayEventsEventPlaceholderView: View {
     private enum Constants {
         static var paddingCoefficient: CGFloat { 0.033 }
     }

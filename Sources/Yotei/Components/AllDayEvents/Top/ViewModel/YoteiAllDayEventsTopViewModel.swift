@@ -1,6 +1,6 @@
 import Foundation
 
-enum CalendarAllDayEventsTopViewModel: Equatable, Identifiable {
+enum YoteiAllDayEventsTopViewModel: Equatable, Identifiable {
     var id: String {
         switch self {
         case .event(event: let event, cols: _):
@@ -10,6 +10,6 @@ enum CalendarAllDayEventsTopViewModel: Equatable, Identifiable {
         }
     }
 
-    case event(event: CalendarEvent, cols: Int)
+    case event(event: YoteiEvent, cols: Int)
     case empty(index: Int)
 }

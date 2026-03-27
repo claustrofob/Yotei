@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SUTimePicker: UIViewRepresentable {
+struct YoteiTimePicker: UIViewRepresentable {
     @Binding private var date: Date
     private let minuteInterval: Int
     private let calendar: Calendar
@@ -43,7 +43,7 @@ struct SUTimePicker: UIViewRepresentable {
     }
 }
 
-extension SUTimePicker {
+extension YoteiTimePicker {
     @MainActor
     class Coordinator: NSObject {
         @Binding private var date: Date

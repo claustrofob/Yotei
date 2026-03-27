@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarScheduleCollectionViewEmptyCell: View {
+struct YoteiScheduleCollectionViewEmptyCell: View {
     var body: some View {
         Text("No events")
             .font(.system(.subheadline))

@@ -1,22 +1,22 @@
 import Internal
 import SwiftUI
 
-struct CalendarScheduleView: View {
+struct YoteiScheduleView: View {
     private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()
         .weekday(.wide)
 
     @Binding private var focusedDate: Date
-    @Binding private var data: CalendarEventsInterval
-    private weak var delegate: CalendarDelegate?
+    @Binding private var data: YoteiEventsInterval
+    private weak var delegate: YoteiDelegate?
 
-    @State private var viewData: CalendarSchedule.ViewData = []
+    @State private var viewData: YoteiSchedule.ViewData = []
 
     init(
         focusedDate: Binding<Date>,
-        data: Binding<CalendarEventsInterval>,
-        delegate: CalendarDelegate?
+        data: Binding<YoteiEventsInterval>,
+        delegate: YoteiDelegate?
     ) {
         _focusedDate = focusedDate
         _data = data
@@ -25,8 +25,8 @@ struct CalendarScheduleView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            CalendarStripContainerView(focusedDate: $focusedDate)
-            CalendarScheduleCollectionView(
+            YoteiStripContainerView(focusedDate: $focusedDate)
+            YoteiScheduleCollectionView(
                 focusedDate: $focusedDate,
                 data: viewData,
                 delegate: delegate
@@ -41,7 +41,7 @@ struct CalendarScheduleView: View {
         }
     }
 
-    private func viewDidChange(data: CalendarEventsInterval, focusedDate: Date) {
+    private func viewDidChange(data: YoteiEventsInterval, focusedDate: Date) {
         guard
             // Updated focusedDate comes before corresponding dateInterval is loaded.
             // This may cause invalid scrolling behavour
@@ -52,13 +52,13 @@ struct CalendarScheduleView: View {
         }
 
         viewData = CalendarDaysSequence(interval: dateInterval).map { date in
-            let items: [CalendarScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
+            let items: [YoteiScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
                 [.init(date: date, kind: .loading)]
             } else if let events = data.events[date], !events.isEmpty {
                 events.sorted(using: [
-                    KeyPathComparator(\CalendarEvent.isAllDaySortable),
-                    KeyPathComparator(\CalendarEvent.start),
-                    KeyPathComparator(\CalendarEvent.durationSortable),
+                    KeyPathComparator(\YoteiEvent.isAllDaySortable),
+                    KeyPathComparator(\YoteiEvent.start),
+                    KeyPathComparator(\YoteiEvent.durationSortable),
                 ]).map { .init(date: date, kind: .event($0)) }
             } else {
                 [.init(date: date, kind: .empty)]

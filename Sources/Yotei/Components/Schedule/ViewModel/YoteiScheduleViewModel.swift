@@ -1,8 +1,8 @@
 import Foundation
 
-struct CalendarScheduleViewModel: Identifiable, Equatable {
+struct YoteiScheduleViewModel: Identifiable, Equatable {
     enum Kind: Equatable {
-        case event(CalendarEvent)
+        case event(YoteiEvent)
         case empty
         case loading
     }

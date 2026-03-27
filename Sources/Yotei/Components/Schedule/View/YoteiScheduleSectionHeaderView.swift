@@ -1,6 +1,6 @@
 import UIKit
 
-final class CalendarScheduleSectionHeaderView: UICollectionReusableView {
+final class YoteiScheduleSectionHeaderView: UICollectionReusableView {
     private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()

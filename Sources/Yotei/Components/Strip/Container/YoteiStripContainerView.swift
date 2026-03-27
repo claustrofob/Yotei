@@ -1,7 +1,7 @@
 import Internal
 import SwiftUI
 
-struct CalendarStripContainerView: View {
+struct YoteiStripContainerView: View {
     private struct DummyModifier: ViewModifier {
         let isActive: Bool
 
@@ -53,7 +53,7 @@ struct CalendarStripContainerView: View {
                         Group {
                             if isExpanded {
                                 tabView(selection: $selectedMonthPageDate, component: .month) { date in
-                                    CalendarStripMonthView(focusedDate: $focusedDate, date: date)
+                                    YoteiStripMonthView(focusedDate: $focusedDate, date: date)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)
@@ -61,7 +61,7 @@ struct CalendarStripContainerView: View {
                                 .zIndex(1)
                             } else {
                                 tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
-                                    CalendarStripWeekView(focusedDate: $focusedDate, date: date)
+                                    YoteiStripWeekView(focusedDate: $focusedDate, date: date)
                                         .frame(maxHeight: .infinity, alignment: .top)
                                         .animation(.default, value: focusedDate)
                                         .ignoresSafeArea(edges: .all)

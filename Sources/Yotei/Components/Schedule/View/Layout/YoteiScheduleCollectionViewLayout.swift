@@ -3,7 +3,7 @@ import UIKit
 // it is possible to implement this layout with CompositionalLayout,
 // but for calendar scroll to work properly, it is required that inside `targetContentOffsetForProposedContentOffset` delegate method
 // we can get updated `layoutAttributesForSupplementaryElement`. Compositional layout returns old attributes in that case.
-final class CalendarScheduleCollectionViewLayout: UICollectionViewLayout {
+final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
     private var contentOffset: CGPoint = .zero
     private var lastWidth: CGFloat = -1
     private var attributeSectionIndexOffset: [Int] = []

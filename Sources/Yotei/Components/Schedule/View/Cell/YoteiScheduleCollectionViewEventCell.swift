@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct CalendarScheduleCollectionViewEventCell: View {
+struct YoteiScheduleCollectionViewEventCell: View {
     private let nowDate = Date.now
     let cellDate: Date
-    let viewModel: CalendarEvent
+    let viewModel: YoteiEvent
     var dateRange: Range<Date> {
         viewModel.dateInterval.start ..< viewModel.dateInterval.end
     }

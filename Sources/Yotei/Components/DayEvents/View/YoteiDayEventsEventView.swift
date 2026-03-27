@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct CalendarDayEventsEventView: View {
-    let event: CalendarEvent
+struct YoteiDayEventsEventView: View {
+    let event: YoteiEvent
 
     var body: some View {
         VStack(alignment: .leading) {

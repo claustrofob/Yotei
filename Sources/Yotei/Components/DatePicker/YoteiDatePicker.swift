@@ -1,7 +1,7 @@
 import Internal
 import SwiftUI
 
-struct SUDatePicker: View {
+struct YoteiDatePicker: View {
     private enum Constants {
         static var weekHeight: CGFloat { 40 }
         static var weekVPadding: CGFloat { 8 }
@@ -48,12 +48,12 @@ struct SUDatePicker: View {
             }
             HStack {
                 if isMonthYearPickerExpanded {
-                    SUMonthYearPicker(date: $selectedDate, calendar: calendar)
+                    YoteiMonthYearPicker(date: $selectedDate, calendar: calendar)
                 } else {
                     CalendarTabView(
                         selection: $selectedPageDate,
                         content: { date in
-                            SUDatePickerMonth(
+                            YoteiDatePickerMonth(
                                 selectedDate: $selectedDate,
                                 dateInMonth: date,
                                 minDate: minDate,

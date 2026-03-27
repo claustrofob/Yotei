@@ -1,7 +1,7 @@
 import Foundation
 
-public protocol CalendarDelegate: AnyObject {
-    func calendarDidSelectEvent(with id: CalendarEvent.ID)
+public protocol YoteiDelegate: AnyObject {
+    func calendarDidSelectEvent(with id: YoteiEvent.ID)
     func calendarDidSelectAllDay(date: Date)
     func calendarDidSelect(dateInterval: DateInterval)
 }

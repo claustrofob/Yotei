@@ -1,7 +1,7 @@
 import Internal
 import SwiftUI
 
-struct CalendarStripWeekView: View {
+struct YoteiStripWeekView: View {
     private let weekInterval: DateInterval
     private let startDate: Date
 

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarScheduleCollectionViewLoadingCell: View {
+struct YoteiScheduleCollectionViewLoadingCell: View {
     var body: some View {
         RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
             .fill(.black.opacity(0.8))

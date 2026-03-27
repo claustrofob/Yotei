@@ -2,21 +2,21 @@ import Foundation
 import Internal
 import SwiftUI
 
-struct CalendarAllDayEventsTopView: View {
+struct YoteiAllDayEventsTopView: View {
     private let numberOfDays: Int
-    @Binding private var data: CalendarEventsInterval
-    private weak var delegate: CalendarDelegate?
+    @Binding private var data: YoteiEventsInterval
+    private weak var delegate: YoteiDelegate?
 
     private let dateSequence: CalendarDaysSequence
 
     @State private var otherEventsCount: [Date: Int] = [:]
-    @State private var viewData: [[CalendarAllDayEventsTopViewModel]] = []
+    @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
 
     init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<CalendarEventsInterval>,
-        delegate: CalendarDelegate?
+        data: Binding<YoteiEventsInterval>,
+        delegate: YoteiDelegate?
     ) {
         _data = data
         self.numberOfDays = numberOfDays
@@ -36,7 +36,7 @@ struct CalendarAllDayEventsTopView: View {
         }
         .frame(maxWidth: .infinity)
         .onChange(of: data, initial: true) {
-            let events = dateSequence.reduce(into: [Date: [CalendarEvent]]()) { result, date in
+            let events = dateSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
                 guard let events = data.events[date]?.filter({ $0.isAllDay }), !events.isEmpty else {
                     return
                 }
@@ -89,7 +89,7 @@ struct CalendarAllDayEventsTopView: View {
     }
 
     @ViewBuilder
-    private func eventView(event: CalendarEvent) -> some View {
+    private func eventView(event: YoteiEvent) -> some View {
         Text(event.title)
             .lineLimit(1)
             .truncationMode(.tail)
@@ -128,16 +128,16 @@ struct CalendarAllDayEventsTopView: View {
             .frame(maxWidth: .infinity)
     }
 
-    private func generateViewData(for events: [Date: [CalendarEvent]]) {
+    private func generateViewData(for events: [Date: [YoteiEvent]]) {
         var events = events
         guard !events.isEmpty else {
             viewData = []
             return
         }
-        var processedEventIDs = Set<CalendarEvent.ID>()
+        var processedEventIDs = Set<YoteiEvent.ID>()
         viewData = (0 ..< 2).map { _ in
             var day = 0
-            var data = [CalendarAllDayEventsTopViewModel]()
+            var data = [YoteiAllDayEventsTopViewModel]()
             while day < numberOfDays {
                 let date = dateSequence[day]
                 if

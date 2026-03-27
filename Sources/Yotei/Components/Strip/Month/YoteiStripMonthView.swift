@@ -1,7 +1,7 @@
 import Internal
 import SwiftUI
 
-struct CalendarStripMonthView: View {
+struct YoteiStripMonthView: View {
     private enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
     }

@@ -1,7 +1,7 @@
 import Internal
 import SwiftUI
 
-struct CalendarWeekView: View {
+struct YoteiWeekView: View {
     private enum Constants {
         static var weekTitlesViewInsets: EdgeInsets {
             EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 0)
@@ -9,18 +9,18 @@ struct CalendarWeekView: View {
     }
 
     @Binding private var focusedDate: Date
-    @Binding private var data: CalendarEventsInterval
+    @Binding private var data: YoteiEventsInterval
     @Binding private var contentOffset: CGPoint?
-    private let delegate: CalendarDelegate?
+    private let delegate: YoteiDelegate?
 
     private let calendarDateService = CalendarDateService()
     @State private var selectedPageDate: Date
 
     init(
         focusedDate: Binding<Date>,
-        data: Binding<CalendarEventsInterval>,
+        data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
-        delegate: CalendarDelegate?
+        delegate: YoteiDelegate?
     ) {
         _focusedDate = focusedDate
         _data = data
@@ -44,7 +44,7 @@ struct CalendarWeekView: View {
                         weekDaysView(startDate: date)
                             .padding(Constants.weekTitlesViewInsets)
                             .padding(.bottom, 4)
-                        CalendarAllDayEventsTopView(
+                        YoteiAllDayEventsTopView(
                             startDate: date,
                             numberOfDays: 7,
                             data: $data,
@@ -52,7 +52,7 @@ struct CalendarWeekView: View {
                         )
                         .padding(Constants.weekTitlesViewInsets)
                         CalendarHorizontalSeparator()
-                        CalendarDayEventsView(
+                        YoteiDayEventsView(
                             startDate: date,
                             numberOfDays: 7,
                             data: $data,

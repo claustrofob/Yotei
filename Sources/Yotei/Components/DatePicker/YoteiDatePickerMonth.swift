@@ -1,7 +1,7 @@
 import Internal
 import SwiftUI
 
-struct SUDatePickerMonth: View {
+struct YoteiDatePickerMonth: View {
     enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
     }
