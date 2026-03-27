@@ -64,7 +64,6 @@ struct SUDatePickerMonth: View {
                                     date: date,
                                     todayDate: todayDate,
                                     focusedDate: selectedDate,
-                                    eventCounts: 0,
                                     isEnabled: minDate.flatMap { $0 <= date } ?? true,
                                     calendar: calendar
                                 )

@@ -4,7 +4,7 @@ enum CalendarAllDayEventsTopModuleViewModel: Equatable, Identifiable {
     var id: String {
         switch self {
         case .event(event: let event, cols: _):
-            "event_\(event.serverID)"
+            "event_\(event.id)"
         case let .empty(index):
             "empty_\(index)"
         }

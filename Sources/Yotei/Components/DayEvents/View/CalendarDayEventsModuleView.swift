@@ -120,8 +120,7 @@ struct CalendarDayEventsModuleView: View {
             ForEach(data, id: \.element) { index, date in
                 EventuallyLayout(
                     startOfDay: date,
-                    numberOfDays: presenter.numberOfDays,
-                    hourSlotHeight: $hourSlotHeight
+                    hourSlotHeight: hourSlotHeight
                 ) {
                     if let events = presenter.events[date] {
                         ForEach(events, id: \.id) { event in
@@ -156,7 +155,7 @@ struct CalendarDayEventsModuleView: View {
         VStack(spacing: 0) {
             ForEach(0 ..< 24, id: \.self) { index in
                 timeSlotView(index: index)
-                    .padding(.bottom, presenter.hourSlotHeight)
+                    .padding(.bottom, hourSlotHeight)
             }
             timeSlotView(index: 0)
         }
@@ -180,7 +179,7 @@ struct CalendarDayEventsModuleView: View {
 
     @ViewBuilder
     private func timelineMarker(startOfDay: Date, date: Date) -> some View {
-        let pointsPerMinute = presenter.hourSlotHeight / 60
+        let pointsPerMinute = hourSlotHeight / 60
         let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
         let offsetY = minutesFromMidnight * pointsPerMinute
         ZStack(alignment: .leading) {
@@ -196,11 +195,11 @@ struct CalendarDayEventsModuleView: View {
     }
 
     private func calculateInitialContentOffset(currentDate: Date) -> CGPoint {
-        let pointsPerMinute = presenter.hourSlotHeight / 60
+        let pointsPerMinute = hourSlotHeight / 60
         let startOfDay = Calendar.current.startOfDay(for: currentDate)
         let minutesFromMidnight = currentDate.timeIntervalSince(startOfDay) / 60
         let currentDateOffsetY = minutesFromMidnight * pointsPerMinute
-        let maxScrollOffsetY = presenter.hourSlotHeight * 24 + Constants.scrollViewInsets.top + Constants.scrollViewInsets.bottom - scrollViewHeight
+        let maxScrollOffsetY = hourSlotHeight * 24 + Constants.scrollViewInsets.top + Constants.scrollViewInsets.bottom - scrollViewHeight
         return CGPoint(
             x: 0,
             y: min(max(currentDateOffsetY - scrollViewHeight / 3, 0), maxScrollOffsetY)

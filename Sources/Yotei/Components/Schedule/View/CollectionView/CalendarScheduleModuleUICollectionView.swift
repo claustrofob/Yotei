@@ -18,14 +18,14 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
     private var lastUserScrollOffset: CGFloat = 0
     private var lastUserScrollDirection: ScrollDirection = .down
 
-    @Binding private var focusedDate: Date?
+    @Binding private var focusedDate: Date
     private let factory: CalendarScheduleModuleCollectionViewFactory
     private let collectionViewDelegate: CalendarScheduleModuleCollectionViewDelegate
     private var items: [CalendarScheduleModuleViewModel] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
     private var isScrollDetectionDisabled = false
-    private var autoUpdateTimer: Timer?
+    private var autoUpdateTask: Task<Void, Never>?
 
     private var diffableDataSource: CalendarScheduleModuleDataSource!
 
@@ -36,10 +36,12 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
 
     init(
         factory: CalendarScheduleModuleCollectionViewFactory,
-        delegate: CalendarScheduleModuleCollectionViewDelegate
+        delegate: CalendarScheduleModuleCollectionViewDelegate,
+        focusedDate: Binding<Date>
     ) {
         self.factory = factory
         collectionViewDelegate = delegate
+        _focusedDate = focusedDate
         layout = factory.layout()
         super.init(frame: .zero, collectionViewLayout: layout)
 
@@ -52,7 +54,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
     }
 
     deinit {
-        autoUpdateTimer?.invalidate()
+        autoUpdateTask?.cancel()
     }
 
     private func setup() {
@@ -146,9 +148,7 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
                 at: indexPath
             )?.frame
         else {
-            if let focusedDate {
-                sectionPosition = (focusedDate, 0)
-            }
+            sectionPosition = (focusedDate, 0)
             return
         }
 
@@ -158,10 +158,12 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
 
     private func startCollectionAutoupdate() {
         // redraw visible cells every minute so reflect time change on screen
-        autoUpdateTimer?.invalidate()
-        autoUpdateTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
+        autoUpdateTask?.cancel()
+        autoUpdateTask = Task { @MainActor in
+            while !Task.isCancelled {
+                await diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
+                try? await Task.sleep(for: .seconds(60))
+            }
         }
     }
 
@@ -207,10 +209,6 @@ final class CalendarScheduleModuleUICollectionView: UICollectionView {
     }
 
     func apply(data: CalendarScheduleModule.ViewData, focusedDate: Binding<Date>) {
-        if self.focusedDate == nil {
-            _focusedDate = focusedDate
-        }
-
         apply(data: data)
         apply(focusedDate: focusedDate)
     }
