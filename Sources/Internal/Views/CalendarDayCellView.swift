@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarDayCellView: View {
+public struct CalendarDayCellView: View {
     private typealias CellStyle = (
         backgroundColor: Color,
         foregroundColor: Color,
@@ -14,7 +14,7 @@ struct CalendarDayCellView: View {
     private let isEnabled: Bool
     private let calendar: Calendar
 
-    init(
+    public init(
         date: Date,
         todayDate: Date,
         focusedDate: Date? = nil,
@@ -29,7 +29,7 @@ struct CalendarDayCellView: View {
         dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
     }
 
-    var body: some View {
+    public var body: some View {
         let style = dayStyle(date: date)
         Text(date.formatted(dayFormatStyle))
             .font(.system(.subheadline))

@@ -18,7 +18,10 @@ let package = Package(
     targets: [
         .target(
             name: "Yotei",
-            dependencies: ["Eventually"]
+            dependencies: ["Eventually", "Internal"]
+        ),
+        .target(
+            name: "Internal"
         ),
     ]
 )

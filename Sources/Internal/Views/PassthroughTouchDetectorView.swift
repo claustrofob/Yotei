@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-struct PassthroughTouchDetectorView: UIViewRepresentable {
+public struct PassthroughTouchDetectorView: UIViewRepresentable {
     private final class PassthroughView: UIView {
         private let onTap: () -> Void
 
@@ -23,13 +23,13 @@ struct PassthroughTouchDetectorView: UIViewRepresentable {
 
     private let onTap: () -> Void
 
-    init(onTap: @escaping () -> Void) {
+    public init(onTap: @escaping () -> Void) {
         self.onTap = onTap
     }
 
-    func makeUIView(context _: Context) -> UIView {
+    public func makeUIView(context _: Context) -> UIView {
         PassthroughView(onTap: onTap)
     }
 
-    func updateUIView(_: UIView, context _: Context) {}
+    public func updateUIView(_: UIView, context _: Context) {}
 }

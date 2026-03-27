@@ -6,7 +6,7 @@ extension Date: @retroactive Identifiable {
     }
 }
 
-extension Date {
+public extension Date {
     func isEqual(
         to date: Date,
         toGranularity component: Calendar.Component,

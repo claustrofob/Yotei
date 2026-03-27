@@ -1,4 +1,5 @@
 import Foundation
+import Internal
 import SwiftUI
 
 struct CalendarAllDayEventsTopView: View {

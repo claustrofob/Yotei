@@ -11,7 +11,7 @@ struct ParentViewModifier<ViewType: UIView>: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func parentView<ViewType: UIView>(completion: @escaping (ViewType) -> Void) -> some View {
         return modifier(ParentViewModifier(completion: completion))
     }

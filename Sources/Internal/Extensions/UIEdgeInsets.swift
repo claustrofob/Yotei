@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-extension UIEdgeInsets {
+public extension UIEdgeInsets {
     init(from insets: EdgeInsets) {
         self.init(
             top: insets.top,

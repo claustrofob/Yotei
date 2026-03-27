@@ -1,4 +1,5 @@
 import Eventually
+import Internal
 import SwiftUI
 
 struct CalendarDayEventsView: View {

@@ -1,3 +1,4 @@
+import Internal
 import SwiftUI
 
 struct CalendarStripContainerView: View {

@@ -47,7 +47,7 @@ struct ScrollViewPositionModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func scrollViewPosition(_ contentOffset: Binding<CGPoint>) -> some View {
         modifier(ScrollViewPositionModifier(contentOffset: contentOffset))
     }
