@@ -5,19 +5,19 @@
 
 import Foundation
 
-public struct CalendarDaysSequence: RandomAccessCollection {
+struct CalendarDaysSequence: RandomAccessCollection {
     private let calendar: Calendar
     private let startDate: Date
 
-    public var startIndex: Int { 0 }
+    var startIndex: Int { 0 }
     // `count` = `endIndex - 1`
-    public let endIndex: Int
+    let endIndex: Int
 
-    public func index(after i: Int) -> Int {
+    func index(after i: Int) -> Int {
         i + 1
     }
 
-    public subscript(position: Int) -> Date {
+    subscript(position: Int) -> Date {
         calendar.date(
             byAdding: .day,
             value: position,
@@ -25,7 +25,7 @@ public struct CalendarDaysSequence: RandomAccessCollection {
         )!
     }
 
-    public init(interval: DateInterval, calendar: Calendar = .current) {
+    init(interval: DateInterval, calendar: Calendar = .current) {
         self.calendar = calendar
         startDate = calendar.startOfDay(for: interval.start)
         endIndex = DateInterval(
@@ -34,7 +34,7 @@ public struct CalendarDaysSequence: RandomAccessCollection {
         ).durationInDays + 1
     }
 
-    public init(
+    init(
         startDate: Date,
         days: Int,
         calendar: Calendar = .current

@@ -17,19 +17,19 @@ import UIKit
  For more info on how to properly work with snapshots see
  https://developer.apple.com/documentation/uikit/views_and_controls/collection_views/updating_collection_views_using_diffable_data_sources
  */
-public final class DiffableDataStorage<Section: Identifiable, Item: Identifiable & Equatable> where Item.ID: Sendable, Section.ID: Sendable {
-    public typealias Snapshot = NSDiffableDataSourceSnapshot<Section.ID, Item.ID>
+final class DiffableDataStorage<Section: Identifiable, Item: Identifiable & Equatable> where Item.ID: Sendable, Section.ID: Sendable {
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section.ID, Item.ID>
 
     private var items = [Item.ID: Item]()
     private var sections = [Section.ID: Section]()
 
-    public init() {}
+    init() {}
 
-    public var isEmpty: Bool {
+    var isEmpty: Bool {
         items.isEmpty
     }
 
-    public func apply(data: [(section: Section, items: [Item])]) -> Snapshot {
+    func apply(data: [(section: Section, items: [Item])]) -> Snapshot {
         var newSections = [Section.ID: Section]()
         var newItems = [Item.ID: Item]()
         var updatedItemIDs = [Item.ID]()
@@ -55,15 +55,15 @@ public final class DiffableDataStorage<Section: Identifiable, Item: Identifiable
         return snapshot
     }
 
-    public func item(for id: Item.ID) -> Item? {
+    func item(for id: Item.ID) -> Item? {
         items[id]
     }
 
-    public func section(for id: Section.ID) -> Section? {
+    func section(for id: Section.ID) -> Section? {
         sections[id]
     }
 
-    public func item(in snapshot: Snapshot, for indexPath: IndexPath) -> Item? {
+    func item(in snapshot: Snapshot, for indexPath: IndexPath) -> Item? {
         guard let sectionID = snapshot.sectionIdentifiers[safe: indexPath.section] else {
             return nil
         }
@@ -71,14 +71,14 @@ public final class DiffableDataStorage<Section: Identifiable, Item: Identifiable
         return itemsIDsInSection[safe: indexPath.item].flatMap { item(for: $0) }
     }
 
-    public func section(in snapshot: Snapshot, for index: Int) -> Section? {
+    func section(in snapshot: Snapshot, for index: Int) -> Section? {
         guard let sectionID = snapshot.sectionIdentifiers[safe: index] else {
             return nil
         }
         return section(for: sectionID)
     }
 
-    public func numberOfItemsInSection(in snapshot: Snapshot, index: Int) -> Int {
+    func numberOfItemsInSection(in snapshot: Snapshot, index: Int) -> Int {
         guard let sectionID = snapshot.sectionIdentifiers[safe: index] else {
             return 0
         }

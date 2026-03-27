@@ -3,7 +3,6 @@
 //  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
-import Internal
 import SwiftUI
 
 public struct YoteiDatePicker: View {

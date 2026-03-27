@@ -5,7 +5,7 @@
 
 import Foundation
 
-public extension DateInterval {
+extension DateInterval {
     var durationInDays: Int {
         Calendar.current.dateComponents(
             [.day],

@@ -23,7 +23,7 @@ struct OnChangeModifier<Value: Equatable>: ViewModifier {
     }
 }
 
-public extension View {
+extension View {
     func onChange(
         of value: some Equatable,
         initial: Bool,

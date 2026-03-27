@@ -5,13 +5,13 @@
 
 import SwiftUI
 
-public struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
-    @Binding public var selection: Date
-    @ViewBuilder public let content: (Date) -> Content
-    public let previousDate: (Date) -> Date
-    public let nextDate: (Date) -> Date
+struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
+    @Binding private var selection: Date
+    @ViewBuilder private let content: (Date) -> Content
+    private let previousDate: (Date) -> Date
+    private let nextDate: (Date) -> Date
 
-    public init(
+    init(
         selection: Binding<Date>,
         @ViewBuilder content: @escaping (Date) -> Content,
         previousDate: @escaping (Date) -> Date,
@@ -23,7 +23,7 @@ public struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
         self.nextDate = nextDate
     }
 
-    public func makeUIViewController(context: Context) -> UIPageViewController {
+    func makeUIViewController(context: Context) -> UIPageViewController {
         let vc = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         vc.dataSource = context.coordinator
         vc.delegate = context.coordinator
@@ -36,7 +36,7 @@ public struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
         return vc
     }
 
-    public func updateUIViewController(_ uiViewController: UIPageViewController, context _: Context) {
+    func updateUIViewController(_ uiViewController: UIPageViewController, context _: Context) {
         guard
             let pageController = uiViewController.viewControllers?.first as? PageController,
             pageController.date != selection
@@ -58,7 +58,7 @@ public struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
         )
     }
 
-    public func makeCoordinator() -> Coordinator {
+    func makeCoordinator() -> Coordinator {
         Coordinator(
             content: content,
             previousDate: previousDate,
@@ -78,7 +78,7 @@ public struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
     }
 }
 
-public extension CalendarTabView {
+extension CalendarTabView {
     final class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
         private let content: (Date) -> Content
         private let previousDate: (Date) -> Date
@@ -97,7 +97,7 @@ public extension CalendarTabView {
             self.onChange = onChange
         }
 
-        public func pageViewController(
+        func pageViewController(
             _: UIPageViewController,
             viewControllerBefore viewController: UIViewController
         ) -> UIViewController? {
@@ -108,7 +108,7 @@ public extension CalendarTabView {
             return PageController(date: date, content: content(date))
         }
 
-        public func pageViewController(
+        func pageViewController(
             _: UIPageViewController,
             viewControllerAfter viewController: UIViewController
         ) -> UIViewController? {
@@ -119,7 +119,7 @@ public extension CalendarTabView {
             return PageController(date: date, content: content(date))
         }
 
-        public func pageViewController(_: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        func pageViewController(_: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
             pendingViewControllers.compactMap {
                 $0 as? PageController
             }.forEach {
@@ -127,7 +127,7 @@ public extension CalendarTabView {
             }
         }
 
-        public func pageViewController(
+        func pageViewController(
             _ pageViewController: UIPageViewController,
             didFinishAnimating _: Bool,
             previousViewControllers _: [UIViewController],

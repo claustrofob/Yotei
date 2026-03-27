@@ -4,7 +4,6 @@
 //
 
 import Foundation
-import Internal
 import SwiftUI
 
 public struct YoteiAllDayEventsTopView: View {

@@ -4,7 +4,6 @@
 //
 
 import Eventually
-import Internal
 import SwiftUI
 
 public struct YoteiDayEventsView: View {
