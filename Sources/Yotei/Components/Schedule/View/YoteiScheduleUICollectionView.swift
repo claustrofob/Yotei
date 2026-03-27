@@ -1,3 +1,8 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 import UIKit
@@ -169,8 +174,8 @@ final class YoteiScheduleUICollectionView: UICollectionView {
     }
 
     private func apply(data: YoteiSchedule.ViewData) {
-        let sections = data.map { $0.section }
-        let items = data.map { $0.items }.flatMap { $0 }
+        let sections = data.map(\.section)
+        let items = data.map(\.items).flatMap(\.self)
         guard sections != self.sections || items != self.items else {
             return
         }
@@ -330,7 +335,7 @@ extension YoteiScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
         layout _: UICollectionViewLayout,
         referenceSizeForHeaderInSection _: Int
     ) -> CGSize {
-        return CGSize(width: bounds.width, height: 28)
+        CGSize(width: bounds.width, height: 28)
     }
 
     func collectionView(

@@ -1,3 +1,8 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Foundation
 
 // Calendar returns weekday as a number in 1 through N (where for the Gregorian calendar N=7 and 1 is Sunday).
@@ -6,7 +11,7 @@ import Foundation
 public extension Calendar {
     var weekdayIndices: [Int] {
         let startIndex = Calendar.current.firstWeekday
-        return (startIndex ... 7).map { $0 } + (1 ..< startIndex).map { $0 }
+        return (startIndex ... 7).map(\.self) + (1 ..< startIndex).map(\.self)
     }
 }
 

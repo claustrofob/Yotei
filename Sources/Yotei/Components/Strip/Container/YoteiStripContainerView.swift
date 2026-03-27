@@ -1,7 +1,12 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiStripContainerView: View {
+public struct YoteiStripContainerView: View {
     private struct DummyModifier: ViewModifier {
         let isActive: Bool
 
@@ -29,7 +34,7 @@ struct YoteiStripContainerView: View {
 
     @Binding private var focusedDate: Date
 
-    init(focusedDate: Binding<Date>) {
+    public init(focusedDate: Binding<Date>) {
         _focusedDate = focusedDate
         selectedWeekPageDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
@@ -41,7 +46,7 @@ struct YoteiStripContainerView: View {
         )!.start
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             CalendarWeekTitlesView(spacing: 10)
 
@@ -142,11 +147,13 @@ struct YoteiStripContainerView: View {
         .animation(.default, value: monthStripHeight)
         .zIndex(10)
     }
+}
 
-    private func tabView<Content: View>(
+private extension YoteiStripContainerView {
+    func tabView(
         selection: Binding<Date>,
         component: Calendar.Component,
-        content: @escaping (Date) -> Content
+        content: @escaping (Date) -> some View
     ) -> some View {
         CalendarTabView(
             selection: selection,
@@ -174,7 +181,7 @@ struct YoteiStripContainerView: View {
         )
     }
 
-    private func calculateMonthStripHeight() {
+    func calculateMonthStripHeight() {
         let numberOfWeeks = CGFloat(Calendar.current.range(
             of: .weekOfMonth,
             in: .month,
@@ -183,12 +190,12 @@ struct YoteiStripContainerView: View {
         monthStripHeight = Constants.weekStripHeight * numberOfWeeks + Constants.weekStripVPadding * (numberOfWeeks - 1)
     }
 
-    private func weekOffset() -> CGFloat {
+    func weekOffset() -> CGFloat {
         let week = focusedDate.weekOfMonth(in: .current)
         return CGFloat(week) * (Constants.weekStripHeight + Constants.weekStripVPadding)
     }
 
-    private func expandStripButton() -> some View {
+    func expandStripButton() -> some View {
         Image(systemName: "chevron.compact.down")
             .tint(.black)
             .rotationEffect(.degrees(isExpanded ? 180 : 0))
@@ -203,7 +210,7 @@ struct YoteiStripContainerView: View {
             }
     }
 
-    private func generateSelectedWeekPageDate() {
+    func generateSelectedWeekPageDate() {
         let startDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
             for: focusedDate
@@ -215,7 +222,7 @@ struct YoteiStripContainerView: View {
         selectedWeekPageDate = startDate
     }
 
-    private func generateSelectedMonthPageDate() {
+    func generateSelectedMonthPageDate() {
         let startDate = Calendar.current.dateInterval(
             of: .month,
             for: focusedDate
@@ -227,7 +234,7 @@ struct YoteiStripContainerView: View {
         selectedMonthPageDate = startDate
     }
 
-    private func updateSelectedPageDate() {
+    func updateSelectedPageDate() {
         focusedDate = isExpanded
             ? calendarDateService.monthFocusedDate(for: selectedMonthPageDate, currentFocusedDate: focusedDate)
             : calendarDateService.weekFocusedDate(for: selectedWeekPageDate, currentFocusedDate: focusedDate)

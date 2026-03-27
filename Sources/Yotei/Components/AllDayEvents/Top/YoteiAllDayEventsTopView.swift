@@ -1,8 +1,13 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Foundation
 import Internal
 import SwiftUI
 
-struct YoteiAllDayEventsTopView: View {
+public struct YoteiAllDayEventsTopView: View {
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
@@ -12,7 +17,7 @@ struct YoteiAllDayEventsTopView: View {
     @State private var otherEventsCount: [Date: Int] = [:]
     @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
 
-    init(
+    public init(
         startDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
@@ -24,7 +29,7 @@ struct YoteiAllDayEventsTopView: View {
         dateSequence = CalendarDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             if !viewData.isEmpty {
                 eventsGridView()
@@ -37,7 +42,7 @@ struct YoteiAllDayEventsTopView: View {
         .frame(maxWidth: .infinity)
         .onChange(of: data, initial: true) {
             let events = dateSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
-                guard let events = data.events[date]?.filter({ $0.isAllDay }), !events.isEmpty else {
+                guard let events = data.events[date]?.filter(\.isAllDay), !events.isEmpty else {
                     return
                 }
                 result[date] = events
@@ -45,8 +50,10 @@ struct YoteiAllDayEventsTopView: View {
             generateViewData(for: events)
         }
     }
+}
 
-    private func eventsGridView() -> some View {
+private extension YoteiAllDayEventsTopView {
+    func eventsGridView() -> some View {
         Grid(horizontalSpacing: 0, verticalSpacing: 2) {
             ForEach(0 ..< viewData.count, id: \.self) { rowIndex in
                 let rowData = viewData[rowIndex]
@@ -75,7 +82,7 @@ struct YoteiAllDayEventsTopView: View {
         }
     }
 
-    private func dayButtonsView() -> some View {
+    func dayButtonsView() -> some View {
         HStack(spacing: 0) {
             ForEach(dateSequence, id: \.self) { date in
                 Button(action: {
@@ -89,7 +96,7 @@ struct YoteiAllDayEventsTopView: View {
     }
 
     @ViewBuilder
-    private func eventView(event: YoteiEvent) -> some View {
+    func eventView(event: YoteiEvent) -> some View {
         Text(event.title)
             .lineLimit(1)
             .truncationMode(.tail)
@@ -106,7 +113,7 @@ struct YoteiAllDayEventsTopView: View {
             .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
 
-    private func moreItemsView(count: Int) -> some View {
+    func moreItemsView(count: Int) -> some View {
         Text("+\(count)")
             .lineLimit(1)
             .foregroundStyle(.black.opacity(0.1))
@@ -122,13 +129,13 @@ struct YoteiAllDayEventsTopView: View {
             .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
 
-    private func emptyView() -> some View {
+    func emptyView() -> some View {
         Color.clear
             .frame(height: 0)
             .frame(maxWidth: .infinity)
     }
 
-    private func generateViewData(for events: [Date: [YoteiEvent]]) {
+    func generateViewData(for events: [Date: [YoteiEvent]]) {
         var events = events
         guard !events.isEmpty else {
             viewData = []

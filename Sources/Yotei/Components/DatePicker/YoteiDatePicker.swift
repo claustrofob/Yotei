@@ -1,7 +1,12 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiDatePicker: View {
+public struct YoteiDatePicker: View {
     private enum Constants {
         static var weekHeight: CGFloat { 40 }
         static var weekVPadding: CGFloat { 8 }
@@ -18,7 +23,7 @@ struct YoteiDatePicker: View {
     @State private var isMonthYearPickerExpanded = false
     private let calendar: Calendar
 
-    init(
+    public init(
         selectedDate: Binding<Date>,
         minDate: Date? = nil,
         calendar: Calendar = .current
@@ -37,7 +42,7 @@ struct YoteiDatePicker: View {
         ).month(.wide).year(.defaultDigits)
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             HStack {
                 monthYearButton()
@@ -79,15 +84,17 @@ struct YoteiDatePicker: View {
             generateSelectedPageDate()
         }
     }
+}
 
-    private func generateSelectedPageDate() {
+private extension YoteiDatePicker {
+    func generateSelectedPageDate() {
         selectedPageDate = calendar.dateInterval(
             of: .month,
             for: selectedDate
         )!.start
     }
 
-    private func monthYearButton() -> some View {
+    func monthYearButton() -> some View {
         Button(action: {
             isMonthYearPickerExpanded.toggle()
         }) {
@@ -102,7 +109,7 @@ struct YoteiDatePicker: View {
         .frame(height: 44)
     }
 
-    private func leftRightButtons() -> some View {
+    func leftRightButtons() -> some View {
         HStack(spacing: 4) {
             Button(action: {
                 selectedPageDate = calendar.date(

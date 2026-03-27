@@ -1,3 +1,8 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
@@ -47,7 +52,7 @@ struct YoteiDatePickerMonth: View {
                 GridRow {
                     ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
                         let date = days[row * Constants.numberOfDaysPerWeek + col]
-                        if monthInterval.contains(date) && monthInterval.end != date {
+                        if monthInterval.contains(date), monthInterval.end != date {
                             Button(action: {
                                 let selectedDateComponents = calendar.dateComponents(
                                     [.hour, .minute, .second],

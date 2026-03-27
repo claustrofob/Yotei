@@ -1,13 +1,18 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiStripWeekView: View {
+public struct YoteiStripWeekView: View {
     private let weekInterval: DateInterval
     private let startDate: Date
 
     @Binding private var focusedDate: Date
 
-    init(focusedDate: Binding<Date>, date: Date) {
+    public init(focusedDate: Binding<Date>, date: Date) {
         _focusedDate = focusedDate
         weekInterval = Calendar.current.dateInterval(of: .weekOfMonth, for: date)!
         startDate = Calendar.current.dateInterval(
@@ -16,7 +21,7 @@ struct YoteiStripWeekView: View {
         )!.start
     }
 
-    var body: some View {
+    public var body: some View {
         let weekDays = CalendarDaysSequence(startDate: startDate, days: 7)
         TimelineView(.everyMinute) { context in
             Grid(horizontalSpacing: 10, verticalSpacing: 8) {

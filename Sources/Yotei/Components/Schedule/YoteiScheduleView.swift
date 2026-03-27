@@ -1,7 +1,12 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiScheduleView: View {
+public struct YoteiScheduleView: View {
     private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()
@@ -13,7 +18,7 @@ struct YoteiScheduleView: View {
 
     @State private var viewData: YoteiSchedule.ViewData = []
 
-    init(
+    public init(
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?
@@ -23,7 +28,7 @@ struct YoteiScheduleView: View {
         self.delegate = delegate
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             YoteiStripContainerView(focusedDate: $focusedDate)
             YoteiScheduleCollectionView(
@@ -40,8 +45,10 @@ struct YoteiScheduleView: View {
             viewDidChange(data: data, focusedDate: focusedDate)
         }
     }
+}
 
-    private func viewDidChange(data: YoteiEventsInterval, focusedDate: Date) {
+private extension YoteiScheduleView {
+    func viewDidChange(data: YoteiEventsInterval, focusedDate: Date) {
         guard
             // Updated focusedDate comes before corresponding dateInterval is loaded.
             // This may cause invalid scrolling behavour

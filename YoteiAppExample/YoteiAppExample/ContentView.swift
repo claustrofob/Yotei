@@ -1,8 +1,6 @@
 //
-//  ContentView.swift
-//  YoteiAppExample
-//
-//  Created by Mikalai Zmachynski on 24/03/2026.
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
 import SwiftUI

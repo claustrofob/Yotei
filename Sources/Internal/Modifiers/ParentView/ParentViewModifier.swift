@@ -1,3 +1,8 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import SwiftUI
 
 struct ParentViewModifier<ViewType: UIView>: ViewModifier {
@@ -13,6 +18,6 @@ struct ParentViewModifier<ViewType: UIView>: ViewModifier {
 
 public extension View {
     func parentView<ViewType: UIView>(completion: @escaping (ViewType) -> Void) -> some View {
-        return modifier(ParentViewModifier(completion: completion))
+        modifier(ParentViewModifier(completion: completion))
     }
 }

@@ -1,7 +1,12 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiWeekView: View {
+public struct YoteiWeekView: View {
     private enum Constants {
         static var weekTitlesViewInsets: EdgeInsets {
             EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 0)
@@ -16,7 +21,7 @@ struct YoteiWeekView: View {
     private let calendarDateService = CalendarDateService()
     @State private var selectedPageDate: Date
 
-    init(
+    public init(
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
@@ -32,7 +37,7 @@ struct YoteiWeekView: View {
         )!.start
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             CalendarWeekTitlesView(spacing: 0)
                 .padding(Constants.weekTitlesViewInsets)
@@ -88,9 +93,11 @@ struct YoteiWeekView: View {
             selectedPageDate = startDate
         }
     }
+}
 
+private extension YoteiWeekView {
     @ViewBuilder
-    private func weekDaysView(startDate: Date) -> some View {
+    func weekDaysView(startDate: Date) -> some View {
         TimelineView(.everyMinute) { context in
             HStack(spacing: 0) {
                 ForEach(CalendarDaysSequence(startDate: startDate, days: 7), id: \.self) { date in

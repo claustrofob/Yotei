@@ -1,13 +1,18 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiDayView: View {
+public struct YoteiDayView: View {
     @Binding var focusedDate: Date
     @Binding var data: YoteiEventsInterval
     @Binding var contentOffset: CGPoint?
     let delegate: YoteiDelegate?
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             YoteiStripContainerView(focusedDate: $focusedDate)
             CalendarTabView(

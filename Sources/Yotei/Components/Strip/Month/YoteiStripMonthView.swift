@@ -1,7 +1,12 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Internal
 import SwiftUI
 
-struct YoteiStripMonthView: View {
+public struct YoteiStripMonthView: View {
     private enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
     }
@@ -12,7 +17,7 @@ struct YoteiStripMonthView: View {
 
     @Binding private var focusedDate: Date
 
-    init(focusedDate: Binding<Date>, date: Date) {
+    public init(focusedDate: Binding<Date>, date: Date) {
         _focusedDate = focusedDate
         monthInterval = Calendar.current.dateInterval(of: .month, for: date)!
         numberOfWeeks = Calendar.current.range(
@@ -26,7 +31,7 @@ struct YoteiStripMonthView: View {
         )!.start
     }
 
-    var body: some View {
+    public var body: some View {
         let monthDays = CalendarDaysSequence(
             startDate: startDate,
             days: numberOfWeeks * Constants.numberOfDaysPerWeek

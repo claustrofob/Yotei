@@ -1,3 +1,8 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import SwiftUI
 
 struct OnChangeModifier<Value: Equatable>: ViewModifier {
@@ -19,8 +24,8 @@ struct OnChangeModifier<Value: Equatable>: ViewModifier {
 }
 
 public extension View {
-    func onChange<Value: Equatable>(
-        of value: Value,
+    func onChange(
+        of value: some Equatable,
         initial: Bool,
         action: @escaping () -> Void
     ) -> some View {

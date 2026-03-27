@@ -1,3 +1,8 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import UIKit
 
 // it is possible to implement this layout with CompositionalLayout,
@@ -13,7 +18,7 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
     private var contentSize: CGSize = .zero
 
     override var collectionViewContentSize: CGSize {
-        return contentSize
+        contentSize
     }
 
     override func prepare() {
@@ -153,7 +158,7 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
 
         var sectionIndexPathsToUpdate = sectionLayoutAttributes.filter {
             $0.frame.minY >= newBounds.minY && $0.frame.maxY <= newBounds.maxY
-        }.map { $0.indexPath }.sorted()
+        }.map(\.indexPath).sorted()
 
         // add a section that is before the first one, because it can be the sticky header
         if let first = sectionIndexPathsToUpdate.first, first.section > 0 {

@@ -1,8 +1,13 @@
+//
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
+//
+
 import Eventually
 import Internal
 import SwiftUI
 
-struct YoteiDayEventsView: View {
+public struct YoteiDayEventsView: View {
     private enum Constants {
         static var scrollViewInsets: EdgeInsets {
             EdgeInsets(top: 16, leading: 12, bottom: 16, trailing: 0)
@@ -29,8 +34,8 @@ struct YoteiDayEventsView: View {
 
     private let dateSequence: CalendarDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
-    @State var events: [Date: [YoteiEvent]] = [:]
-    @State var placeholderEvent: YoteiDayEventsPlaceholderEvent?
+    @State private var events: [Date: [YoteiEvent]] = [:]
+    @State private var placeholderEvent: YoteiDayEventsPlaceholderEvent?
     @State private var hourSlotHeight: CGFloat = 60
     @State private var timelineWidth: CGFloat = 0
     @State private var scrollViewHeight: CGFloat = 0
@@ -43,7 +48,7 @@ struct YoteiDayEventsView: View {
         .minute(.twoDigits)
         .locale(Locale.time24Hour)
 
-    init(
+    public init(
         startDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
@@ -58,7 +63,7 @@ struct YoteiDayEventsView: View {
         dateSequence = CalendarDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
-    var body: some View {
+    public var body: some View {
         ScrollView(.vertical) {
             ZStack {
                 hoursGridView()
@@ -107,8 +112,10 @@ struct YoteiDayEventsView: View {
             }
         }
     }
+}
 
-    private func tapGesture() -> some Gesture {
+private extension YoteiDayEventsView {
+    func tapGesture() -> some Gesture {
         SpatialTapGesture(coordinateSpace: .named(scrollCoordinateSpaceName)).onEnded { value in
             let dayIndex = Int(value.location.x / daySlotWidth)
             let secondsPerPoint = 3600 / hourSlotHeight
@@ -124,7 +131,7 @@ struct YoteiDayEventsView: View {
         }
     }
 
-    private func eventsLayoutView() -> some View {
+    func eventsLayoutView() -> some View {
         HStack(spacing: 0) {
             let data = Array(dateSequence.enumerated())
             ForEach(data, id: \.element) { index, date in
@@ -161,7 +168,7 @@ struct YoteiDayEventsView: View {
         }
     }
 
-    private func hoursGridView() -> some View {
+    func hoursGridView() -> some View {
         VStack(spacing: 0) {
             ForEach(0 ..< 24, id: \.self) { index in
                 timeSlotView(index: index)
@@ -172,7 +179,7 @@ struct YoteiDayEventsView: View {
     }
 
     @ViewBuilder
-    private func timeSlotView(index: Int) -> some View {
+    func timeSlotView(index: Int) -> some View {
         HStack(spacing: 6) {
             let x = TimeInterval(3600 * Double(index))
             let date = startOfDay.addingTimeInterval(x)
@@ -188,7 +195,7 @@ struct YoteiDayEventsView: View {
     }
 
     @ViewBuilder
-    private func timelineMarker(startOfDay: Date, date: Date) -> some View {
+    func timelineMarker(startOfDay: Date, date: Date) -> some View {
         let pointsPerMinute = hourSlotHeight / 60
         let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
         let offsetY = minutesFromMidnight * pointsPerMinute
@@ -204,7 +211,7 @@ struct YoteiDayEventsView: View {
         .offset(y: offsetY)
     }
 
-    private func calculateInitialContentOffset(currentDate: Date) -> CGPoint {
+    func calculateInitialContentOffset(currentDate: Date) -> CGPoint {
         let pointsPerMinute = hourSlotHeight / 60
         let startOfDay = Calendar.current.startOfDay(for: currentDate)
         let minutesFromMidnight = currentDate.timeIntervalSince(startOfDay) / 60
