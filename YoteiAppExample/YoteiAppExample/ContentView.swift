@@ -6,14 +6,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    private enum Destination: Hashable {
+        case fullCalendar
+    }
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            List {
+                NavigationLink("Full calendar", value: Destination.fullCalendar)
+            }
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .fullCalendar:
+                    FullCalendarView()
+                }
+            }
+            .navigationTitle("Example app")
         }
-        .padding()
     }
 }
 

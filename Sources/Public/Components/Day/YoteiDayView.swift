@@ -6,10 +6,22 @@
 import SwiftUI
 
 public struct YoteiDayView: View {
-    @Binding var focusedDate: Date
-    @Binding var data: YoteiEventsInterval
-    @Binding var contentOffset: CGPoint?
-    let delegate: YoteiDelegate?
+    @Binding private var focusedDate: Date
+    @Binding private var data: YoteiEventsInterval
+    @Binding private var contentOffset: CGPoint?
+    private let delegate: YoteiDelegate?
+
+    public init(
+        focusedDate: Binding<Date>,
+        data: Binding<YoteiEventsInterval>,
+        contentOffset: Binding<CGPoint?>,
+        delegate: YoteiDelegate? = nil
+    ) {
+        _focusedDate = focusedDate
+        _data = data
+        _contentOffset = contentOffset
+        self.delegate = delegate
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
