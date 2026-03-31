@@ -21,6 +21,7 @@ struct ContentView: View {
                     FullCalendarView()
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Example app")
         }
     }

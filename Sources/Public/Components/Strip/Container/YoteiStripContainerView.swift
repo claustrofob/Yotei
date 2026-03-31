@@ -200,6 +200,8 @@ private extension YoteiStripContainerView {
             .rotationEffect(.degrees(isExpanded ? 180 : 0))
             .frame(maxWidth: .infinity)
             .frame(height: 24)
+            .contentShape(Rectangle())
+            .background(.background)
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()

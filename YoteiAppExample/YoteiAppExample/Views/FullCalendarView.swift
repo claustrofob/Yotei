@@ -7,6 +7,9 @@ import SwiftUI
 import Yotei
 
 struct FullCalendarView: View {
+    private let currentMonthFormatStyle = Date.FormatStyle().month(.wide)
+    private let monthYearFormatStyle = Date.FormatStyle().month().year(.defaultDigits)
+
     @State private var focusedDate = Date()
     @State private var data = YoteiEventsInterval(
         dateInterval: nil,
@@ -42,7 +45,15 @@ struct FullCalendarView: View {
                 )
             }
         }
-        .navigationTitle("Full calendar")
+        .navigationTitle(
+            Calendar.current.isDate(
+                focusedDate,
+                equalTo: Date(),
+                toGranularity: .year
+            )
+                ? focusedDate.formatted(currentMonthFormatStyle)
+                : focusedDate.formatted(monthYearFormatStyle)
+        )
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu(content: {
