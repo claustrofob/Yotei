@@ -7,6 +7,12 @@ import SwiftUI
 import Yotei
 
 struct FullCalendarView: View {
+    private enum Constants {
+        static var weekTitlesViewInsets: EdgeInsets {
+            EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 0)
+        }
+    }
+
     private let currentMonthFormatStyle = Date.FormatStyle().month(.wide)
     private let monthYearFormatStyle = Date.FormatStyle().month().year(.defaultDigits)
 
@@ -24,25 +30,75 @@ struct FullCalendarView: View {
         VStack {
             switch viewType {
             case .schedule:
-                YoteiScheduleView(
-                    focusedDate: $focusedDate,
-                    data: $data,
-                    delegate: nil
-                )
+                VStack(spacing: 0) {
+                    YoteiStripContainerView(focusedDate: $focusedDate)
+                    YoteiScheduleView(
+                        focusedDate: $focusedDate,
+                        data: $data,
+                        delegate: nil
+                    )
+                }
             case .day:
-                YoteiDayView(
-                    focusedDate: $focusedDate,
-                    data: $data,
-                    contentOffset: $contentOffset,
-                    delegate: nil
-                )
+                VStack(spacing: 0) {
+                    YoteiStripContainerView(focusedDate: $focusedDate)
+                    YoteiPagesDayView(
+                        focusedDate: $focusedDate
+                    ) { date in
+                        VStack(spacing: 0) {
+                            YoteiAllDayEventsTopView(
+                                startDate: date,
+                                numberOfDays: 1,
+                                data: $data,
+                                delegate: nil
+                            )
+                            .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
+                            .background {
+                                Text("All day")
+                                    .font(.system(.caption))
+                                    .padding(.horizontal, 4)
+                                    .frame(width: 50)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .clipped()
+                            YoteiDayEventsView(
+                                startDate: date,
+                                numberOfDays: 1,
+                                data: $data,
+                                contentOffset: $contentOffset,
+                                delegate: nil
+                            )
+                        }
+                    }
+                }
             case .week:
-                YoteiWeekView(
-                    focusedDate: $focusedDate,
-                    data: $data,
-                    contentOffset: $contentOffset,
-                    delegate: nil
-                )
+                VStack(spacing: 0) {
+                    YoteiWeekdayTitlesView(spacing: 0)
+                        .padding(Constants.weekTitlesViewInsets)
+
+                    YoteiPagesWeekView(
+                        focusedDate: $focusedDate
+                    ) { date in
+                        VStack(spacing: 0) {
+                            YoteiWeekdaysView(weekStartDate: date)
+                                .padding(Constants.weekTitlesViewInsets)
+                                .padding(.bottom, 4)
+                            YoteiAllDayEventsTopView(
+                                startDate: date,
+                                numberOfDays: 7,
+                                data: $data,
+                                delegate: nil
+                            )
+                            .padding(Constants.weekTitlesViewInsets)
+                            YoteiDayEventsView(
+                                startDate: date,
+                                numberOfDays: 7,
+                                data: $data,
+                                contentOffset: $contentOffset,
+                                delegate: nil
+                            )
+                        }
+                    }
+                }
             }
         }
         .navigationTitle(

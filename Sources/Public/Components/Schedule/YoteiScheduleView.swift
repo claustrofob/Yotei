@@ -28,14 +28,11 @@ public struct YoteiScheduleView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            YoteiStripContainerView(focusedDate: $focusedDate)
-            YoteiScheduleCollectionView(
-                focusedDate: $focusedDate,
-                data: viewData,
-                delegate: delegate
-            )
-        }
+        YoteiScheduleCollectionView(
+            focusedDate: $focusedDate,
+            data: viewData,
+            delegate: delegate
+        )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: focusedDate, initial: true) {
             viewDidChange(data: data, focusedDate: focusedDate)

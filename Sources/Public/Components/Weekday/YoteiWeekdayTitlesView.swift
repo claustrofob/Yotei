@@ -5,14 +5,14 @@
 
 import SwiftUI
 
-struct CalendarWeekTitlesView: View {
-    let spacing: CGFloat
+public struct YoteiWeekdayTitlesView: View {
+    private let spacing: CGFloat
 
-    init(spacing: CGFloat) {
+    public init(spacing: CGFloat) {
         self.spacing = spacing
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: spacing) {
             ForEach(Calendar.current.weekdayIndices, id: \.self) { index in
                 Text("\(Calendar.current.veryShortStandaloneWeekdaySymbols[index - 1])")
