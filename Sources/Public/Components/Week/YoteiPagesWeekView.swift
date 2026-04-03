@@ -16,7 +16,11 @@ public struct YoteiPagesWeekView<Content: View>: View {
         focusedDate: Binding<Date>,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
-        _focusedDate = focusedDate
+        _focusedDate = Binding(get: {
+            Calendar.current.startOfDay(for: focusedDate.wrappedValue)
+        }, set: {
+            focusedDate.wrappedValue = $0
+        })
         self.content = content
         selectedPageDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
@@ -55,9 +59,6 @@ public struct YoteiPagesWeekView<Content: View>: View {
                 return
             }
             selectedPageDate = startDate
-        }
-        .onAppear {
-            focusedDate = Calendar.current.startOfDay(for: focusedDate)
         }
     }
 }

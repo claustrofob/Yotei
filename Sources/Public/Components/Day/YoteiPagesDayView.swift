@@ -13,7 +13,11 @@ public struct YoteiPagesDayView<Content: View>: View {
         focusedDate: Binding<Date>,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
-        _focusedDate = focusedDate
+        _focusedDate = Binding(get: {
+            Calendar.current.startOfDay(for: focusedDate.wrappedValue)
+        }, set: {
+            focusedDate.wrappedValue = $0
+        })
         self.content = content
     }
 
@@ -35,8 +39,5 @@ public struct YoteiPagesDayView<Content: View>: View {
             }
         )
         .ignoresSafeArea()
-        .onAppear {
-            focusedDate = Calendar.current.startOfDay(for: focusedDate)
-        }
     }
 }

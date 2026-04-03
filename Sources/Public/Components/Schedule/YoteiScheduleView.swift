@@ -22,7 +22,11 @@ public struct YoteiScheduleView: View {
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?
     ) {
-        _focusedDate = focusedDate
+        _focusedDate = Binding(get: {
+            Calendar.current.startOfDay(for: focusedDate.wrappedValue)
+        }, set: {
+            focusedDate.wrappedValue = $0
+        })
         _data = data
         self.delegate = delegate
     }
@@ -39,9 +43,6 @@ public struct YoteiScheduleView: View {
         }
         .onChange(of: data, initial: false) {
             viewDidChange(data: data, focusedDate: focusedDate)
-        }
-        .onAppear {
-            focusedDate = Calendar.current.startOfDay(for: focusedDate)
         }
     }
 }
