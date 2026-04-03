@@ -43,6 +43,9 @@ public struct YoteiScheduleView: View {
         .onChange(of: data, initial: false) {
             viewDidChange(data: data, focusedDate: focusedDate)
         }
+        .onAppear {
+            focusedDate = Calendar.current.startOfDay(for: focusedDate)
+        }
     }
 }
 

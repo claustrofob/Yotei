@@ -66,6 +66,10 @@ public struct YoteiDayView: View {
                     Calendar.current.date(byAdding: .day, value: 1, to: date)!
                 }
             )
+            .ignoresSafeArea()
+        }
+        .onAppear {
+            focusedDate = Calendar.current.startOfDay(for: focusedDate)
         }
     }
 }

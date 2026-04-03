@@ -79,7 +79,7 @@ public struct YoteiDatePicker: View {
         .onChange(of: selectedDate) { _ in
             generateSelectedPageDate()
         }
-        .onFirstAppear {
+        .onAppear {
             generateSelectedPageDate()
         }
     }

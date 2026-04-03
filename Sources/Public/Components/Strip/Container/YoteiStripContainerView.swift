@@ -108,7 +108,7 @@ public struct YoteiStripContainerView: View {
             }
             .frame(height: Constants.weekStripHeight + Constants.expandButtonHeight, alignment: .top)
         }
-        .onFirstAppear {
+        .onAppear {
             generateSelectedWeekPageDate()
             generateSelectedMonthPageDate()
             calculateMonthStripHeight()

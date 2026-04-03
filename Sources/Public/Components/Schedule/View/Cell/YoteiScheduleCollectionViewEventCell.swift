@@ -24,7 +24,7 @@ struct YoteiScheduleCollectionViewEventCell: View {
         .minute()
 
     var body: some View {
-        let isPast = viewModel.end < nowDate || (cellDate < nowDate.startOfDay())
+        let isPast = viewModel.end < nowDate || (cellDate < Calendar.current.startOfDay(for: nowDate))
         Group {
             if viewModel.isAllDay {
                 allDayEventView()

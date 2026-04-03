@@ -76,6 +76,7 @@ public struct YoteiWeekView: View {
                     Calendar.current.date(byAdding: .weekOfMonth, value: 1, to: date)!
                 }
             )
+            .ignoresSafeArea()
         }
         .onChange(of: selectedPageDate) { value in
             focusedDate = calendarDateService.weekFocusedDate(for: value, currentFocusedDate: focusedDate)
@@ -90,6 +91,9 @@ public struct YoteiWeekView: View {
                 return
             }
             selectedPageDate = startDate
+        }
+        .onAppear {
+            focusedDate = Calendar.current.startOfDay(for: focusedDate)
         }
     }
 }
