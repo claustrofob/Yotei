@@ -13,22 +13,19 @@ struct FullCalendarView: View {
         }
     }
 
+    private let hapticFeedbackGenerator = UISelectionFeedbackGenerator()
     private let currentMonthFormatStyle = Date.FormatStyle().month(.wide)
     private let monthYearFormatStyle = Date.FormatStyle().month().year(.defaultDigits)
 
-    @State private var focusedDate = Date()
-    @State private var data = YoteiEventsInterval(
-        dateInterval: nil,
-        dateLoadingInterval: nil,
-        monthInterval: nil,
-        events: [:]
+    @StateObject private var viewModel = FullCalendarViewModelModel(
+        eventsLocalRepository: EventsLocalRepository()
     )
+
     @State private var contentOffset: CGPoint?
-    @State private var viewType: CalendarViewType = .day
 
     var body: some View {
         VStack {
-            switch viewType {
+            switch viewModel.viewType {
             case .schedule:
                 scheduleView()
             case .day:
@@ -39,19 +36,19 @@ struct FullCalendarView: View {
         }
         .navigationTitle(
             Calendar.current.isDate(
-                focusedDate,
+                viewModel.focusedDate,
                 equalTo: Date(),
                 toGranularity: .year
             )
-                ? focusedDate.formatted(currentMonthFormatStyle)
-                : focusedDate.formatted(monthYearFormatStyle)
+                ? viewModel.focusedDate.formatted(currentMonthFormatStyle)
+                : viewModel.focusedDate.formatted(monthYearFormatStyle)
         )
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu(content: {
                     ForEach(CalendarViewType.allCases, id: \.self) { value in
                         Button(action: {
-                            viewType = value
+                            viewModel.viewType = value
                         }) {
                             Label {
                                 Text(value.title)
@@ -61,19 +58,23 @@ struct FullCalendarView: View {
                         }
                     }
                 }) {
-                    viewType.icon
+                    viewModel.viewType.icon
                 }
             }
+        }
+        .onChange(of: viewModel.focusedDate) { _ in
+            hapticFeedbackGenerator.selectionChanged()
+            viewModel.viewDidChangeFocusedDate()
         }
     }
 
     @ViewBuilder
     private func scheduleView() -> some View {
         VStack(spacing: 0) {
-            YoteiStripContainerView(focusedDate: $focusedDate)
+            YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiScheduleView(
-                focusedDate: $focusedDate,
-                data: $data,
+                focusedDate: $viewModel.focusedDate,
+                data: $viewModel.data,
                 delegate: nil
             )
         }
@@ -82,15 +83,15 @@ struct FullCalendarView: View {
     @ViewBuilder
     private func dayView() -> some View {
         VStack(spacing: 0) {
-            YoteiStripContainerView(focusedDate: $focusedDate)
+            YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiPagesDayView(
-                focusedDate: $focusedDate
+                focusedDate: $viewModel.focusedDate
             ) { date in
                 VStack(spacing: 0) {
                     YoteiAllDayEventsTopView(
                         startDate: date,
                         numberOfDays: 1,
-                        data: $data,
+                        data: $viewModel.data,
                         delegate: nil
                     )
                     .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
@@ -105,7 +106,7 @@ struct FullCalendarView: View {
                     YoteiDayEventsView(
                         startDate: date,
                         numberOfDays: 1,
-                        data: $data,
+                        data: $viewModel.data,
                         contentOffset: $contentOffset,
                         delegate: nil
                     )
@@ -121,7 +122,7 @@ struct FullCalendarView: View {
                 .padding(Constants.weekTitlesViewInsets)
 
             YoteiPagesWeekView(
-                focusedDate: $focusedDate
+                focusedDate: $viewModel.focusedDate
             ) { date in
                 VStack(spacing: 0) {
                     YoteiWeekdaysView(weekStartDate: date)
@@ -130,14 +131,14 @@ struct FullCalendarView: View {
                     YoteiAllDayEventsTopView(
                         startDate: date,
                         numberOfDays: 7,
-                        data: $data,
+                        data: $viewModel.data,
                         delegate: nil
                     )
                     .padding(Constants.weekTitlesViewInsets)
                     YoteiDayEventsView(
                         startDate: date,
                         numberOfDays: 7,
-                        data: $data,
+                        data: $viewModel.data,
                         contentOffset: $contentOffset,
                         delegate: nil
                     )

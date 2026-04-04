@@ -26,6 +26,8 @@ final class YoteiScheduleSectionHeaderView: UICollectionReusableView {
 
     private func setupLayout() {
         titleLabel.numberOfLines = 1
+        addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: -16),
