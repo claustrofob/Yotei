@@ -39,7 +39,7 @@ public struct YoteiAllDayEventsTopView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .onChange(of: data, initial: true) {
+        .onChange(of: data, initial: true, isAsync: true) {
             let events = dateSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
                 guard let events = data.events[date]?.filter(\.isAllDay), !events.isEmpty else {
                     return

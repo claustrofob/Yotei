@@ -101,7 +101,7 @@ public struct YoteiDayEventsView: View {
                 }))
             }
         }
-        .onChange(of: data, initial: true) {
+        .onChange(of: data, initial: true, isAsync: true) {
             events = dateSequence.reduce(into: [:]) { result, date in
                 result[date] = data.events[date]?.filter { !$0.isAllDay } ?? []
             }

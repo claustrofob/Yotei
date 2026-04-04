@@ -27,8 +27,21 @@ extension View {
     func onChange(
         of value: some Equatable,
         initial: Bool,
+        isAsync: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
-        modifier(OnChangeModifier(value: value, initial: initial, action: action))
+        modifier(OnChangeModifier(
+            value: value,
+            initial: initial,
+            action: {
+                if isAsync {
+                    DispatchQueue.main.async {
+                        action()
+                    }
+                } else {
+                    action()
+                }
+            }
+        ))
     }
 }

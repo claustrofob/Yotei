@@ -40,14 +40,12 @@ struct ScrollViewPositionModifier: ViewModifier {
                     }
                 }
             }
-            .onChange(of: contentOffset) { _ in
+            .onChange(of: contentOffset, initial: false, isAsync: true) {
                 guard lastContentOffset != contentOffset else {
                     return
                 }
-                DispatchQueue.main.async {
-                    lastContentOffset = contentOffset
-                    scrollView?.contentOffset = contentOffset
-                }
+                lastContentOffset = contentOffset
+                scrollView?.contentOffset = contentOffset
             }
     }
 }

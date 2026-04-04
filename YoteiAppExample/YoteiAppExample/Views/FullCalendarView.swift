@@ -66,6 +66,9 @@ struct FullCalendarView: View {
             hapticFeedbackGenerator.selectionChanged()
             viewModel.viewDidChangeFocusedDate()
         }
+        .onAppear {
+            viewModel.viewDidChangeFocusedDate()
+        }
     }
 
     @ViewBuilder
