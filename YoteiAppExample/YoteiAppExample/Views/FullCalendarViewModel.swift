@@ -54,7 +54,7 @@ final class FullCalendarViewModelModel: ObservableObject {
 
         // fetch and save events to local DB
         Task {
-            try? await Task.sleep(nanoseconds: 1_000_000)
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
             lastRemoteLoadedDateInterval = dateInterval
             data.dateLoadingInterval = nil
         }

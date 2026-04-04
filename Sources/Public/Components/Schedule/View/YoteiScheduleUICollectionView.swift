@@ -295,8 +295,11 @@ extension YoteiScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
             return
         }
         lastUserScrollOffset = scrollView.contentOffset.y
-        focusedDate = date
-        focusedDateUpdate(date)
+
+        if date != focusedDate {
+            focusedDate = date
+            focusedDateUpdate(date)
+        }
     }
 
     func collectionView(

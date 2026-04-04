@@ -7,17 +7,16 @@ import SwiftUI
 import UIKit
 
 struct YoteiScheduleCollectionView: UIViewRepresentable {
-    @Binding var focusedDate: Date
     let data: YoteiScheduleViewData?
     let delegate: YoteiDelegate?
+    let focusedDateUpdate: (Date) -> Void
 
     func makeUIView(context _: Context) -> YoteiScheduleUICollectionView {
         YoteiScheduleUICollectionView(
             factory: YoteiScheduleCollectionViewFactory(),
-            delegate: delegate
-        ) { date in
-            focusedDate = date
-        }
+            delegate: delegate,
+            focusedDateUpdate: focusedDateUpdate
+        )
     }
 
     func updateUIView(_ uiView: YoteiScheduleUICollectionView, context _: Context) {

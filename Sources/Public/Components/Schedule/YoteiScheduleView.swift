@@ -34,23 +34,33 @@ public struct YoteiScheduleView: View {
     public var body: some View {
         ZStack {
             YoteiScheduleCollectionView(
-                focusedDate: $focusedDate,
                 data: viewData,
                 delegate: delegate
-            )
+            ) {
+                viewData?.focusedDate = $0
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
         .onChange(of: focusedDate, initial: false, isAsync: true) {
             // Updated focusedDate comes before corresponding dateInterval is loaded.
             // This may cause invalid scrolling behavour
-            guard data.monthInterval.flatMap({ $0.contains(focusedDate) }) != false else {
+            guard
+                data.monthInterval.flatMap({ $0.contains(focusedDate) }) != false,
+                viewData?.focusedDate != focusedDate
+            else {
                 return
             }
             viewData?.focusedDate = focusedDate
         }
         .onChange(of: data, initial: true, isAsync: true) {
             viewDidChange(data: data)
+        }
+        .onChange(of: viewData?.focusedDate) { value in
+            guard let value, value != focusedDate else {
+                return
+            }
+            focusedDate = value
         }
     }
 }
