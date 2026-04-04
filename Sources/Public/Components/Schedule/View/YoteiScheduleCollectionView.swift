@@ -14,12 +14,13 @@ struct YoteiScheduleCollectionView: UIViewRepresentable {
     func makeUIView(context _: Context) -> YoteiScheduleUICollectionView {
         YoteiScheduleUICollectionView(
             factory: YoteiScheduleCollectionViewFactory(),
-            delegate: delegate,
-            focusedDate: $focusedDate
-        )
+            delegate: delegate
+        ) { date in
+            focusedDate = date
+        }
     }
 
     func updateUIView(_ uiView: YoteiScheduleUICollectionView, context _: Context) {
-        uiView.apply(data: data, focusedDate: $focusedDate)
+        uiView.apply(data: data, focusedDate: focusedDate)
     }
 }

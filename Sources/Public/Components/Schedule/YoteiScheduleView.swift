@@ -38,6 +38,7 @@ public struct YoteiScheduleView: View {
             delegate: delegate
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
         .onChange(of: focusedDate, initial: true) {
             viewDidChange(data: data, focusedDate: focusedDate)
         }

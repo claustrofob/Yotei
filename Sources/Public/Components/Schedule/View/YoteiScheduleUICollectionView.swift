@@ -13,17 +13,12 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         }
     }
 
-    private enum ScrollDirection {
-        case up
-        case down
-    }
-
     private let layout: YoteiScheduleCollectionViewLayout
 
     private var lastUserScrollOffset: CGFloat = 0
-    private var lastUserScrollDirection: ScrollDirection = .down
+    private var focusedDate: Date?
 
-    @Binding private var focusedDate: Date
+    private let focusedDateUpdate: (Date) -> Void
     private let factory: YoteiScheduleCollectionViewFactory
     private weak var calendarDelegate: YoteiDelegate?
     private var items: [YoteiScheduleViewModel] = []
@@ -42,11 +37,11 @@ final class YoteiScheduleUICollectionView: UICollectionView {
     init(
         factory: YoteiScheduleCollectionViewFactory,
         delegate: YoteiDelegate?,
-        focusedDate: Binding<Date>
+        focusedDateUpdate: @escaping (Date) -> Void
     ) {
         self.factory = factory
         calendarDelegate = delegate
-        _focusedDate = focusedDate
+        self.focusedDateUpdate = focusedDateUpdate
         layout = factory.layout()
         super.init(frame: .zero, collectionViewLayout: layout)
 
@@ -131,15 +126,6 @@ final class YoteiScheduleUICollectionView: UICollectionView {
     }
 
     private func saveCurrentPosition() {
-        // The initial strategy was to detect an item which should keep the position on screen after update based on the scroll direction.
-        // For scrolling down (to the future) the first visible item keeps its position on screen,
-        // for scrolling up (to the past) it is the last visible item at the bottom.
-//        let indexPath: IndexPath? = switch lastUserScrollDirection {
-//        case .up:
-//            sortedVisibleSections().last
-//        case .down:
-//            sortedVisibleSections().first
-//        }
         let indexPath = sortedVisibleSections().first
 
         guard
@@ -153,7 +139,9 @@ final class YoteiScheduleUICollectionView: UICollectionView {
                 at: indexPath
             )?.frame
         else {
-            sectionPosition = (focusedDate, 0)
+            if let focusedDate {
+                sectionPosition = (focusedDate, 0)
+            }
             return
         }
 
@@ -194,16 +182,16 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         startCollectionAutoupdate()
     }
 
-    private func apply(focusedDate: Binding<Date>) {
-        guard focusedDate.wrappedValue != self.focusedDate else {
+    private func apply(focusedDate: Date) {
+        guard focusedDate != self.focusedDate else {
             return
         }
 
-        _focusedDate = focusedDate
-        sectionPosition = (focusedDate.wrappedValue, 0)
+        self.focusedDate = focusedDate
+        sectionPosition = (focusedDate, 0)
 
         if
-            let sectionIndex = diffableDataSource.snapshot().indexOfSection(focusedDate.wrappedValue.id),
+            let sectionIndex = diffableDataSource.snapshot().indexOfSection(focusedDate.id),
             let sectionFrame = layout.absoluteLayoutAttributesForSupplementaryView(
                 ofKind: UICollectionView.elementKindSectionHeader,
                 at: IndexPath(row: 0, section: sectionIndex)
@@ -213,7 +201,11 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         }
     }
 
-    func apply(data: YoteiSchedule.ViewData, focusedDate: Binding<Date>) {
+    func apply(data: YoteiSchedule.ViewData, focusedDate: Date) {
+        if self.focusedDate == nil {
+            self.focusedDate = focusedDate
+        }
+
         apply(data: data)
         apply(focusedDate: focusedDate)
     }
@@ -302,9 +294,9 @@ extension YoteiScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
         else {
             return
         }
-        lastUserScrollDirection = scrollView.contentOffset.y < lastUserScrollOffset ? .up : .down
         lastUserScrollOffset = scrollView.contentOffset.y
         focusedDate = date
+        focusedDateUpdate(date)
     }
 
     func collectionView(
