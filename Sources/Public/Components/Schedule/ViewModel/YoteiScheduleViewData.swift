@@ -5,6 +5,7 @@
 
 import Foundation
 
-enum YoteiSchedule {
-    typealias ViewData = [(section: Date, items: [YoteiScheduleViewModel])]
+struct YoteiScheduleViewData {
+    var focusedDate: Date
+    var data: [(section: Date, items: [YoteiScheduleViewModel])]
 }

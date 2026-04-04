@@ -15,7 +15,7 @@ public struct YoteiScheduleView: View {
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
 
-    @State private var viewData: YoteiSchedule.ViewData = []
+    @State private var viewData: YoteiScheduleViewData?
 
     public init(
         focusedDate: Binding<Date>,
@@ -32,34 +32,36 @@ public struct YoteiScheduleView: View {
     }
 
     public var body: some View {
-        YoteiScheduleCollectionView(
-            focusedDate: $focusedDate,
-            data: viewData,
-            delegate: delegate
-        )
+        ZStack {
+            YoteiScheduleCollectionView(
+                focusedDate: $focusedDate,
+                data: viewData,
+                delegate: delegate
+            )
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
-        .onChange(of: focusedDate, initial: true, isAsync: true) {
-            viewDidChange(data: data, focusedDate: focusedDate)
+        .onChange(of: focusedDate, initial: false, isAsync: true) {
+            // Updated focusedDate comes before corresponding dateInterval is loaded.
+            // This may cause invalid scrolling behavour
+            guard data.monthInterval.flatMap({ $0.contains(focusedDate) }) != false else {
+                return
+            }
+            viewData?.focusedDate = focusedDate
         }
-        .onChange(of: data, initial: false, isAsync: true) {
-            viewDidChange(data: data, focusedDate: focusedDate)
+        .onChange(of: data, initial: true, isAsync: true) {
+            viewDidChange(data: data)
         }
     }
 }
 
 private extension YoteiScheduleView {
-    func viewDidChange(data: YoteiEventsInterval, focusedDate: Date) {
-        guard
-            // Updated focusedDate comes before corresponding dateInterval is loaded.
-            // This may cause invalid scrolling behavour
-            data.monthInterval.flatMap({ $0.contains(focusedDate) }) != false,
-            let dateInterval = data.dateInterval
-        else {
+    func viewDidChange(data: YoteiEventsInterval) {
+        guard let dateInterval = data.dateInterval else {
             return
         }
 
-        viewData = CalendarDaysSequence(interval: dateInterval).map { date in
+        let data = CalendarDaysSequence(interval: dateInterval).map { date in
             let items: [YoteiScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
                 [.init(date: date, kind: .loading)]
             } else if let events = data.events[date], !events.isEmpty {
@@ -73,5 +75,7 @@ private extension YoteiScheduleView {
             }
             return (section: date, items: items)
         }
+
+        viewData = YoteiScheduleViewData(focusedDate: focusedDate, data: data)
     }
 }

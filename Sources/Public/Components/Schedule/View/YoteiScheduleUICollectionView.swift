@@ -160,7 +160,7 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         }
     }
 
-    private func apply(data: YoteiSchedule.ViewData) {
+    private func apply(data: [(section: Date, items: [YoteiScheduleViewModel])]) {
         let sections = data.map(\.section)
         let items = data.map(\.items).flatMap(\.self)
         guard sections != self.sections || items != self.items else {
@@ -201,13 +201,13 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         }
     }
 
-    func apply(data: YoteiSchedule.ViewData, focusedDate: Date) {
-        if self.focusedDate == nil {
-            self.focusedDate = focusedDate
+    func apply(data: YoteiScheduleViewData) {
+        if focusedDate == nil {
+            focusedDate = data.focusedDate
         }
 
-        apply(data: data)
-        apply(focusedDate: focusedDate)
+        apply(data: data.data)
+        apply(focusedDate: data.focusedDate)
     }
 }
 
