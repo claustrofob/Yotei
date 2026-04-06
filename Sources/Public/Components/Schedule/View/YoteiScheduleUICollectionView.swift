@@ -7,12 +7,6 @@ import SwiftUI
 import UIKit
 
 final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UICollectionView, UICollectionViewDelegateFlowLayout {
-    private enum Constants {
-        static var sectionInsets: UIEdgeInsets {
-            .init(top: 6, left: 16, bottom: 8, right: 16)
-        }
-    }
-
     private let layout: YoteiScheduleCollectionViewLayout
 
     private var lastUserScrollOffset: CGFloat = 0
@@ -332,22 +326,29 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
             return .zero
         }
 
-        let width = bounds.width - Constants.sectionInsets.left - Constants.sectionInsets.right
-
-        switch viewModel.kind {
+        let proposal = ProposedViewSize(width: bounds.width, height: nil)
+        return switch viewModel.kind {
         case let .event(event):
-            return CGSize(width: width, height: event.isAllDay ? 16 : 52)
-        case .empty, .loading:
-            return CGSize(width: width, height: 52)
+            viewFactory.eventViewSizeThatFits(proposal: proposal, event: event)
+        case .empty:
+            viewFactory.emptyViewSizeThatFits(proposal: proposal, date: viewModel.date)
+        case .loading:
+            viewFactory.loadingViewSizeThatFits(proposal: proposal, date: viewModel.date)
         }
     }
 
     func collectionView(
         _: UICollectionView,
         layout _: UICollectionViewLayout,
-        referenceSizeForHeaderInSection _: Int
+        referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        CGSize(width: bounds.width, height: 28)
+        let date = diffableDataStorage.section(
+            in: diffableDataSource.snapshot(),
+            for: section
+        ) ?? Date()
+
+        let proposal = ProposedViewSize(width: bounds.width, height: nil)
+        return viewFactory.headerViewSizeThatFits(proposal: proposal, date: date)
     }
 
     func collectionView(
@@ -355,7 +356,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         layout _: UICollectionViewLayout,
         insetForSectionAt _: Int
     ) -> UIEdgeInsets {
-        Constants.sectionInsets
+        viewFactory.insetsForHeader()
     }
 
     func collectionView(
@@ -363,7 +364,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         layout _: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt _: Int
     ) -> CGFloat {
-        8
+        viewFactory.interitemSpacing()
     }
 
     func collectionView(
@@ -371,6 +372,6 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         layout _: UICollectionViewLayout,
         minimumLineSpacingForSectionAt _: Int
     ) -> CGFloat {
-        8
+        viewFactory.headerLineSpacing()
     }
 }
