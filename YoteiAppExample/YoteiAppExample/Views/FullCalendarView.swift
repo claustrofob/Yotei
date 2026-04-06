@@ -112,7 +112,9 @@ struct FullCalendarView: View {
                         data: $viewModel.data,
                         contentOffset: $contentOffset,
                         delegate: nil
-                    )
+                    ) { event in
+                        YoteiDayEventDefaultView(event: event)
+                    }
                 }
             }
         }
@@ -144,7 +146,9 @@ struct FullCalendarView: View {
                         data: $viewModel.data,
                         contentOffset: $contentOffset,
                         delegate: nil
-                    )
+                    ) { event in
+                        YoteiDayEventDefaultView(event: event)
+                    }
                 }
             }
         }

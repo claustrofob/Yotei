@@ -11,7 +11,7 @@ public struct YoteiDayEventDefaultView: View {
     public init(event: YoteiEvent) {
         self.event = event
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading) {
             Text(event.title)

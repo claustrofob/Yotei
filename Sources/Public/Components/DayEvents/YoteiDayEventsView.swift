@@ -6,7 +6,7 @@
 import Eventually
 import SwiftUI
 
-public struct YoteiDayEventsView: View {
+public struct YoteiDayEventsView<EventContent: View>: View {
     private enum Constants {
         static var scrollViewInsets: EdgeInsets {
             EdgeInsets(top: 16, leading: 12, bottom: 16, trailing: 0)
@@ -30,6 +30,7 @@ public struct YoteiDayEventsView: View {
     @Binding private var data: YoteiEventsInterval
     @Binding private var contentOffset: CGPoint?
     private weak var delegate: YoteiDelegate?
+    @ViewBuilder private let eventContent: (YoteiEvent) -> EventContent
 
     private let dateSequence: YoteiDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
@@ -51,13 +52,15 @@ public struct YoteiDayEventsView: View {
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
-        delegate: YoteiDelegate?
+        delegate: YoteiDelegate?,
+        @ViewBuilder eventContent: @escaping (YoteiEvent) -> EventContent
     ) {
         startOfDay = startDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
         self.delegate = delegate
+        self.eventContent = eventContent
         dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
@@ -139,7 +142,7 @@ private extension YoteiDayEventsView {
                             Button(action: {
                                 delegate?.calendarDidSelectEvent(with: event.id)
                             }) {
-                                YoteiDayEventsEventView(event: event)
+                                eventContent(event)
                             }
                             .eventuallyDateIntervalLayout(event.dateInterval)
                         }

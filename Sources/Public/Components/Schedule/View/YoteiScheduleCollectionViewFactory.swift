@@ -13,9 +13,9 @@ struct YoteiScheduleCollectionViewFactory {
     }
 
     func eventCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, (Date, YoteiEvent)> {
-        .init { cell, _, viewModel in
+        .init { cell, _, event in
             cell.contentConfiguration = UIHostingConfiguration {
-                YoteiScheduleCollectionViewEventCell(cellDate: viewModel.0, viewModel: viewModel.1)
+                YoteiScheduleEventCellDefaultView(cellDate: event.0, event: event.1)
             }.margins(.all, 0)
         }
     }
@@ -23,7 +23,7 @@ struct YoteiScheduleCollectionViewFactory {
     func emptyCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Date> {
         .init { cell, _, _ in
             cell.contentConfiguration = UIHostingConfiguration {
-                YoteiScheduleCollectionViewEmptyCell()
+                YoteiScheduleEmptyCellDefaultView()
             }.margins(.all, 0)
         }
     }
@@ -31,7 +31,7 @@ struct YoteiScheduleCollectionViewFactory {
     func loadingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Date> {
         .init { cell, _, _ in
             cell.contentConfiguration = UIHostingConfiguration {
-                YoteiScheduleCollectionViewLoadingCell()
+                YoteiScheduleLoadingCellDefaultView()
             }.margins(.all, 0)
         }
     }
