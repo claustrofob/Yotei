@@ -10,6 +10,19 @@
 		48C87F2D2F76B77200262F6A /* Yotei in Frameworks */ = {isa = PBXBuildFile; productRef = 48C87F2C2F76B77200262F6A /* Yotei */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		48F1F61B2F841F84005436E4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		48C87D602F72E00B00262F6A /* YoteiAppExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YoteiAppExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		48C87D742F72E0FD00262F6A /* Yotei */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Yotei; path = ..; sourceTree = SOURCE_ROOT; };
@@ -70,6 +83,7 @@
 				48C87D5C2F72E00B00262F6A /* Sources */,
 				48C87D5D2F72E00B00262F6A /* Frameworks */,
 				48C87D5E2F72E00B00262F6A /* Resources */,
+				48F1F61B2F841F84005436E4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

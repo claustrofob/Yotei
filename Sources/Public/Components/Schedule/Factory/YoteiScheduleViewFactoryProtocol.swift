@@ -4,15 +4,32 @@
 //
 
 import SwiftUI
-import Yotei
 
-struct ScheduleViewFactory: YoteiScheduleViewFactoryProtocol {
-    private enum Constants {
-        static var sectionInsets: UIEdgeInsets {
-            .init(top: 6, left: 16, bottom: 8, right: 16)
-        }
-    }
+@MainActor
+public protocol YoteiScheduleViewFactoryProtocol {
+    associatedtype EventCellView: View
+    func eventCellView(date: Date, event: YoteiEvent) -> EventCellView
 
+    associatedtype EmptyCellView: View
+    func emptyCellView(date: Date) -> EmptyCellView
+
+    associatedtype LoadingCellView: View
+    func loadingCellView(date: Date) -> LoadingCellView
+
+    associatedtype DayHeaderView: View
+    func dayHeaderView(date: Date) -> DayHeaderView
+
+    func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize
+    func emptyViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
+    func loadingViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
+    func headerViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
+
+    func insetsForHeader() -> UIEdgeInsets
+    func headerLineSpacing() -> CGFloat
+    func interitemSpacing() -> CGFloat
+}
+
+public extension YoteiScheduleViewFactoryProtocol {
     func eventCellView(date: Date, event: YoteiEvent) -> some View {
         YoteiScheduleEventCellDefaultView(cellDate: date, event: event)
     }
@@ -31,19 +48,19 @@ struct ScheduleViewFactory: YoteiScheduleViewFactoryProtocol {
 
     func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
-        let width = size.width - Constants.sectionInsets.left - Constants.sectionInsets.right
+        let width = size.width - YoteiScheduleViewConstants.sectionInsets.left - YoteiScheduleViewConstants.sectionInsets.right
         return CGSize(width: width, height: event.isAllDay ? 16 : 52)
     }
 
     func emptyViewSizeThatFits(proposal: ProposedViewSize, date _: Date) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
-        let width = size.width - Constants.sectionInsets.left - Constants.sectionInsets.right
+        let width = size.width - YoteiScheduleViewConstants.sectionInsets.left - YoteiScheduleViewConstants.sectionInsets.right
         return CGSize(width: width, height: 52)
     }
 
     func loadingViewSizeThatFits(proposal: ProposedViewSize, date _: Date) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
-        let width = size.width - Constants.sectionInsets.left - Constants.sectionInsets.right
+        let width = size.width - YoteiScheduleViewConstants.sectionInsets.left - YoteiScheduleViewConstants.sectionInsets.right
         return CGSize(width: width, height: 52)
     }
 
@@ -53,7 +70,7 @@ struct ScheduleViewFactory: YoteiScheduleViewFactoryProtocol {
     }
 
     func insetsForHeader() -> UIEdgeInsets {
-        Constants.sectionInsets
+        YoteiScheduleViewConstants.sectionInsets
     }
 
     func headerLineSpacing() -> CGFloat {
