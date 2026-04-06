@@ -5,10 +5,14 @@
 
 import SwiftUI
 
-struct YoteiDayEventsEventView: View {
-    let event: YoteiEvent
+public struct YoteiDayEventDefaultView: View {
+    private let event: YoteiEvent
 
-    var body: some View {
+    public init(event: YoteiEvent) {
+        self.event = event
+    }
+    
+    public var body: some View {
         VStack(alignment: .leading) {
             Text(event.title)
                 .foregroundStyle(.blue.opacity(0.5))
