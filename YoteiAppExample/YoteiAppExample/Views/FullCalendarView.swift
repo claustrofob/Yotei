@@ -78,7 +78,8 @@ struct FullCalendarView: View {
             YoteiScheduleView(
                 focusedDate: $viewModel.focusedDate,
                 data: $viewModel.data,
-                delegate: nil
+                delegate: nil,
+                viewFactory: ScheduleViewFactory()
             )
         }
     }

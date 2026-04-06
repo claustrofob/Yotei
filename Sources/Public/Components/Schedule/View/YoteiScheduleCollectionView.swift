@@ -6,20 +6,21 @@
 import SwiftUI
 import UIKit
 
-struct YoteiScheduleCollectionView: UIViewRepresentable {
+struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UIViewRepresentable {
     let data: YoteiScheduleViewData?
     let delegate: YoteiDelegate?
+    let viewFactory: ViewFactory
     let focusedDateUpdate: (Date) -> Void
 
-    func makeUIView(context _: Context) -> YoteiScheduleUICollectionView {
+    func makeUIView(context _: Context) -> YoteiScheduleUICollectionView<ViewFactory> {
         YoteiScheduleUICollectionView(
-            factory: YoteiScheduleCollectionViewFactory(),
+            viewFactory: viewFactory,
             delegate: delegate,
             focusedDateUpdate: focusedDateUpdate
         )
     }
 
-    func updateUIView(_ uiView: YoteiScheduleUICollectionView, context _: Context) {
+    func updateUIView(_ uiView: YoteiScheduleUICollectionView<ViewFactory>, context _: Context) {
         guard let data else {
             return
         }

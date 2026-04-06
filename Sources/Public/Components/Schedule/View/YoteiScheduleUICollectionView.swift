@@ -6,7 +6,7 @@
 import SwiftUI
 import UIKit
 
-final class YoteiScheduleUICollectionView: UICollectionView {
+final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UICollectionView, UICollectionViewDelegateFlowLayout {
     private enum Constants {
         static var sectionInsets: UIEdgeInsets {
             .init(top: 6, left: 16, bottom: 8, right: 16)
@@ -19,7 +19,7 @@ final class YoteiScheduleUICollectionView: UICollectionView {
     private var focusedDate: Date?
 
     private let focusedDateUpdate: (Date) -> Void
-    private let factory: YoteiScheduleCollectionViewFactory
+    private let viewFactory: ViewFactory
     private weak var calendarDelegate: YoteiDelegate?
     private var items: [YoteiScheduleViewModel] = []
     private var sections: [Date] = []
@@ -35,11 +35,11 @@ final class YoteiScheduleUICollectionView: UICollectionView {
     >()
 
     init(
-        factory: YoteiScheduleCollectionViewFactory,
+        viewFactory: ViewFactory,
         delegate: YoteiDelegate?,
         focusedDateUpdate: @escaping (Date) -> Void
     ) {
-        self.factory = factory
+        self.viewFactory = viewFactory
         calendarDelegate = delegate
         self.focusedDateUpdate = focusedDateUpdate
         layout = YoteiScheduleCollectionViewLayout()
@@ -63,14 +63,37 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         showsHorizontalScrollIndicator = false
         delegate = self
 
-        let eventCellRegistration = factory.eventCellRegistration()
-        let emptyCellRegistration = factory.emptyCellRegistration()
-        let loadingCellRegistration = factory.loadingCellRegistration()
-        let headerRegistration = factory.headerRegistration { [unowned self] indexPath in
-            diffableDataStorage.section(
+        let eventCellRegistration = UICollectionView.CellRegistration<
+            UICollectionViewCell, (Date, YoteiEvent)
+        > { [viewFactory] cell, _, event in
+            cell.contentConfiguration = UIHostingConfiguration {
+                viewFactory.eventCellView(date: event.0, event: event.1)
+            }.margins(.all, 0)
+        }
+        let emptyCellRegistration = UICollectionView.CellRegistration<
+            UICollectionViewCell, Date
+        > { [viewFactory] cell, _, date in
+            cell.contentConfiguration = UIHostingConfiguration {
+                viewFactory.emptyCellView(date: date)
+            }.margins(.all, 0)
+        }
+        let loadingCellRegistration = UICollectionView.CellRegistration<
+            UICollectionViewCell, Date
+        > { [viewFactory] cell, _, date in
+            cell.contentConfiguration = UIHostingConfiguration {
+                viewFactory.loadingCellView(date: date)
+            }.margins(.all, 0)
+        }
+        let headerRegistration = UICollectionView.SupplementaryRegistration<UICollectionViewCell>(
+            elementKind: UICollectionView.elementKindSectionHeader
+        ) { [unowned self] cell, _, indexPath in
+            let date = diffableDataStorage.section(
                 in: diffableDataSource.snapshot(),
                 for: indexPath.section
             ) ?? Date()
+            cell.contentConfiguration = UIHostingConfiguration {
+                YoteiScheduleSectionDefaultHeaderView(date: date)
+            }.margins(.all, 0)
         }
 
         diffableDataSource = YoteiScheduleDataSource(
@@ -204,9 +227,9 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         apply(data: data.data)
         apply(focusedDate: data.focusedDate)
     }
-}
 
-extension YoteiScheduleUICollectionView: UICollectionViewDelegateFlowLayout {
+    // MARK: - UICollectionViewDelegateFlowLayout
+
     func collectionView(_: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         guard let viewModel = diffableDataStorage.item(
             in: diffableDataSource.snapshot(),

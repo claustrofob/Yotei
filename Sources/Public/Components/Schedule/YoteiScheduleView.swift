@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct YoteiScheduleView: View {
+public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: View {
     private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()
@@ -14,13 +14,15 @@ public struct YoteiScheduleView: View {
     @Binding private var focusedDate: Date
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
+    private let viewFactory: ViewFactory
 
     @State private var viewData: YoteiScheduleViewData?
 
     public init(
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval>,
-        delegate: YoteiDelegate?
+        delegate: YoteiDelegate?,
+        viewFactory: ViewFactory
     ) {
         _focusedDate = Binding(get: {
             Calendar.current.startOfDay(for: focusedDate.wrappedValue)
@@ -29,13 +31,15 @@ public struct YoteiScheduleView: View {
         })
         _data = data
         self.delegate = delegate
+        self.viewFactory = viewFactory
     }
 
     public var body: some View {
         ZStack {
             YoteiScheduleCollectionView(
                 data: viewData,
-                delegate: delegate
+                delegate: delegate,
+                viewFactory: viewFactory
             ) {
                 viewData?.focusedDate = $0
             }
