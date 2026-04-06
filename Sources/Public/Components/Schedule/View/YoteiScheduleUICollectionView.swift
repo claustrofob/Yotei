@@ -86,7 +86,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
                 for: indexPath.section
             ) ?? Date()
             cell.contentConfiguration = UIHostingConfiguration {
-                YoteiScheduleSectionDefaultHeaderView(date: date)
+                YoteiScheduleSectionHeaderDefaultView(date: date)
             }.margins(.all, 0)
         }
 
@@ -164,9 +164,11 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     private func startCollectionAutoupdate() {
         // redraw visible cells every minute so reflect time change on screen
         autoUpdateTask?.cancel()
-        autoUpdateTask = Task { @MainActor in
+        autoUpdateTask = Task { @MainActor [weak self] in
             while !Task.isCancelled {
-                await diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
+                if let self {
+                    await diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
+                }
                 try? await Task.sleep(for: .seconds(60))
             }
         }

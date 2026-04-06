@@ -50,11 +50,11 @@ struct CalendarDayCellView: View {
         if date.isInSameDay(as: todayDate) {
             (Color.blue, .white, false)
         } else if !isEnabled {
-            (.clear, .black.opacity(0.2), false)
+            (.clear, .secondary, false)
         } else if let focusedDate, date.isInSameDay(as: focusedDate) {
             (Color.blue.opacity(0.2), .blue, false)
         } else {
-            (.clear, .black, true)
+            (.clear, .primary, true)
         }
     }
 }

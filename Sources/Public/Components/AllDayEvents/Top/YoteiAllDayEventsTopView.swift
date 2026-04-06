@@ -6,10 +6,12 @@
 import Foundation
 import SwiftUI
 
-public struct YoteiAllDayEventsTopView: View {
+public struct YoteiAllDayEventsTopView<EventContent: View, MoreEventsContent: View>: View {
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
+    @ViewBuilder private let eventContent: (YoteiEvent) -> EventContent
+    @ViewBuilder private let moreEventsContent: (Int) -> MoreEventsContent
 
     private let dateSequence: YoteiDaysSequence
 
@@ -20,11 +22,19 @@ public struct YoteiAllDayEventsTopView: View {
         startDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
-        delegate: YoteiDelegate?
+        delegate: YoteiDelegate?,
+        @ViewBuilder eventContent: @escaping (YoteiEvent) -> EventContent = { event in
+            YoteiAllDayEventDefaultView(event: event)
+        },
+        @ViewBuilder moreEventsContent: @escaping (Int) -> MoreEventsContent = { count in
+            YoteiAllDayMoreEventsDefaultView(moreEventsCount: count)
+        }
     ) {
         _data = data
         self.numberOfDays = numberOfDays
         self.delegate = delegate
+        self.eventContent = eventContent
+        self.moreEventsContent = moreEventsContent
         dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
@@ -60,7 +70,7 @@ private extension YoteiAllDayEventsTopView {
                     ForEach(rowData, id: \.id) { item in
                         switch item {
                         case let .event(event: event, cols: cols):
-                            eventView(event: event)
+                            eventContent(event)
                                 .gridCellColumns(cols)
                         case .empty:
                             emptyView()
@@ -72,7 +82,7 @@ private extension YoteiAllDayEventsTopView {
             GridRow {
                 ForEach(dateSequence, id: \.self) { date in
                     if let count = otherEventsCount[date], count > 0 {
-                        moreItemsView(count: count)
+                        moreEventsContent(count)
                     } else {
                         emptyView()
                     }
@@ -92,40 +102,6 @@ private extension YoteiAllDayEventsTopView {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }.frame(maxWidth: .infinity)
-    }
-
-    @ViewBuilder
-    func eventView(event: YoteiEvent) -> some View {
-        Text(event.title)
-            .lineLimit(1)
-            .truncationMode(.tail)
-            .foregroundStyle(.blue.opacity(0.5))
-            .font(.system(.caption2))
-            .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
-            .frame(height: 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background {
-                RoundedRectangle(cornerSize: CGSize(width: 4, height: 4))
-                    .fill(.blue.opacity(0.1))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
-    }
-
-    func moreItemsView(count: Int) -> some View {
-        Text("+\(count)")
-            .lineLimit(1)
-            .foregroundStyle(.black.opacity(0.1))
-            .font(.system(.caption2))
-            .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
-            .frame(height: 16)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .background {
-                RoundedRectangle(cornerSize: CGSize(width: 4, height: 4))
-                    .fill(.black.opacity(0.8))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
 
     func emptyView() -> some View {

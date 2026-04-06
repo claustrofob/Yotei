@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct YoteiScheduleSectionDefaultHeaderView: View {
+public struct YoteiScheduleSectionHeaderDefaultView: View {
     private static let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()

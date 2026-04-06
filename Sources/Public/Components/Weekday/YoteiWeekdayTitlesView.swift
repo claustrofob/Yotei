@@ -18,7 +18,7 @@ public struct YoteiWeekdayTitlesView: View {
                 Text("\(Calendar.current.veryShortStandaloneWeekdaySymbols[index - 1])")
                     .frame(maxWidth: .infinity)
                     .font(.system(.caption))
-                    .foregroundStyle(.black.opacity(0.2))
+                    .foregroundStyle(.tertiary)
             }
         }
         .frame(height: 24)

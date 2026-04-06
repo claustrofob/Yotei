@@ -26,7 +26,7 @@ struct ScheduleViewFactory: YoteiScheduleViewFactoryProtocol {
     }
 
     func dayHeaderView(date: Date) -> some View {
-        YoteiScheduleSectionDefaultHeaderView(date: date)
+        YoteiScheduleSectionHeaderDefaultView(date: date)
     }
 
     func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize {

@@ -53,7 +53,9 @@ public struct YoteiDayEventsView<EventContent: View>: View {
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
         delegate: YoteiDelegate?,
-        @ViewBuilder eventContent: @escaping (YoteiEvent) -> EventContent
+        @ViewBuilder eventContent: @escaping (YoteiEvent) -> EventContent = { event in
+            YoteiDayEventDefaultView(event: event)
+        }
     ) {
         startOfDay = startDate
         self.numberOfDays = numberOfDays
@@ -185,7 +187,7 @@ private extension YoteiDayEventsView {
                 .font(.system(.caption))
                 .fixedSize()
                 .frame(width: 32, alignment: .trailing)
-            Color.black.opacity(0.8)
+            Color.secondary.opacity(0.5)
                 .frame(maxWidth: .infinity)
                 .frame(height: 1)
         }
