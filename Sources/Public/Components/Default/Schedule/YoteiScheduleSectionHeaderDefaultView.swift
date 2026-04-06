@@ -12,15 +12,18 @@ public struct YoteiScheduleSectionHeaderDefaultView: View {
         .weekday(.wide)
 
     private let date: Date
+    private let sectionInsets: UIEdgeInsets
 
-    public init(date: Date) {
+    public init(date: Date, sectionInsets: UIEdgeInsets) {
         self.date = date
+        self.sectionInsets = sectionInsets
     }
 
     public var body: some View {
         Text(date.formatted(Self.dateFormatStyle))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
+            .padding(.leading, sectionInsets.left)
+            .padding(.trailing, sectionInsets.right)
             .background(.background)
     }
 }

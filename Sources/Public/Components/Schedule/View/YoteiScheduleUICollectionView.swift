@@ -86,7 +86,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
                 for: indexPath.section
             ) ?? Date()
             cell.contentConfiguration = UIHostingConfiguration {
-                YoteiScheduleSectionHeaderDefaultView(date: date)
+                viewFactory.dayHeaderView(date: date)
             }.margins(.all, 0)
         }
 
@@ -358,7 +358,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         layout _: UICollectionViewLayout,
         insetForSectionAt _: Int
     ) -> UIEdgeInsets {
-        viewFactory.insetsForHeader()
+        viewFactory.insetsForSection()
     }
 
     func collectionView(
@@ -367,13 +367,5 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         minimumInteritemSpacingForSectionAt _: Int
     ) -> CGFloat {
         viewFactory.interitemSpacing()
-    }
-
-    func collectionView(
-        _: UICollectionView,
-        layout _: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt _: Int
-    ) -> CGFloat {
-        viewFactory.headerLineSpacing()
     }
 }

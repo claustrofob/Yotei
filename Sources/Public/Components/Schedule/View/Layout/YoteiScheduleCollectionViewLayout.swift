@@ -56,11 +56,6 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
                 layout: self,
                 minimumInteritemSpacingForSectionAt: sectionIndex
             ) ?? 0
-            let sectionSpacing = delegate.collectionView?(
-                collectionView,
-                layout: self,
-                minimumLineSpacingForSectionAt: sectionIndex
-            ) ?? 0
             let sectionIndexPath = IndexPath(row: 0, section: sectionIndex)
             let sectionAttribute = UICollectionViewLayoutAttributes(
                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -72,7 +67,7 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
                 referenceSizeForHeaderInSection: sectionIndex
             ) ?? .zero
 
-            let sectionOrigin = CGPoint(x: 0, y: verticalOffset + sectionSpacing)
+            let sectionOrigin = CGPoint(x: 0, y: verticalOffset)
             sectionAttribute.frame = CGRect(origin: sectionOrigin, size: sectionSize)
             sectionLayoutAttributes.append(sectionAttribute)
             fullRect = fullRect.union(sectionAttribute.frame)

@@ -24,8 +24,7 @@ public protocol YoteiScheduleViewFactoryProtocol {
     func loadingViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
     func headerViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
 
-    func insetsForHeader() -> UIEdgeInsets
-    func headerLineSpacing() -> CGFloat
+    func insetsForSection() -> UIEdgeInsets
     func interitemSpacing() -> CGFloat
 }
 
@@ -43,24 +42,27 @@ public extension YoteiScheduleViewFactoryProtocol {
     }
 
     func dayHeaderView(date: Date) -> some View {
-        YoteiScheduleSectionHeaderDefaultView(date: date)
+        YoteiScheduleSectionHeaderDefaultView(date: date, sectionInsets: insetsForSection())
     }
 
     func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
-        let width = size.width - YoteiScheduleViewConstants.sectionInsets.left - YoteiScheduleViewConstants.sectionInsets.right
+        let sectionInsets = insetsForSection()
+        let width = size.width - sectionInsets.left - sectionInsets.right
         return CGSize(width: width, height: event.isAllDay ? 16 : 52)
     }
 
     func emptyViewSizeThatFits(proposal: ProposedViewSize, date _: Date) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
-        let width = size.width - YoteiScheduleViewConstants.sectionInsets.left - YoteiScheduleViewConstants.sectionInsets.right
+        let sectionInsets = insetsForSection()
+        let width = size.width - sectionInsets.left - sectionInsets.right
         return CGSize(width: width, height: 52)
     }
 
     func loadingViewSizeThatFits(proposal: ProposedViewSize, date _: Date) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
-        let width = size.width - YoteiScheduleViewConstants.sectionInsets.left - YoteiScheduleViewConstants.sectionInsets.right
+        let sectionInsets = insetsForSection()
+        let width = size.width - sectionInsets.left - sectionInsets.right
         return CGSize(width: width, height: 52)
     }
 
@@ -69,12 +71,8 @@ public extension YoteiScheduleViewFactoryProtocol {
         return CGSize(width: size.width, height: 28)
     }
 
-    func insetsForHeader() -> UIEdgeInsets {
-        YoteiScheduleViewConstants.sectionInsets
-    }
-
-    func headerLineSpacing() -> CGFloat {
-        8
+    func insetsForSection() -> UIEdgeInsets {
+        .init(top: 6, left: 16, bottom: 16, right: 16)
     }
 
     func interitemSpacing() -> CGFloat {
