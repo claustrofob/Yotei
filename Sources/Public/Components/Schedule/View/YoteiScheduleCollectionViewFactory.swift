@@ -8,10 +8,6 @@ import UIKit
 
 @MainActor
 struct YoteiScheduleCollectionViewFactory {
-    func layout() -> YoteiScheduleCollectionViewLayout {
-        YoteiScheduleCollectionViewLayout()
-    }
-
     func eventCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, (Date, YoteiEvent)> {
         .init { cell, _, event in
             cell.contentConfiguration = UIHostingConfiguration {
@@ -36,7 +32,11 @@ struct YoteiScheduleCollectionViewFactory {
         }
     }
 
-    func headerRegistration() -> UICollectionView.SupplementaryRegistration<YoteiScheduleSectionHeaderView> {
-        .init(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in }
+    func headerRegistration(dateByIndexPath: @escaping (IndexPath) -> Date) -> UICollectionView.SupplementaryRegistration<UICollectionViewCell> {
+        .init(elementKind: UICollectionView.elementKindSectionHeader) { cell, _, indexPath in
+            cell.contentConfiguration = UIHostingConfiguration {
+                YoteiScheduleSectionDefaultHeaderView(date: dateByIndexPath(indexPath))
+            }.margins(.all, 0)
+        }
     }
 }

@@ -42,7 +42,7 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         self.factory = factory
         calendarDelegate = delegate
         self.focusedDateUpdate = focusedDateUpdate
-        layout = factory.layout()
+        layout = YoteiScheduleCollectionViewLayout()
         super.init(frame: .zero, collectionViewLayout: layout)
 
         setup()
@@ -66,7 +66,12 @@ final class YoteiScheduleUICollectionView: UICollectionView {
         let eventCellRegistration = factory.eventCellRegistration()
         let emptyCellRegistration = factory.emptyCellRegistration()
         let loadingCellRegistration = factory.loadingCellRegistration()
-        let headerRegistration = factory.headerRegistration()
+        let headerRegistration = factory.headerRegistration { [unowned self] indexPath in
+            diffableDataStorage.section(
+                in: diffableDataSource.snapshot(),
+                for: indexPath.section
+            ) ?? Date()
+        }
 
         diffableDataSource = YoteiScheduleDataSource(
             collectionView: self
@@ -97,25 +102,15 @@ final class YoteiScheduleUICollectionView: UICollectionView {
             }
         }
 
-        diffableDataSource.supplementaryViewProvider = .init { [unowned self] collectionView, elementKind, indexPath in
-            guard
-                elementKind == UICollectionView.elementKindSectionHeader,
-                let sectionModel = diffableDataStorage.section(
-                    in: diffableDataSource.snapshot(),
-                    for: indexPath.section
-                )
-            else {
+        diffableDataSource.supplementaryViewProvider = .init { collectionView, elementKind, indexPath in
+            guard elementKind == UICollectionView.elementKindSectionHeader else {
                 return nil
             }
 
-            let headerView = collectionView.dequeueConfiguredReusableSupplementary(
+            return collectionView.dequeueConfiguredReusableSupplementary(
                 using: headerRegistration,
                 for: indexPath
             )
-
-            headerView.apply(date: sectionModel)
-
-            return headerView
         }
     }
 
