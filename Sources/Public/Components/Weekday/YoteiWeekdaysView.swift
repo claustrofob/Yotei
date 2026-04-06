@@ -15,7 +15,7 @@ public struct YoteiWeekdaysView: View {
     public var body: some View {
         TimelineView(.everyMinute) { context in
             HStack(spacing: 0) {
-                ForEach(CalendarDaysSequence(startDate: weekStartDate, days: 7), id: \.self) { date in
+                ForEach(YoteiDaysSequence(startDate: weekStartDate, days: 7), id: \.self) { date in
                     CalendarDayCellView(date: date, todayDate: context.date)
                 }
             }

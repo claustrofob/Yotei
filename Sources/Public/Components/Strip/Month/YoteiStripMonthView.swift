@@ -31,7 +31,7 @@ public struct YoteiStripMonthView: View {
     }
 
     public var body: some View {
-        let monthDays = CalendarDaysSequence(
+        let monthDays = YoteiDaysSequence(
             startDate: startDate,
             days: numberOfWeeks * Constants.numberOfDaysPerWeek
         )

@@ -11,7 +11,7 @@ public struct YoteiAllDayEventsTopView: View {
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
 
-    private let dateSequence: CalendarDaysSequence
+    private let dateSequence: YoteiDaysSequence
 
     @State private var otherEventsCount: [Date: Int] = [:]
     @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
@@ -25,7 +25,7 @@ public struct YoteiAllDayEventsTopView: View {
         _data = data
         self.numberOfDays = numberOfDays
         self.delegate = delegate
-        dateSequence = CalendarDaysSequence(startDate: startDate, days: numberOfDays)
+        dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
     public var body: some View {

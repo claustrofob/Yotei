@@ -31,7 +31,7 @@ public struct YoteiDayEventsView: View {
     @Binding private var contentOffset: CGPoint?
     private weak var delegate: YoteiDelegate?
 
-    private let dateSequence: CalendarDaysSequence
+    private let dateSequence: YoteiDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
     @State private var events: [Date: [YoteiEvent]] = [:]
     @State private var placeholderEvent: YoteiDayEventsPlaceholderEvent?
@@ -58,7 +58,7 @@ public struct YoteiDayEventsView: View {
         _data = data
         _contentOffset = contentOffset
         self.delegate = delegate
-        dateSequence = CalendarDaysSequence(startDate: startDate, days: numberOfDays)
+        dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
     public var body: some View {

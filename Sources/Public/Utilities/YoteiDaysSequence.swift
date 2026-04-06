@@ -5,19 +5,19 @@
 
 import Foundation
 
-struct CalendarDaysSequence: RandomAccessCollection {
+public struct YoteiDaysSequence: RandomAccessCollection {
     private let calendar: Calendar
     private let startDate: Date
 
-    var startIndex: Int { 0 }
+    public var startIndex: Int { 0 }
     // `count` = `endIndex - 1`
-    let endIndex: Int
+    public let endIndex: Int
 
-    func index(after i: Int) -> Int {
+    public func index(after i: Int) -> Int {
         i + 1
     }
 
-    subscript(position: Int) -> Date {
+    public subscript(position: Int) -> Date {
         calendar.date(
             byAdding: .day,
             value: position,
@@ -25,7 +25,7 @@ struct CalendarDaysSequence: RandomAccessCollection {
         )!
     }
 
-    init(interval: DateInterval, calendar: Calendar = .current) {
+    public init(interval: DateInterval, calendar: Calendar = .current) {
         self.calendar = calendar
         startDate = calendar.startOfDay(for: interval.start)
         endIndex = DateInterval(
@@ -34,7 +34,7 @@ struct CalendarDaysSequence: RandomAccessCollection {
         ).durationInDays + 1
     }
 
-    init(
+    public init(
         startDate: Date,
         days: Int,
         calendar: Calendar = .current

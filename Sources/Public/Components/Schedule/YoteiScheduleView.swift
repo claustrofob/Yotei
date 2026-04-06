@@ -71,7 +71,7 @@ private extension YoteiScheduleView {
             return
         }
 
-        let data = CalendarDaysSequence(interval: dateInterval).map { date in
+        let data = YoteiDaysSequence(interval: dateInterval).map { date in
             let items: [YoteiScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
                 [.init(date: date, kind: .loading)]
             } else if let events = data.events[date], !events.isEmpty {

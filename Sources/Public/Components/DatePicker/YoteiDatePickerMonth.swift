@@ -12,7 +12,7 @@ struct YoteiDatePickerMonth: View {
 
     @Binding private var selectedDate: Date
     private let minDate: Date?
-    private let days: CalendarDaysSequence
+    private let days: YoteiDaysSequence
     private let monthInterval: DateInterval
     private let numberOfWeeks: Int
     private let calendar: Calendar
@@ -36,7 +36,7 @@ struct YoteiDatePickerMonth: View {
             in: .month,
             for: dateInMonth
         )!.count
-        days = CalendarDaysSequence(
+        days = YoteiDaysSequence(
             startDate: startDate,
             days: numberOfWeeks * Constants.numberOfDaysPerWeek,
             calendar: calendar

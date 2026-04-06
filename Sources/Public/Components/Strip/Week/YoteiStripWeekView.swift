@@ -21,7 +21,7 @@ public struct YoteiStripWeekView: View {
     }
 
     public var body: some View {
-        let weekDays = CalendarDaysSequence(startDate: startDate, days: 7)
+        let weekDays = YoteiDaysSequence(startDate: startDate, days: 7)
         TimelineView(.everyMinute) { context in
             Grid(horizontalSpacing: 10, verticalSpacing: 8) {
                 GridRow {
