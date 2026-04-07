@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct YoteiStripMonthView: View {
+public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: View {
     private enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
     }
@@ -15,9 +15,15 @@ public struct YoteiStripMonthView: View {
     private let numberOfWeeks: Int
 
     @Binding private var focusedDate: Date
+    private let viewFactory: ViewFactory
 
-    public init(focusedDate: Binding<Date>, date: Date) {
+    public init(
+        focusedDate: Binding<Date>,
+        date: Date,
+        viewFactory: ViewFactory = YoteiStripViewFactory()
+    ) {
         _focusedDate = focusedDate
+        self.viewFactory = viewFactory
         monthInterval = Calendar.current.dateInterval(of: .month, for: date)!
         numberOfWeeks = Calendar.current.range(
             of: .weekOfMonth,
@@ -37,7 +43,7 @@ public struct YoteiStripMonthView: View {
         )
 
         TimelineView(.everyMinute) { context in
-            Grid(horizontalSpacing: 10, verticalSpacing: 8) {
+            Grid(horizontalSpacing: 10, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
                 ForEach(0 ..< numberOfWeeks, id: \.self) { row in
                     GridRow {
                         ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in

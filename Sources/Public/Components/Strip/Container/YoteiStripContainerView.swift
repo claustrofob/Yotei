@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct YoteiStripContainerView: View {
+public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol>: View {
     private struct DummyModifier: ViewModifier {
         let isActive: Bool
 
@@ -15,12 +15,7 @@ public struct YoteiStripContainerView: View {
     }
 
     private enum Constants {
-        static var expandButtonHeight: CGFloat { 24 }
         static var weekStripHeight: CGFloat { 40 }
-        static var weekStripVPadding: CGFloat { 8 }
-        static var maxMonthStripHeight: CGFloat {
-            weekStripHeight * 6 + weekStripVPadding * 5
-        }
     }
 
     private let calendarDateService = CalendarDateService()
@@ -30,11 +25,21 @@ public struct YoteiStripContainerView: View {
     @State private var selectedWeekPageDate: Date
     @State private var selectedMonthPageDate: Date
     @State private var isExpanded = false
+    @State private var expandButtonHeight: CGFloat = 0
 
     @Binding private var focusedDate: Date
+    private let viewFactory: ViewFactory
 
-    public init(focusedDate: Binding<Date>) {
+    private var maxMonthStripHeight: CGFloat {
+        Constants.weekStripHeight * 6 + viewFactory.weekInteritemVerticalSpacing() * 5
+    }
+
+    public init(
+        focusedDate: Binding<Date>,
+        viewFactory: ViewFactory = YoteiStripViewFactory()
+    ) {
         _focusedDate = focusedDate
+        self.viewFactory = viewFactory
         selectedWeekPageDate = Calendar.current.dateInterval(
             of: .weekOfMonth,
             for: focusedDate.wrappedValue
@@ -57,18 +62,26 @@ public struct YoteiStripContainerView: View {
                         Group {
                             if isExpanded {
                                 tabView(selection: $selectedMonthPageDate, component: .month) { date in
-                                    YoteiStripMonthView(focusedDate: $focusedDate, date: date)
-                                        .frame(maxHeight: .infinity, alignment: .top)
-                                        .animation(.default, value: focusedDate)
-                                        .ignoresSafeArea(edges: .all)
+                                    YoteiStripMonthView(
+                                        focusedDate: $focusedDate,
+                                        date: date,
+                                        viewFactory: viewFactory
+                                    )
+                                    .frame(maxHeight: .infinity, alignment: .top)
+                                    .animation(.default, value: focusedDate)
+                                    .ignoresSafeArea(edges: .all)
                                 }
                                 .zIndex(1)
                             } else {
                                 tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
-                                    YoteiStripWeekView(focusedDate: $focusedDate, date: date)
-                                        .frame(maxHeight: .infinity, alignment: .top)
-                                        .animation(.default, value: focusedDate)
-                                        .ignoresSafeArea(edges: .all)
+                                    YoteiStripWeekView(
+                                        focusedDate: $focusedDate,
+                                        date: date,
+                                        viewFactory: viewFactory
+                                    )
+                                    .frame(maxHeight: .infinity, alignment: .top)
+                                    .animation(.default, value: focusedDate)
+                                    .ignoresSafeArea(edges: .all)
                                 }
                             }
                         }
@@ -84,7 +97,7 @@ public struct YoteiStripContainerView: View {
                         )))
                     }
                     // this frame is required for transition to work properly
-                    .frame(height: Constants.maxMonthStripHeight, alignment: .top)
+                    .frame(height: maxMonthStripHeight, alignment: .top)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDisabled(true)
@@ -106,7 +119,7 @@ public struct YoteiStripContainerView: View {
                     .frame(height: 3000)
                 }
             }
-            .frame(height: Constants.weekStripHeight + Constants.expandButtonHeight, alignment: .top)
+            .frame(height: Constants.weekStripHeight + expandButtonHeight, alignment: .top)
         }
         .onAppear {
             generateSelectedWeekPageDate()
@@ -186,22 +199,21 @@ private extension YoteiStripContainerView {
             in: .month,
             for: focusedDate
         )!.count)
-        monthStripHeight = Constants.weekStripHeight * numberOfWeeks + Constants.weekStripVPadding * (numberOfWeeks - 1)
+        monthStripHeight = Constants.weekStripHeight * numberOfWeeks + viewFactory.weekInteritemVerticalSpacing() * (numberOfWeeks - 1)
     }
 
     func weekOffset() -> CGFloat {
         let week = focusedDate.weekOfMonth(in: .current)
-        return CGFloat(week) * (Constants.weekStripHeight + Constants.weekStripVPadding)
+        return CGFloat(week) * (Constants.weekStripHeight + viewFactory.weekInteritemVerticalSpacing())
     }
 
     func expandStripButton() -> some View {
-        Image(systemName: "chevron.compact.down")
-            .tint(.black)
-            .rotationEffect(.degrees(isExpanded ? 180 : 0))
-            .frame(maxWidth: .infinity)
-            .frame(height: 24)
-            .contentShape(Rectangle())
-            .background(.background)
+        viewFactory.expandView(isExpanded: isExpanded)
+            .onGeometryChange(for: CGFloat.self, of: {
+                $0.size.height
+            }) {
+                expandButtonHeight = $0
+            }
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()
