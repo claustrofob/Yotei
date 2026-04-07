@@ -35,7 +35,7 @@ public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: Vi
                         Button(action: {
                             focusedDate = date
                         }, label: {
-                            CalendarDayCellView(
+                            viewFactory.dayCellView(
                                 date: date,
                                 todayDate: context.date,
                                 focusedDate: focusedDate,

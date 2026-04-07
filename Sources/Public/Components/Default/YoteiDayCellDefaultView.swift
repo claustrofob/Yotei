@@ -5,37 +5,33 @@
 
 import SwiftUI
 
-struct CalendarDayCellView: View {
+public struct YoteiDayCellDefaultView: View {
     private typealias CellStyle = (
         backgroundColor: Color,
         foregroundColor: Color,
         isEventsVisible: Bool
     )
 
-    private let dayFormatStyle: Date.FormatStyle
     private let date: Date
     private let todayDate: Date
     private let focusedDate: Date?
     private let isEnabled: Bool
-    private let calendar: Calendar
 
-    init(
+    public init(
         date: Date,
         todayDate: Date,
         focusedDate: Date? = nil,
-        isEnabled: Bool = true,
-        calendar: Calendar = .current
+        isEnabled: Bool = true
     ) {
         self.date = date
         self.todayDate = todayDate
         self.focusedDate = focusedDate
         self.isEnabled = isEnabled
-        self.calendar = calendar
-        dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
     }
 
-    var body: some View {
+    public var body: some View {
         let style = dayStyle(date: date)
+        let dayFormatStyle = Date.FormatStyle(calendar: Calendar.current, timeZone: Calendar.current.timeZone).day()
         Text(date.formatted(dayFormatStyle))
             .font(.system(.subheadline))
             .foregroundStyle(style.foregroundColor)

@@ -65,12 +65,11 @@ struct YoteiDatePickerMonth: View {
                                 )!
                                 selectedDate = newDate
                             }, label: {
-                                CalendarDayCellView(
+                                YoteiDayCellDefaultView(
                                     date: date,
                                     todayDate: todayDate,
                                     focusedDate: selectedDate,
-                                    isEnabled: minDate.flatMap { $0 <= date } ?? true,
-                                    calendar: calendar
+                                    isEnabled: minDate.flatMap { $0 <= date } ?? true
                                 )
                             })
                         } else {

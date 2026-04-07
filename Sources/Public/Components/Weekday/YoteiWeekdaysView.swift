@@ -16,7 +16,7 @@ public struct YoteiWeekdaysView: View {
         TimelineView(.everyMinute) { context in
             HStack(spacing: 0) {
                 ForEach(YoteiDaysSequence(startDate: weekStartDate, days: 7), id: \.self) { date in
-                    CalendarDayCellView(date: date, todayDate: context.date)
+                    YoteiDayCellDefaultView(date: date, todayDate: context.date)
                 }
             }
         }

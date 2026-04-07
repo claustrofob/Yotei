@@ -53,7 +53,7 @@ public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: V
                             Button(action: {
                                 focusedDate = date
                             }, label: {
-                                CalendarDayCellView(
+                                viewFactory.dayCellView(
                                     date: date,
                                     todayDate: context.date,
                                     focusedDate: focusedDate,
