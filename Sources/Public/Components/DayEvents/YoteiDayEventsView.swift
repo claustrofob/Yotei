@@ -6,46 +6,26 @@
 import Eventually
 import SwiftUI
 
-public struct YoteiDayEventsView<EventContent: View>: View {
-    private enum Constants {
-        static var scrollViewInsets: EdgeInsets {
-            EdgeInsets(top: 16, leading: 12, bottom: 16, trailing: 0)
-        }
-
-        static var eventsViewInsets: EdgeInsets {
-            EdgeInsets(top: 0, leading: 38, bottom: 0, trailing: 0)
-        }
-
-        static var eventsDayViewInsets: EdgeInsets {
-            EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 5)
-        }
-
-        static var hourSlotHeightRange: ClosedRange<CGFloat> {
-            40 ... 100
-        }
-    }
-
+public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>: View {
     private let startOfDay: Date
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval
     @Binding private var contentOffset: CGPoint?
     private weak var delegate: YoteiDelegate?
-    @ViewBuilder private let eventContent: (YoteiEvent) -> EventContent
+    private let viewFactory: ViewFactory
 
     private let dateSequence: YoteiDaysSequence
     private let scrollCoordinateSpaceName = "scrollViewContent"
     @State private var events: [Date: [YoteiEvent]] = [:]
     @State private var placeholderEvent: YoteiDayEventsPlaceholderEvent?
-    @State private var hourSlotHeight: CGFloat = 60
     @State private var timelineWidth: CGFloat = 0
     private var daySlotWidth: CGFloat {
         timelineWidth / CGFloat(numberOfDays)
     }
 
-    private let timeFormatStyle = Date.FormatStyle()
-        .hour(.twoDigits(amPM: .omitted))
-        .minute(.twoDigits)
-        .locale(Locale.time24Hour)
+    private var hourSlotHeight: CGFloat {
+        viewFactory.hourSlotHeight()
+    }
 
     public init(
         startDate: Date,
@@ -53,16 +33,14 @@ public struct YoteiDayEventsView<EventContent: View>: View {
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
         delegate: YoteiDelegate?,
-        @ViewBuilder eventContent: @escaping (YoteiEvent) -> EventContent = { event in
-            YoteiDayEventDefaultView(event: event)
-        }
+        viewFactory: ViewFactory = YoteiDayEventsViewFactory()
     ) {
         startOfDay = startDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
         self.delegate = delegate
-        self.eventContent = eventContent
+        self.viewFactory = viewFactory
         dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
@@ -77,15 +55,13 @@ public struct YoteiDayEventsView<EventContent: View>: View {
                                 let frame = event.frame(
                                     hourSlotHeight: hourSlotHeight,
                                     daySlotWidth: daySlotWidth,
-                                    insets: UIEdgeInsets(from: Constants.eventsDayViewInsets),
                                     initialDate: startOfDay
                                 )
-                                YoteiDayEventsEventPlaceholderView(
+                                viewFactory.placeholderView(
                                     coordinateSpace: .named(scrollCoordinateSpaceName)
                                 )
                                 .frame(width: frame.width, height: frame.height)
                                 .offset(x: frame.minX, y: frame.minY)
-                                .padding(Constants.eventsDayViewInsets)
                             }
                         }
                         .onGeometryChange(for: CGSize.self) {
@@ -96,9 +72,9 @@ public struct YoteiDayEventsView<EventContent: View>: View {
                         .contentShape(Rectangle())
                         .gesture(tapGesture())
                         .coordinateSpace(name: scrollCoordinateSpaceName)
-                        .padding(Constants.eventsViewInsets)
+                        .padding(viewFactory.insetsForViewsLayout())
                 }
-                .padding(Constants.scrollViewInsets)
+                .padding(viewFactory.insetsForScrollView())
                 .scrollViewPosition(Binding(get: {
                     contentOffset ?? calculateInitialContentOffset(currentDate: .now, scrollViewHeight: proxy.size.height)
                 }, set: {
@@ -144,13 +120,12 @@ private extension YoteiDayEventsView {
                             Button(action: {
                                 delegate?.calendarDidSelectEvent(with: event.id)
                             }) {
-                                eventContent(event)
+                                viewFactory.eventView(event: event)
                             }
                             .eventuallyDateIntervalLayout(event.dateInterval)
                         }
                     }
                 }
-                .padding(Constants.eventsDayViewInsets)
                 .overlay(alignment: .top) {
                     TimelineView(.everyMinute) { context in
                         if date.isInSameDay(as: context.date) {
@@ -160,9 +135,7 @@ private extension YoteiDayEventsView {
                 }
 
                 if (numberOfDays - 1) != index {
-                    Color.black.opacity(0.8)
-                        .frame(maxHeight: .infinity)
-                        .frame(width: 1)
+                    viewFactory.daysDelimiterView()
                 }
             }
         }
@@ -180,18 +153,10 @@ private extension YoteiDayEventsView {
 
     @ViewBuilder
     func timeSlotView(index: Int) -> some View {
-        HStack(spacing: 6) {
-            let x = TimeInterval(3600 * Double(index))
-            let date = startOfDay.addingTimeInterval(x)
-            Text(date.formatted(timeFormatStyle))
-                .font(.system(.caption))
-                .fixedSize()
-                .frame(width: 32, alignment: .trailing)
-            Color.secondary.opacity(0.5)
-                .frame(maxWidth: .infinity)
-                .frame(height: 1)
-        }
-        .frame(height: 0)
+        let x = TimeInterval(3600 * Double(index))
+        let date = startOfDay.addingTimeInterval(x)
+        viewFactory.timeSlotView(date: date)
+            .frame(height: 0)
     }
 
     @ViewBuilder
@@ -199,16 +164,9 @@ private extension YoteiDayEventsView {
         let pointsPerMinute = hourSlotHeight / 60
         let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
         let offsetY = minutesFromMidnight * pointsPerMinute
-        ZStack(alignment: .leading) {
-            Color.blue
-                .frame(height: 1)
-            Circle()
-                .fill(.blue)
-                .frame(width: 8, height: 8)
-                .offset(x: -4)
-        }
-        .frame(height: 0)
-        .offset(y: offsetY)
+        viewFactory.currentTimeMarkerView()
+            .frame(height: 0)
+            .offset(y: offsetY)
     }
 
     func calculateInitialContentOffset(currentDate: Date, scrollViewHeight: CGFloat) -> CGPoint {
@@ -216,7 +174,8 @@ private extension YoteiDayEventsView {
         let startOfDay = Calendar.current.startOfDay(for: currentDate)
         let minutesFromMidnight = currentDate.timeIntervalSince(startOfDay) / 60
         let currentDateOffsetY = minutesFromMidnight * pointsPerMinute
-        let maxScrollOffsetY = hourSlotHeight * 24 + Constants.scrollViewInsets.top + Constants.scrollViewInsets.bottom - scrollViewHeight
+        let scrollViewInsets = viewFactory.insetsForScrollView()
+        let maxScrollOffsetY = hourSlotHeight * 24 + scrollViewInsets.top + scrollViewInsets.bottom - scrollViewHeight
         return CGPoint(
             x: 0,
             y: min(max(currentDateOffsetY - scrollViewHeight / 3, 0), maxScrollOffsetY)

@@ -5,14 +5,18 @@
 
 import SwiftUI
 
-struct YoteiDayEventsEventPlaceholderView: View {
+public struct YoteiDayEventsEventPlaceholderDefaultView: View {
     private enum Constants {
         static var paddingCoefficient: CGFloat { 0.033 }
     }
 
-    let coordinateSpace: CoordinateSpace
+    private let coordinateSpace: CoordinateSpace
 
-    var body: some View {
+    public init(coordinateSpace: CoordinateSpace) {
+        self.coordinateSpace = coordinateSpace
+    }
+
+    public var body: some View {
         GeometryReader { proxy in
             let indicatorPadding: CGFloat = Constants.paddingCoefficient * proxy.size.width
             RoundedRectangle(cornerSize: .init(width: 4, height: 4))

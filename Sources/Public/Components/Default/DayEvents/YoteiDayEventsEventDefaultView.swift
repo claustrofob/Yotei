@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct YoteiDayEventDefaultView: View {
+public struct YoteiDayEventsEventDefaultView: View {
     private let event: YoteiEvent
 
     public init(event: YoteiEvent) {

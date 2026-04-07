@@ -12,7 +12,6 @@ struct YoteiDayEventsPlaceholderEvent {
     func frame(
         hourSlotHeight: CGFloat,
         daySlotWidth: CGFloat,
-        insets: UIEdgeInsets,
         initialDate: Date
     ) -> CGRect {
         let startDate = dateInterval.start
@@ -30,6 +29,6 @@ struct YoteiDayEventsPlaceholderEvent {
             y: originY,
             width: daySlotWidth,
             height: height
-        ).inset(by: insets)
+        )
     }
 }
