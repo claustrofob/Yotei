@@ -6,12 +6,11 @@
 import Foundation
 import SwiftUI
 
-public struct YoteiAllDayEventsTopView<EventContent: View, MoreEventsContent: View>: View {
+public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFactoryProtocol>: View {
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
-    @ViewBuilder private let eventContent: (YoteiEvent) -> EventContent
-    @ViewBuilder private let moreEventsContent: (Int) -> MoreEventsContent
+    private let viewFactory: ViewFactory
 
     private let dateSequence: YoteiDaysSequence
 
@@ -23,18 +22,12 @@ public struct YoteiAllDayEventsTopView<EventContent: View, MoreEventsContent: Vi
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?,
-        @ViewBuilder eventContent: @escaping (YoteiEvent) -> EventContent = { event in
-            YoteiAllDayEventDefaultView(event: event)
-        },
-        @ViewBuilder moreEventsContent: @escaping (Int) -> MoreEventsContent = { count in
-            YoteiAllDayMoreEventsDefaultView(moreEventsCount: count)
-        }
+        viewFactory: ViewFactory = YoteiAllDayEventsTopViewFactory()
     ) {
         _data = data
         self.numberOfDays = numberOfDays
         self.delegate = delegate
-        self.eventContent = eventContent
-        self.moreEventsContent = moreEventsContent
+        self.viewFactory = viewFactory
         dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
     }
 
@@ -45,7 +38,7 @@ public struct YoteiAllDayEventsTopView<EventContent: View, MoreEventsContent: Vi
                     .overlay {
                         dayButtonsView()
                     }
-                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 2, trailing: 0))
+                    .padding(viewFactory.insets())
             }
         }
         .frame(maxWidth: .infinity)
@@ -63,14 +56,17 @@ public struct YoteiAllDayEventsTopView<EventContent: View, MoreEventsContent: Vi
 
 private extension YoteiAllDayEventsTopView {
     func eventsGridView() -> some View {
-        Grid(horizontalSpacing: 0, verticalSpacing: 2) {
+        Grid(
+            horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
+            verticalSpacing: viewFactory.interitemVerticalSpacing()
+        ) {
             ForEach(0 ..< viewData.count, id: \.self) { rowIndex in
                 let rowData = viewData[rowIndex]
                 GridRow {
                     ForEach(rowData, id: \.id) { item in
                         switch item {
                         case let .event(event: event, cols: cols):
-                            eventContent(event)
+                            viewFactory.eventView(event: event)
                                 .gridCellColumns(cols)
                         case .empty:
                             emptyView()
@@ -82,7 +78,7 @@ private extension YoteiAllDayEventsTopView {
             GridRow {
                 ForEach(dateSequence, id: \.self) { date in
                     if let count = otherEventsCount[date], count > 0 {
-                        moreEventsContent(count)
+                        viewFactory.moreEventsView(count: count)
                     } else {
                         emptyView()
                     }

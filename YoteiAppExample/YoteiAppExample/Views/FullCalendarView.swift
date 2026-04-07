@@ -96,9 +96,7 @@ struct FullCalendarView: View {
                         numberOfDays: 1,
                         data: $viewModel.data,
                         delegate: nil
-                    ) { event in
-                        YoteiAllDayEventDefaultView(event: event)
-                    }
+                    )
                     .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
                     .background {
                         Text("All day")
@@ -140,9 +138,7 @@ struct FullCalendarView: View {
                         numberOfDays: 7,
                         data: $viewModel.data,
                         delegate: nil
-                    ) { event in
-                        YoteiAllDayEventDefaultView(event: event)
-                    }
+                    )
                     .padding(Constants.weekTitlesViewInsets)
                     YoteiDayEventsView(
                         startDate: date,
