@@ -64,6 +64,13 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
                 viewFactory.eventCellView(date: event.0, event: event.1)
             }.margins(.all, 0)
         }
+        let allDayEventCellRegistration = UICollectionView.CellRegistration<
+            UICollectionViewCell, (Date, YoteiEvent)
+        > { [viewFactory] cell, _, event in
+            cell.contentConfiguration = UIHostingConfiguration {
+                viewFactory.allDayEventCellView(date: event.0, event: event.1)
+            }.margins(.all, 0)
+        }
         let emptyCellRegistration = UICollectionView.CellRegistration<
             UICollectionViewCell, Date
         > { [viewFactory] cell, _, date in
@@ -100,7 +107,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
             switch viewModel.kind {
             case let .event(event):
                 return collectionView.dequeueConfiguredReusableCell(
-                    using: eventCellRegistration,
+                    using: event.isAllDay ? allDayEventCellRegistration : eventCellRegistration,
                     for: indexPath,
                     item: (viewModel.date, event)
                 )
