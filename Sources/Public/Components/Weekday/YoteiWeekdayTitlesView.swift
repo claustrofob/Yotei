@@ -6,21 +6,17 @@
 import SwiftUI
 
 public struct YoteiWeekdayTitlesView: View {
-    private let spacing: CGFloat
-
-    public init(spacing: CGFloat) {
-        self.spacing = spacing
-    }
+    public init() {}
 
     public var body: some View {
-        HStack(spacing: spacing) {
+        HStack {
             ForEach(Calendar.current.weekdayIndices, id: \.self) { index in
                 Text("\(Calendar.current.veryShortStandaloneWeekdaySymbols[index - 1])")
                     .frame(maxWidth: .infinity)
                     .font(.system(.caption))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.secondary)
             }
         }
-        .frame(height: 24)
+        .padding(.vertical, 4)
     }
 }

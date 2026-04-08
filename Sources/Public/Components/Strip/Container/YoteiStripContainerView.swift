@@ -52,8 +52,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 
     public var body: some View {
         VStack(spacing: 0) {
-            YoteiWeekdayTitlesView(spacing: 10)
-
             VStack(spacing: 0) {
                 // On iOS17 scroll view area of PageController extends beyond the container edges.
                 // This extra ScrollView fixes it.

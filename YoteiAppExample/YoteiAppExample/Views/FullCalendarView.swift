@@ -76,6 +76,7 @@ struct FullCalendarView: View {
     @ViewBuilder
     private func scheduleView() -> some View {
         VStack(spacing: 0) {
+            YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiScheduleView(
                 focusedDate: $viewModel.focusedDate,
@@ -88,6 +89,7 @@ struct FullCalendarView: View {
     @ViewBuilder
     private func dayView() -> some View {
         VStack(spacing: 0) {
+            YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiPagesDayView(
                 focusedDate: $viewModel.focusedDate
@@ -124,7 +126,7 @@ struct FullCalendarView: View {
     @ViewBuilder
     private func weekView() -> some View {
         VStack(spacing: 0) {
-            YoteiWeekdayTitlesView(spacing: 0)
+            YoteiWeekdayTitlesView()
                 .padding(Constants.weekTitlesViewInsets)
 
             YoteiPagesWeekView(

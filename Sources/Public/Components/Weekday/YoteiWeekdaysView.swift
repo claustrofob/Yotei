@@ -5,18 +5,20 @@
 
 import SwiftUI
 
-public struct YoteiWeekdaysView: View {
+public struct YoteiWeekdaysView<ViewFactory: YoteiWeekdayViewFactoryProtocol>: View {
     private let weekStartDate: Date
+    private let viewFactory: ViewFactory
 
-    public init(weekStartDate: Date) {
+    public init(weekStartDate: Date, viewFactory: ViewFactory = YoteiWeekdayViewFactory()) {
         self.weekStartDate = weekStartDate
+        self.viewFactory = viewFactory
     }
 
     public var body: some View {
         TimelineView(.everyMinute) { context in
             HStack(spacing: 0) {
                 ForEach(YoteiDaysSequence(startDate: weekStartDate, days: 7), id: \.self) { date in
-                    YoteiDayCellDefaultView(date: date, todayDate: context.date)
+                    viewFactory.dayCellView(date: date, todayDate: context.date)
                 }
             }
         }
