@@ -34,8 +34,8 @@ struct FullCalendarView: View {
                 weekView()
             }
         }
-        .tint(.green)
-        .foregroundStyle(.brown, .orange, .yellow)
+//        .tint(.green)
+//        .foregroundStyle(.brown, .orange, .yellow)
         .navigationTitle(
             Calendar.current.isDate(
                 viewModel.focusedDate,

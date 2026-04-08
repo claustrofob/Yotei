@@ -11,10 +11,10 @@ public struct YoteiDayEventsCurrentTimeMarkerDefaultView: View {
     public var body: some View {
         ZStack(alignment: .leading) {
             Rectangle()
-                .fill(.tint)
+                .fill(.primary)
                 .frame(height: 1)
             Circle()
-                .fill(.tint)
+                .fill(.primary)
                 .frame(width: 8, height: 8)
                 .offset(x: -4)
         }

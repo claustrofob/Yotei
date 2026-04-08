@@ -11,7 +11,7 @@ public struct DayEventsViewFactory: YoteiDayEventsViewFactoryProtocol {
 
     public func eventView(event: YoteiEvent) -> some View {
         YoteiDayEventsViewFactory().eventView(event: event)
-            .tint(.blue)
-            .foregroundStyle(.white, .white)
+//            .tint(.blue)
+//            .foregroundStyle(.white, .white)
     }
 }
