@@ -123,9 +123,11 @@ private extension YoteiDayEventsView {
                                 viewFactory.eventView(event: event)
                             }
                             .eventuallyDateIntervalLayout(event.dateInterval)
+                            .zIndex(event.start.timeIntervalSince1970)
                         }
                     }
                 }
+                .frame(maxWidth: .infinity)
                 .overlay(alignment: .top) {
                     TimelineView(.everyMinute) { context in
                         if date.isInSameDay(as: context.date) {

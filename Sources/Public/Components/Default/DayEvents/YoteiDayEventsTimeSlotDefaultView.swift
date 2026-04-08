@@ -6,7 +6,7 @@
 import SwiftUI
 
 public struct YoteiDayEventsTimeSlotDefaultView: View {
-    private static let timeFormatStyle = Date.FormatStyle()
+    private let timeFormatStyle = Date.FormatStyle()
         .hour(.twoDigits(amPM: .omitted))
         .minute(.twoDigits)
         .locale(Locale.time24Hour)
@@ -19,11 +19,13 @@ public struct YoteiDayEventsTimeSlotDefaultView: View {
 
     public var body: some View {
         HStack(spacing: 6) {
-            Text(date.formatted(Self.timeFormatStyle))
+            Text(date.formatted(timeFormatStyle))
                 .font(.system(.caption))
                 .fixedSize()
                 .frame(width: 32, alignment: .trailing)
-            Color.secondary.opacity(0.5)
+                .foregroundStyle(.secondary)
+            Rectangle()
+                .fill(.tertiary)
                 .frame(maxWidth: .infinity)
                 .frame(height: 1)
         }

@@ -34,6 +34,8 @@ struct FullCalendarView: View {
                 weekView()
             }
         }
+        .tint(.green)
+        .foregroundStyle(.brown, .orange, .yellow)
         .navigationTitle(
             Calendar.current.isDate(
                 viewModel.focusedDate,
@@ -111,7 +113,8 @@ struct FullCalendarView: View {
                         numberOfDays: 1,
                         data: $viewModel.data,
                         contentOffset: $contentOffset,
-                        delegate: nil
+                        delegate: nil,
+                        viewFactory: DayEventsViewFactory()
                     )
                 }
             }

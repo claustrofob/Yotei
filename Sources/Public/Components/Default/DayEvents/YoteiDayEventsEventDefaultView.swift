@@ -15,7 +15,7 @@ public struct YoteiDayEventsEventDefaultView: View {
     public var body: some View {
         VStack(alignment: .leading) {
             Text(event.title)
-                .foregroundStyle(.blue.opacity(0.5))
+                .foregroundStyle(.primary)
                 .font(.system(.caption2))
                 .lineLimit(1)
                 .truncationMode(.tail)
@@ -29,7 +29,12 @@ public struct YoteiDayEventsEventDefaultView: View {
             maxHeight: .infinity,
             alignment: .topLeading
         )
-        .background(.blue.opacity(0.2))
-        .cornerRadius(4)
+        .background(.tint)
+        .clipShape(.rect(cornerRadius: 6))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .inset(by: 0.5)
+                .stroke(.secondary, lineWidth: 1)
+        )
     }
 }

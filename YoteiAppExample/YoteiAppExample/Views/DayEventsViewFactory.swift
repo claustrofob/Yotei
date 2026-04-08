@@ -1,8 +1,17 @@
 //
-//  DayEventsViewFactory.swift
-//  YoteiAppExample
-//
-//  Created by Mikalai Zmachynski on 08/04/2026.
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
+import Yotei
+
+public struct DayEventsViewFactory: YoteiDayEventsViewFactoryProtocol {
+    public init() {}
+
+    public func eventView(event: YoteiEvent) -> some View {
+        YoteiDayEventsViewFactory().eventView(event: event)
+            .tint(.blue)
+            .foregroundStyle(.white, .white)
+    }
+}

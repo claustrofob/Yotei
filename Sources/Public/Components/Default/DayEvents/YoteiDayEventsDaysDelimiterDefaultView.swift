@@ -9,8 +9,9 @@ public struct YoteiDayEventsDaysDelimiterDefaultView: View {
     public init() {}
 
     public var body: some View {
-        Color.secondary.opacity(0.5)
-            .frame(maxHeight: .infinity)
+        Rectangle()
+            .fill(.tertiary)
             .frame(width: 1)
+            .frame(maxHeight: .infinity)
     }
 }

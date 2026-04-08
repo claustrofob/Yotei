@@ -15,16 +15,13 @@ public struct YoteiAllDayMoreEventsDefaultView: View {
     public var body: some View {
         Text("+\(moreEventsCount)")
             .lineLimit(1)
-            .foregroundStyle(.primary.opacity(0.8))
+            .foregroundStyle(.secondary)
             .font(.system(.caption2))
             .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             .frame(height: 16)
             .frame(maxWidth: .infinity, alignment: .center)
-            .background {
-                RoundedRectangle(cornerSize: CGSize(width: 4, height: 4))
-                    .fill(.background.opacity(0.8))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+            .background(.tertiary)
+            .clipShape(.rect(cornerRadius: 6))
             .padding(EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
 }

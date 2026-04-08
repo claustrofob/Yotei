@@ -20,7 +20,7 @@ public struct YoteiDayEventsEventPlaceholderDefaultView: View {
         GeometryReader { proxy in
             let indicatorPadding: CGFloat = Constants.paddingCoefficient * proxy.size.width
             RoundedRectangle(cornerSize: .init(width: 4, height: 4))
-                .stroke(.blue, lineWidth: 2)
+                .stroke(.tint, lineWidth: 2)
                 .overlay(alignment: .topTrailing) {
                     dragIndicator()
                         .alignmentGuide(.top) { $0.height / 2 }
@@ -45,8 +45,8 @@ public struct YoteiDayEventsEventPlaceholderDefaultView: View {
 
     private func dragIndicator() -> some View {
         Circle()
-            .stroke(.blue.opacity(0.1), lineWidth: 2)
-            .background(Circle().foregroundColor(.blue))
+            // .stroke(.blue.opacity(0.1), lineWidth: 2)
+            .fill(.tint)
             .frame(width: 10, height: 10)
     }
 }
