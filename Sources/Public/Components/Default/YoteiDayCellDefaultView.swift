@@ -46,7 +46,7 @@ public struct YoteiDayCellDefaultView: View {
         if date.isInSameDay(as: todayDate) {
             (AnyShapeStyle(.tint), AnyShapeStyle(.background), false)
         } else if !isEnabled {
-            (AnyShapeStyle(.clear), AnyShapeStyle(.quaternary), false)
+            (AnyShapeStyle(.clear), AnyShapeStyle(.tertiary), false)
         } else if let focusedDate, date.isInSameDay(as: focusedDate) {
             (AnyShapeStyle(.tint.opacity(0.2)), AnyShapeStyle(.secondary), false)
         } else {

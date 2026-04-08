@@ -25,7 +25,7 @@ public struct YoteiDayEventsTimeSlotDefaultView: View {
                 .frame(width: 32, alignment: .trailing)
                 .foregroundStyle(.secondary)
             Rectangle()
-                .fill(.tertiary)
+                .fill(.quaternary)
                 .frame(maxWidth: .infinity)
                 .frame(height: 1)
         }

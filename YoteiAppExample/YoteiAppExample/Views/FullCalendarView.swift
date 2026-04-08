@@ -34,6 +34,7 @@ struct FullCalendarView: View {
                 weekView()
             }
         }
+        .fontDesign(.serif)
         .navigationTitle(
             Calendar.current.isDate(
                 viewModel.focusedDate,
