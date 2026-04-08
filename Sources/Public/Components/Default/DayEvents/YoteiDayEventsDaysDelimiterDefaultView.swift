@@ -10,7 +10,7 @@ public struct YoteiDayEventsDaysDelimiterDefaultView: View {
 
     public var body: some View {
         Rectangle()
-            .fill(.tertiary)
+            .fill(.quaternary)
             .frame(width: 1)
             .frame(maxHeight: .infinity)
     }
