@@ -41,7 +41,7 @@ public struct YoteiScheduleEventCellDefaultView: View {
         let dateInterval = event.dateInterval
 
         VStack(alignment: .leading, spacing: 4) {
-            let dateStyle = dateInterval.start.isInSameDay(as: dateInterval.end)
+            let dateStyle = dateInterval.start.isInSameDay(as: dateInterval.end, in: calendar)
                 ? timeIntervalShortFormatStyle
                 : timeIntervalLongFormatStyle
             Text(dateRange.formatted(dateStyle))

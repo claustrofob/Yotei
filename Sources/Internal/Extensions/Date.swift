@@ -15,7 +15,7 @@ extension Date {
     func isEqual(
         to date: Date,
         toGranularity component: Calendar.Component,
-        in calendar: Calendar = .current
+        in calendar: Calendar
     ) -> Bool {
         calendar.isDate(
             self,
@@ -26,11 +26,12 @@ extension Date {
 
     func isInSameDay(
         as date: Date,
-        in _: Calendar = .current
+        in calendar: Calendar
     ) -> Bool {
         isEqual(
             to: date,
-            toGranularity: .day
+            toGranularity: .day,
+            in: calendar
         )
     }
 

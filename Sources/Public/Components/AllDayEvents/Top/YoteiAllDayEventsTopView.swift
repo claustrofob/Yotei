@@ -128,12 +128,12 @@ private extension YoteiAllDayEventsTopView {
                     let eventDateInterval = event.displayableDateInterval()
                     if
                         processedEventIDs.contains(event.id) ||
-                        (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date))
+                        (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date, in: calendar))
                     {
                         continue
                     }
                     let dateInterval = DateInterval(start: date, end: eventDateInterval.end)
-                    let durationInDays = min(dateInterval.durationInDays + 1, numberOfDays - day)
+                    let durationInDays = min(dateInterval.durationInDays(in: calendar) + 1, numberOfDays - day)
                     data.append(.event(event: event, cols: durationInDays))
                     day += durationInDays
                     processedEventIDs.insert(event.id)

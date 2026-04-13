@@ -31,7 +31,7 @@ public struct YoteiDaysSequence: RandomAccessCollection {
         endIndex = DateInterval(
             start: startDate,
             end: calendar.startOfDay(for: interval.end)
-        ).durationInDays + 1
+        ).durationInDays(in: calendar) + 1
     }
 
     public init(

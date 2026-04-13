@@ -6,8 +6,8 @@
 import Foundation
 
 extension DateInterval {
-    var durationInDays: Int {
-        Calendar.current.dateComponents(
+    func durationInDays(in calendar: Calendar) -> Int {
+        calendar.dateComponents(
             [.day],
             from: start,
             to: end

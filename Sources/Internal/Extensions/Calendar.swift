@@ -10,7 +10,7 @@ import Foundation
 //  E.g. if week start on Monday it returns [2,3,4,5,6,7,1]
 extension Calendar {
     var weekdayIndices: [Int] {
-        let startIndex = Calendar.current.firstWeekday
+        let startIndex = firstWeekday
         return (startIndex ... 7).map(\.self) + (1 ..< startIndex).map(\.self)
     }
 }

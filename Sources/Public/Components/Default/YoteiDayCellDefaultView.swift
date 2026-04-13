@@ -16,6 +16,7 @@ public struct YoteiDayCellDefaultView: View {
     private let todayDate: Date
     private let focusedDate: Date?
     private let isEnabled: Bool
+    private let calendar: Calendar
     private let dayFormatStyle: Date.FormatStyle
 
     public init(
@@ -29,6 +30,7 @@ public struct YoteiDayCellDefaultView: View {
         self.todayDate = todayDate
         self.focusedDate = focusedDate
         self.isEnabled = isEnabled
+        self.calendar = calendar
         dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
     }
 
@@ -45,11 +47,11 @@ public struct YoteiDayCellDefaultView: View {
     }
 
     private func dayStyle(date: Date) -> CellStyle {
-        if date.isInSameDay(as: todayDate) {
+        if date.isInSameDay(as: todayDate, in: calendar) {
             (AnyShapeStyle(.tint), AnyShapeStyle(.background), false)
         } else if !isEnabled {
             (AnyShapeStyle(.clear), AnyShapeStyle(.tertiary), false)
-        } else if let focusedDate, date.isInSameDay(as: focusedDate) {
+        } else if let focusedDate, date.isInSameDay(as: focusedDate, in: calendar) {
             (AnyShapeStyle(.tint.opacity(0.2)), AnyShapeStyle(.secondary), false)
         } else {
             (AnyShapeStyle(.clear), AnyShapeStyle(.primary), true)

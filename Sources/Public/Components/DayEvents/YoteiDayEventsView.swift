@@ -133,7 +133,7 @@ private extension YoteiDayEventsView {
                 .frame(maxWidth: .infinity)
                 .overlay(alignment: .top) {
                     TimelineView(.everyMinute) { context in
-                        if date.isInSameDay(as: context.date) {
+                        if date.isInSameDay(as: context.date, in: calendar) {
                             timelineMarker(startOfDay: date, date: context.date)
                         }
                     }
