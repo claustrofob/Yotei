@@ -9,7 +9,7 @@ public struct YoteiWeekdayTitlesView: View {
     public init() {}
 
     public var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             ForEach(Calendar.current.weekdayIndices, id: \.self) { index in
                 Text("\(Calendar.current.veryShortStandaloneWeekdaySymbols[index - 1])")
                     .frame(maxWidth: .infinity)
