@@ -8,17 +8,21 @@ import SwiftUI
 struct ContentView: View {
     private enum Destination: Hashable {
         case fullCalendar
+        case datePicker
     }
 
     var body: some View {
         NavigationStack {
             List {
                 NavigationLink("Full calendar", value: Destination.fullCalendar)
+                NavigationLink("Date Picker", value: Destination.datePicker)
             }
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .fullCalendar:
                     FullCalendarView()
+                case .datePicker:
+                    DatePickerView()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

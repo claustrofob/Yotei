@@ -5,12 +5,12 @@
 
 import SwiftUI
 
-struct YoteiTimePicker: UIViewRepresentable {
+public struct YoteiTimePicker: UIViewRepresentable {
     @Binding private var date: Date
     private let minuteInterval: Int
     private let calendar: Calendar
 
-    init(
+    public init(
         date: Binding<Date>,
         minuteInterval: Int,
         calendar: Calendar = .current
@@ -20,7 +20,7 @@ struct YoteiTimePicker: UIViewRepresentable {
         self.calendar = calendar
     }
 
-    func makeUIView(context: Context) -> UIDatePicker {
+    public func makeUIView(context: Context) -> UIDatePicker {
         let view = UIDatePicker()
         view.preferredDatePickerStyle = .wheels
         view.datePickerMode = .time
@@ -36,19 +36,19 @@ struct YoteiTimePicker: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIDatePicker, context _: Context) {
+    public func updateUIView(_ uiView: UIDatePicker, context _: Context) {
         uiView.date = date
         uiView.minuteInterval = minuteInterval
         uiView.calendar = calendar
         uiView.timeZone = calendar.timeZone
     }
 
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(date: $date)
     }
 }
 
-extension YoteiTimePicker {
+public extension YoteiTimePicker {
     @MainActor
     class Coordinator: NSObject {
         @Binding private var date: Date

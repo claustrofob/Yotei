@@ -5,27 +5,30 @@
 
 import SwiftUI
 
-public struct YoteiDatePicker: View {
+public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View {
     private enum Constants {
-        static var weekHeight: CGFloat { 40 }
-        static var weekVPadding: CGFloat { 8 }
         static var maxNumberOfWeeks: CGFloat { 6 }
-        static var maxMonthHeight: CGFloat {
-            weekHeight * maxNumberOfWeeks + weekVPadding * (maxNumberOfWeeks - 1)
-        }
     }
 
     private let monthYearFormatStyle: Date.FormatStyle
     @Binding private var selectedDate: Date
     private let minDate: Date?
+    private let viewFactory: ViewFactory
+
     @State private var selectedPageDate: Date
     @State private var isMonthYearPickerExpanded = false
     private let calendar: Calendar
 
+    private var maxMonthHeight: CGFloat {
+        viewFactory.dayCellViewHeight() * Constants.maxNumberOfWeeks
+            + viewFactory.weekInteritemVerticalSpacing() * (Constants.maxNumberOfWeeks - 1)
+    }
+
     public init(
         selectedDate: Binding<Date>,
         minDate: Date? = nil,
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        viewFactory: ViewFactory = YoteiDatePickerFactory()
     ) {
         self.calendar = calendar
         _selectedDate = selectedDate
@@ -33,6 +36,7 @@ public struct YoteiDatePicker: View {
             of: .month,
             for: selectedDate.wrappedValue
         )!.start)
+        self.viewFactory = viewFactory
         self.minDate = minDate.flatMap {
             calendar.startOfDay(for: $0)
         }
@@ -47,9 +51,10 @@ public struct YoteiDatePicker: View {
                 monthYearButton()
                 Spacer()
                 if !isMonthYearPickerExpanded {
-                    leftRightButtons()
+                    backForwardButtons()
                 }
             }
+            .foregroundStyle(.primary)
             HStack {
                 if isMonthYearPickerExpanded {
                     YoteiMonthYearPicker(date: $selectedDate, calendar: calendar)
@@ -73,7 +78,7 @@ public struct YoteiDatePicker: View {
                     )
                 }
             }
-            .frame(height: Constants.maxMonthHeight, alignment: .center)
+            .frame(height: maxMonthHeight, alignment: .center)
         }
         .animation(.default, value: isMonthYearPickerExpanded)
         .onChange(of: selectedDate) { _ in
@@ -101,14 +106,13 @@ private extension YoteiDatePicker {
                 Text(selectedPageDate.formatted(monthYearFormatStyle).capitalizedFirstLetter)
                     .font(.system(.body))
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(.blue)
                     .rotationEffect(.degrees(isMonthYearPickerExpanded ? 90 : 0))
             }
         }
         .frame(height: 44)
     }
 
-    func leftRightButtons() -> some View {
+    func backForwardButtons() -> some View {
         HStack(spacing: 4) {
             Button(action: {
                 selectedPageDate = calendar.date(
@@ -118,7 +122,6 @@ private extension YoteiDatePicker {
                 )!
             }) {
                 Image(systemName: "chevron.left")
-                    .foregroundStyle(.blue)
             }
             .frame(width: 32, height: 44)
 
@@ -130,7 +133,6 @@ private extension YoteiDatePicker {
                 )!
             }) {
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(.blue)
             }
             .frame(width: 32, height: 44)
         }

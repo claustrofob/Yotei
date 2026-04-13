@@ -42,10 +42,10 @@ public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: Vi
                                 isEnabled: true
                             )
                         })
-                        .buttonStyle(.plain)
                     }
                 }
             }
+            .buttonStyle(.plain)
         }
     }
 }

@@ -122,7 +122,6 @@ private extension YoteiDayEventsView {
                             }) {
                                 viewFactory.eventView(event: event)
                             }
-                            .buttonStyle(.plain)
                             .eventuallyDateIntervalLayout(event.dateInterval)
                             .zIndex(event.start.timeIntervalSince1970)
                         }
@@ -142,6 +141,7 @@ private extension YoteiDayEventsView {
                 }
             }
         }
+        .buttonStyle(.plain)
     }
 
     func hoursGridView() -> some View {

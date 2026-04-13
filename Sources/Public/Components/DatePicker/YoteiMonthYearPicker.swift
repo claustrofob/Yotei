@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-struct YoteiMonthYearPicker: UIViewRepresentable {
+public struct YoteiMonthYearPicker: UIViewRepresentable {
     private enum Constants {
         // imitate infinite scrollable list of months (as Apple does in its )
         static var numberOfMonths: Int { 12000 }
@@ -20,7 +20,7 @@ struct YoteiMonthYearPicker: UIViewRepresentable {
         self.calendar = calendar
     }
 
-    func makeUIView(context: Context) -> UIPickerView {
+    public func makeUIView(context: Context) -> UIPickerView {
         let view = UIPickerView()
         view.dataSource = context.coordinator
         view.delegate = context.coordinator
@@ -29,11 +29,11 @@ struct YoteiMonthYearPicker: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIPickerView, context _: Context) {
+    public func updateUIView(_ uiView: UIPickerView, context _: Context) {
         selectCurrentDate(uiView: uiView, animated: true)
     }
 
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(date: $date, calendar: calendar)
     }
 
@@ -45,7 +45,7 @@ struct YoteiMonthYearPicker: UIViewRepresentable {
     }
 }
 
-extension YoteiMonthYearPicker {
+public extension YoteiMonthYearPicker {
     class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         @Binding private var date: Date
         private let calendar: Calendar
@@ -55,11 +55,11 @@ extension YoteiMonthYearPicker {
             self.calendar = calendar
         }
 
-        func numberOfComponents(in _: UIPickerView) -> Int {
+        public func numberOfComponents(in _: UIPickerView) -> Int {
             2
         }
 
-        func pickerView(
+        public func pickerView(
             _: UIPickerView,
             numberOfRowsInComponent component: Int
         ) -> Int {
@@ -70,7 +70,7 @@ extension YoteiMonthYearPicker {
             }
         }
 
-        func pickerView(
+        public func pickerView(
             _: UIPickerView,
             titleForRow row: Int,
             forComponent component: Int
@@ -82,7 +82,7 @@ extension YoteiMonthYearPicker {
             }
         }
 
-        func pickerView(_: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        public func pickerView(_: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
             var dateComponents = calendar.dateComponents(
                 [.year, .month, .day, .hour, .minute, .second],
                 from: date

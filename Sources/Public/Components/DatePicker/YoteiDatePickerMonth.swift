@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-struct YoteiDatePickerMonth: View {
+public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>: View {
     enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
     }
@@ -16,12 +16,14 @@ struct YoteiDatePickerMonth: View {
     private let monthInterval: DateInterval
     private let numberOfWeeks: Int
     private let calendar: Calendar
+    private let viewFactory: ViewFactory
 
-    init(
+    public init(
         selectedDate: Binding<Date>,
         dateInMonth: Date,
         minDate: Date? = nil,
-        calendar: Calendar
+        calendar: Calendar,
+        viewFactory: ViewFactory = YoteiDatePickerFactory()
     ) {
         _selectedDate = selectedDate
         self.calendar = calendar
@@ -42,16 +44,18 @@ struct YoteiDatePickerMonth: View {
             calendar: calendar
         )
         self.minDate = minDate
+        self.viewFactory = viewFactory
     }
 
-    var body: some View {
+    public var body: some View {
         let todayDate = Date.now
-        Grid(horizontalSpacing: 10, verticalSpacing: 8) {
+        Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
             ForEach(0 ..< numberOfWeeks, id: \.self) { row in
                 GridRow {
                     ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
                         let date = days[row * Constants.numberOfDaysPerWeek + col]
                         if monthInterval.contains(date), monthInterval.end != date {
+                            let isEnabled = minDate.flatMap { $0 <= date } ?? true
                             Button(action: {
                                 let selectedDateComponents = calendar.dateComponents(
                                     [.hour, .minute, .second],
@@ -65,13 +69,14 @@ struct YoteiDatePickerMonth: View {
                                 )!
                                 selectedDate = newDate
                             }, label: {
-                                YoteiDayCellDefaultView(
+                                viewFactory.dayCellView(
                                     date: date,
                                     todayDate: todayDate,
                                     focusedDate: selectedDate,
-                                    isEnabled: minDate.flatMap { $0 <= date } ?? true
+                                    isEnabled: isEnabled
                                 )
                             })
+                            .disabled(!isEnabled)
                         } else {
                             Color.clear.frame(height: 1)
                         }
@@ -79,6 +84,7 @@ struct YoteiDatePickerMonth: View {
                 }
             }
         }
+        .buttonStyle(.plain)
         .frame(maxHeight: .infinity, alignment: .center)
     }
 }

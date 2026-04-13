@@ -60,12 +60,12 @@ public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: V
                                     isEnabled: isEnabled
                                 )
                             })
-                            .buttonStyle(.plain)
                             .disabled(!isEnabled)
                         }
                     }
                 }
             }
+            .buttonStyle(.plain)
         }
     }
 }

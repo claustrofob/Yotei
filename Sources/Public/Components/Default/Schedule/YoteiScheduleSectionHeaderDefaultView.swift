@@ -6,7 +6,7 @@
 import SwiftUI
 
 public struct YoteiScheduleSectionHeaderDefaultView: View {
-    private static let dateFormatStyle = Date.FormatStyle()
+    private let dateFormatStyle = Date.FormatStyle()
         .month(.wide)
         .day()
         .weekday(.wide)
@@ -20,7 +20,7 @@ public struct YoteiScheduleSectionHeaderDefaultView: View {
     }
 
     public var body: some View {
-        Text(date.formatted(Self.dateFormatStyle))
+        Text(date.formatted(dateFormatStyle))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .padding(.leading, sectionInsets.left)
             .padding(.trailing, sectionInsets.right)
