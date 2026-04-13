@@ -12,6 +12,7 @@ public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>:
 
     @Binding private var selectedDate: Date
     private let minDate: Date?
+    private let maxDate: Date?
     private let days: YoteiDaysSequence
     private let monthInterval: DateInterval
     private let numberOfWeeks: Int
@@ -22,6 +23,7 @@ public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>:
         selectedDate: Binding<Date>,
         dateInMonth: Date,
         minDate: Date? = nil,
+        maxDate: Date? = nil,
         calendar: Calendar,
         viewFactory: ViewFactory = YoteiDatePickerFactory()
     ) {
@@ -43,7 +45,12 @@ public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>:
             days: numberOfWeeks * Constants.numberOfDaysPerWeek,
             calendar: calendar
         )
-        self.minDate = minDate
+        self.minDate = minDate.flatMap {
+            calendar.startOfDay(for: $0)
+        }
+        self.maxDate = maxDate.flatMap {
+            calendar.startOfDay(for: $0)
+        }
         self.viewFactory = viewFactory
     }
 
@@ -55,7 +62,8 @@ public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>:
                     ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
                         let date = days[row * Constants.numberOfDaysPerWeek + col]
                         if monthInterval.contains(date), monthInterval.end != date {
-                            let isEnabled = minDate.flatMap { $0 <= date } ?? true
+                            let isEnabled = (minDate.flatMap { $0 <= date } ?? true)
+                                && (maxDate.flatMap { $0 >= date } ?? true)
                             Button(action: {
                                 let selectedDateComponents = calendar.dateComponents(
                                     [.hour, .minute, .second],

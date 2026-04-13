@@ -12,6 +12,7 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
 
     @Binding private var selectedDate: Date
     private let minDate: Date?
+    private let maxDate: Date?
     private let viewFactory: ViewFactory
 
     @State private var selectedPageDate: Date
@@ -26,6 +27,7 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
     public init(
         selectedDate: Binding<Date>,
         minDate: Date? = nil,
+        maxDate: Date? = nil,
         calendar: Calendar = .current,
         viewFactory: ViewFactory = YoteiDatePickerFactory()
     ) {
@@ -36,9 +38,8 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
             for: selectedDate.wrappedValue
         )!.start)
         self.viewFactory = viewFactory
-        self.minDate = minDate.flatMap {
-            calendar.startOfDay(for: $0)
-        }
+        self.minDate = minDate
+        self.maxDate = maxDate
     }
 
     public var body: some View {
@@ -62,7 +63,9 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
                                 selectedDate: $selectedDate,
                                 dateInMonth: date,
                                 minDate: minDate,
-                                calendar: calendar
+                                maxDate: maxDate,
+                                calendar: calendar,
+                                viewFactory: viewFactory
                             )
                         },
                         previousDate: { date in
