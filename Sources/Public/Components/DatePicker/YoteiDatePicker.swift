@@ -10,7 +10,6 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
         static var maxNumberOfWeeks: CGFloat { 6 }
     }
 
-    private let monthYearFormatStyle: Date.FormatStyle
     @Binding private var selectedDate: Date
     private let minDate: Date?
     private let viewFactory: ViewFactory
@@ -40,9 +39,6 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
         self.minDate = minDate.flatMap {
             calendar.startOfDay(for: $0)
         }
-        monthYearFormatStyle = Date.FormatStyle(
-            calendar: calendar, timeZone: calendar.timeZone
-        ).month(.wide).year(.defaultDigits)
     }
 
     public var body: some View {
@@ -102,14 +98,8 @@ private extension YoteiDatePicker {
         Button(action: {
             isMonthYearPickerExpanded.toggle()
         }) {
-            HStack(spacing: 16) {
-                Text(selectedPageDate.formatted(monthYearFormatStyle).capitalizedFirstLetter)
-                    .font(.system(.body))
-                Image(systemName: "chevron.right")
-                    .rotationEffect(.degrees(isMonthYearPickerExpanded ? 90 : 0))
-            }
+            viewFactory.monthSelectorButtonView(date: selectedPageDate, isExpanded: isMonthYearPickerExpanded)
         }
-        .frame(height: 44)
     }
 
     func backForwardButtons() -> some View {
@@ -121,9 +111,8 @@ private extension YoteiDatePicker {
                     to: selectedPageDate
                 )!
             }) {
-                Image(systemName: "chevron.left")
+                viewFactory.monthBackButtonView()
             }
-            .frame(width: 32, height: 44)
 
             Button(action: {
                 selectedPageDate = calendar.date(
@@ -132,9 +121,8 @@ private extension YoteiDatePicker {
                     to: selectedPageDate
                 )!
             }) {
-                Image(systemName: "chevron.right")
+                viewFactory.monthForwardButtonView()
             }
-            .frame(width: 32, height: 44)
         }
     }
 }
