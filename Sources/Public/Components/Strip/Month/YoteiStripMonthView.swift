@@ -43,7 +43,7 @@ public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: V
         )
 
         TimelineView(.everyMinute) { context in
-            Grid(horizontalSpacing: 10, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
+            Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
                 ForEach(0 ..< numberOfWeeks, id: \.self) { row in
                     GridRow {
                         ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in

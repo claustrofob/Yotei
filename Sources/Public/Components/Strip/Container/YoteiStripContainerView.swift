@@ -14,10 +14,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         }
     }
 
-    private enum Constants {
-        static var weekStripHeight: CGFloat { 40 }
-    }
-
     private let calendarDateService = CalendarDateService()
 
     @State private var monthStripHeight: CGFloat = 0
@@ -31,7 +27,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     private let viewFactory: ViewFactory
 
     private var maxMonthStripHeight: CGFloat {
-        Constants.weekStripHeight * 6 + viewFactory.weekInteritemVerticalSpacing() * 5
+        viewFactory.dayCellViewHeight() * 6 + viewFactory.weekInteritemVerticalSpacing() * 5
     }
 
     public init(
@@ -99,7 +95,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDisabled(true)
-                .frame(height: isExpanded ? monthStripHeight : Constants.weekStripHeight, alignment: .top)
+                .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
                 .clipped()
                 .contentShape(Rectangle())
 
@@ -117,7 +113,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                     .frame(height: 3000)
                 }
             }
-            .frame(height: Constants.weekStripHeight + expandButtonHeight, alignment: .top)
+            .frame(height: viewFactory.dayCellViewHeight() + expandButtonHeight, alignment: .top)
         }
         .onAppear {
             generateSelectedWeekPageDate()
@@ -197,12 +193,12 @@ private extension YoteiStripContainerView {
             in: .month,
             for: focusedDate
         )!.count)
-        monthStripHeight = Constants.weekStripHeight * numberOfWeeks + viewFactory.weekInteritemVerticalSpacing() * (numberOfWeeks - 1)
+        monthStripHeight = viewFactory.dayCellViewHeight() * numberOfWeeks + viewFactory.weekInteritemVerticalSpacing() * (numberOfWeeks - 1)
     }
 
     func weekOffset() -> CGFloat {
         let week = focusedDate.weekOfMonth(in: .current)
-        return CGFloat(week) * (Constants.weekStripHeight + viewFactory.weekInteritemVerticalSpacing())
+        return CGFloat(week) * (viewFactory.dayCellViewHeight() + viewFactory.weekInteritemVerticalSpacing())
     }
 
     func expandStripButton() -> some View {

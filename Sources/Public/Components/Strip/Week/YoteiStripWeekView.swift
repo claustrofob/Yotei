@@ -29,7 +29,7 @@ public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: Vi
     public var body: some View {
         let weekDays = YoteiDaysSequence(startDate: startDate, days: 7)
         TimelineView(.everyMinute) { context in
-            Grid(horizontalSpacing: 10, verticalSpacing: 8) {
+            Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
                 GridRow {
                     ForEach(weekDays, id: \.self) { date in
                         Button(action: {

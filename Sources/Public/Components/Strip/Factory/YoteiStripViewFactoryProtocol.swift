@@ -18,6 +18,7 @@ public protocol YoteiStripViewFactoryProtocol {
         isEnabled: Bool
     ) -> DayCellView
 
+    func dayCellViewHeight() -> CGFloat
     func weekInteritemVerticalSpacing() -> CGFloat
 }
 
@@ -38,6 +39,10 @@ public extension YoteiStripViewFactoryProtocol {
             focusedDate: focusedDate,
             isEnabled: isEnabled
         )
+    }
+
+    func dayCellViewHeight() -> CGFloat {
+        40
     }
 
     func weekInteritemVerticalSpacing() -> CGFloat {
