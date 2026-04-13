@@ -34,7 +34,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
         delegate: YoteiDelegate?,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiDayEventsViewFactory()
     ) {
         startOfDay = startDate

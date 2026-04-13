@@ -12,7 +12,7 @@ public struct YoteiPagesDayView<Content: View>: View {
 
     public init(
         focusedDate: Binding<Date>,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
         _focusedDate = Binding(get: {

@@ -33,7 +33,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 
     public init(
         focusedDate: Binding<Date>,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiStripViewFactory()
     ) {
         _focusedDate = focusedDate
@@ -63,6 +63,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                                     YoteiStripMonthView(
                                         focusedDate: $focusedDate,
                                         date: date,
+                                        calendar: calendar,
                                         viewFactory: viewFactory
                                     )
                                     .frame(maxHeight: .infinity, alignment: .top)
@@ -75,6 +76,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                                     YoteiStripWeekView(
                                         focusedDate: $focusedDate,
                                         date: date,
+                                        calendar: calendar,
                                         viewFactory: viewFactory
                                     )
                                     .frame(maxHeight: .infinity, alignment: .top)

@@ -23,7 +23,7 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiAllDayEventsTopViewFactory()
     ) {
         _data = data

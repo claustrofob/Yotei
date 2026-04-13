@@ -8,7 +8,7 @@ import SwiftUI
 public struct YoteiWeekdayTitlesView: View {
     private let calendar: Calendar
 
-    public init(calendar: Calendar = .current) {
+    public init(calendar: Calendar) {
         self.calendar = calendar
     }
 

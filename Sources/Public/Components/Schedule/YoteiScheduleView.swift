@@ -23,7 +23,7 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiScheduleViewFactory()
     ) {
         _focusedDate = Binding(get: {

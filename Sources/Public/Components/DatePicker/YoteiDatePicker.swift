@@ -28,7 +28,7 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
         selectedDate: Binding<Date>,
         minDate: Date? = nil,
         maxDate: Date? = nil,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiDatePickerFactory()
     ) {
         self.calendar = calendar

@@ -16,7 +16,7 @@ public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: Vi
     public init(
         focusedDate: Binding<Date>,
         date: Date,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiStripViewFactory()
     ) {
         _focusedDate = focusedDate

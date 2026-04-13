@@ -13,7 +13,7 @@ public struct YoteiTimePicker: UIViewRepresentable {
     public init(
         date: Binding<Date>,
         minuteInterval: Int,
-        calendar: Calendar = .current
+        calendar: Calendar
     ) {
         _date = date
         self.minuteInterval = minuteInterval

@@ -13,7 +13,7 @@ public struct YoteiWeekdaysView<ViewFactory: YoteiWeekdayViewFactoryProtocol>: V
 
     public init(
         weekStartDate: Date,
-        calendar: Calendar = .current,
+        calendar: Calendar,
         viewFactory: ViewFactory = YoteiWeekdayViewFactory()
     ) {
         self.weekStartDate = weekStartDate
