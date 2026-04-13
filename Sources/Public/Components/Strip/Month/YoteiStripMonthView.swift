@@ -10,44 +10,48 @@ public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: V
         static var numberOfDaysPerWeek: Int { 7 }
     }
 
-    private let startDate: Date
     private let monthInterval: DateInterval
     private let numberOfWeeks: Int
+    private let daysSequence: YoteiDaysSequence
 
     @Binding private var focusedDate: Date
+    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
     public init(
         focusedDate: Binding<Date>,
         date: Date,
+        calendar: Calendar = .current,
         viewFactory: ViewFactory = YoteiStripViewFactory()
     ) {
         _focusedDate = focusedDate
+        self.calendar = calendar
         self.viewFactory = viewFactory
-        monthInterval = Calendar.current.dateInterval(of: .month, for: date)!
-        numberOfWeeks = Calendar.current.range(
+        monthInterval = calendar.dateInterval(of: .month, for: date)!
+        numberOfWeeks = calendar.range(
             of: .weekOfMonth,
             in: .month,
             for: date
         )!.count
-        startDate = Calendar.current.dateInterval(
+
+        let startDate = calendar.dateInterval(
             of: .weekOfMonth,
             for: monthInterval.start
         )!.start
+        daysSequence = YoteiDaysSequence(
+            startDate: startDate,
+            days: numberOfWeeks * Constants.numberOfDaysPerWeek,
+            calendar: calendar
+        )
     }
 
     public var body: some View {
-        let monthDays = YoteiDaysSequence(
-            startDate: startDate,
-            days: numberOfWeeks * Constants.numberOfDaysPerWeek
-        )
-
         TimelineView(.everyMinute) { context in
             Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
                 ForEach(0 ..< numberOfWeeks, id: \.self) { row in
                     GridRow {
                         ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                            let date = monthDays[row * Constants.numberOfDaysPerWeek + col]
+                            let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
                             // monthInterval.end equals the start date of the next day
                             let isEnabled = monthInterval.contains(date) && monthInterval.end != date
                             Button(action: {
@@ -57,7 +61,8 @@ public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: V
                                     date: date,
                                     todayDate: context.date,
                                     focusedDate: focusedDate,
-                                    isEnabled: isEnabled
+                                    isEnabled: isEnabled,
+                                    calendar: calendar
                                 )
                             })
                             .disabled(!isEnabled)

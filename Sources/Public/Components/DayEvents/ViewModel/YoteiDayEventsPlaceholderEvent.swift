@@ -8,6 +8,7 @@ import UIKit
 
 struct YoteiDayEventsPlaceholderEvent {
     let dateInterval: DateInterval
+    let calendar: Calendar
 
     func frame(
         hourSlotHeight: CGFloat,
@@ -18,10 +19,10 @@ struct YoteiDayEventsPlaceholderEvent {
         let endDate = dateInterval.end
 
         let pointsPerSecond = hourSlotHeight / 3600
-        let startOfDay = Calendar.current.startOfDay(for: startDate)
+        let startOfDay = calendar.startOfDay(for: startDate)
         let originY = max(startDate.timeIntervalSince(startOfDay), 0) * pointsPerSecond
         let height = endDate.timeIntervalSince(startDate) * pointsPerSecond
-        let dayIndex = Calendar.current.dateComponents([.day], from: initialDate, to: startDate).day!
+        let dayIndex = calendar.dateComponents([.day], from: initialDate, to: startDate).day!
         let originX = CGFloat(dayIndex) * daySlotWidth
 
         return CGRect(

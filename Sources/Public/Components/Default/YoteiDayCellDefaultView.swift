@@ -16,22 +16,24 @@ public struct YoteiDayCellDefaultView: View {
     private let todayDate: Date
     private let focusedDate: Date?
     private let isEnabled: Bool
+    private let dayFormatStyle: Date.FormatStyle
 
     public init(
         date: Date,
         todayDate: Date,
         focusedDate: Date? = nil,
-        isEnabled: Bool = true
+        isEnabled: Bool = true,
+        calendar: Calendar
     ) {
         self.date = date
         self.todayDate = todayDate
         self.focusedDate = focusedDate
         self.isEnabled = isEnabled
+        dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
     }
 
     public var body: some View {
         let style = dayStyle(date: date)
-        let dayFormatStyle = Date.FormatStyle(calendar: Calendar.current, timeZone: Calendar.current.timeZone).day()
         Text(date.formatted(dayFormatStyle))
             .font(.system(.subheadline))
             .foregroundStyle(style.foregroundColor)

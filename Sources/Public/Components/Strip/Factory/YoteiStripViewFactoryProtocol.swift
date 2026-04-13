@@ -15,7 +15,8 @@ public protocol YoteiStripViewFactoryProtocol {
         date: Date,
         todayDate: Date,
         focusedDate: Date?,
-        isEnabled: Bool
+        isEnabled: Bool,
+        calendar: Calendar
     ) -> DayCellView
 
     func dayCellViewHeight() -> CGFloat
@@ -31,13 +32,15 @@ public extension YoteiStripViewFactoryProtocol {
         date: Date,
         todayDate: Date,
         focusedDate: Date?,
-        isEnabled: Bool
+        isEnabled: Bool,
+        calendar: Calendar
     ) -> some View {
         YoteiDayCellDefaultView(
             date: date,
             todayDate: todayDate,
             focusedDate: focusedDate,
-            isEnabled: isEnabled
+            isEnabled: isEnabled,
+            calendar: calendar
         )
     }
 

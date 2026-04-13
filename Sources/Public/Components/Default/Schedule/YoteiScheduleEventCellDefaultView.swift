@@ -24,14 +24,20 @@ public struct YoteiScheduleEventCellDefaultView: View {
 
     private let cellDate: Date
     private let event: YoteiEvent
+    private let calendar: Calendar
 
-    public init(cellDate: Date, event: YoteiEvent) {
+    public init(
+        cellDate: Date,
+        event: YoteiEvent,
+        calendar: Calendar
+    ) {
         self.cellDate = cellDate
         self.event = event
+        self.calendar = calendar
     }
 
     public var body: some View {
-        let isPast = event.end < nowDate || (cellDate < Calendar.current.startOfDay(for: nowDate))
+        let isPast = event.end < nowDate || (cellDate < calendar.startOfDay(for: nowDate))
         let dateInterval = event.dateInterval
 
         VStack(alignment: .leading, spacing: 4) {

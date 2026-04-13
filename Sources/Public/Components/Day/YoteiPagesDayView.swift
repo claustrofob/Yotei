@@ -7,17 +7,20 @@ import SwiftUI
 
 public struct YoteiPagesDayView<Content: View>: View {
     @Binding private var focusedDate: Date
+    private let calendar: Calendar
     @ViewBuilder private let content: (Date) -> Content
 
     public init(
         focusedDate: Binding<Date>,
+        calendar: Calendar = .current,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
         _focusedDate = Binding(get: {
-            Calendar.current.startOfDay(for: focusedDate.wrappedValue)
+            calendar.startOfDay(for: focusedDate.wrappedValue)
         }, set: {
             focusedDate.wrappedValue = $0
         })
+        self.calendar = calendar
         self.content = content
     }
 
@@ -32,10 +35,10 @@ public struct YoteiPagesDayView<Content: View>: View {
                     .toolbar(.visible, for: .navigationBar)
             },
             previousDate: { date in
-                Calendar.current.date(byAdding: .day, value: -1, to: date)!
+                calendar.date(byAdding: .day, value: -1, to: date)!
             },
             nextDate: { date in
-                Calendar.current.date(byAdding: .day, value: 1, to: date)!
+                calendar.date(byAdding: .day, value: 1, to: date)!
             }
         )
         .ignoresSafeArea()

@@ -13,6 +13,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     private var focusedDate: Date?
 
     private let focusedDateUpdate: (Date) -> Void
+    private let calendar: Calendar
     private let viewFactory: ViewFactory
     private weak var calendarDelegate: YoteiDelegate?
     private var items: [YoteiScheduleViewModel] = []
@@ -29,10 +30,12 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     >()
 
     init(
+        calendar: Calendar,
         viewFactory: ViewFactory,
         delegate: YoteiDelegate?,
         focusedDateUpdate: @escaping (Date) -> Void
     ) {
+        self.calendar = calendar
         self.viewFactory = viewFactory
         calendarDelegate = delegate
         self.focusedDateUpdate = focusedDateUpdate
@@ -59,16 +62,24 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
 
         let eventCellRegistration = UICollectionView.CellRegistration<
             UICollectionViewCell, (Date, YoteiEvent)
-        > { [viewFactory] cell, _, event in
+        > { [viewFactory, calendar] cell, _, event in
             cell.contentConfiguration = UIHostingConfiguration {
-                viewFactory.eventCellView(date: event.0, event: event.1)
+                viewFactory.eventCellView(
+                    date: event.0,
+                    event: event.1,
+                    calendar: calendar
+                )
             }.margins(.all, 0)
         }
         let allDayEventCellRegistration = UICollectionView.CellRegistration<
             UICollectionViewCell, (Date, YoteiEvent)
-        > { [viewFactory] cell, _, event in
+        > { [viewFactory, calendar] cell, _, event in
             cell.contentConfiguration = UIHostingConfiguration {
-                viewFactory.allDayEventCellView(date: event.0, event: event.1)
+                viewFactory.allDayEventCellView(
+                    date: event.0,
+                    event: event.1,
+                    calendar: calendar
+                )
             }.margins(.all, 0)
         }
         let emptyCellRegistration = UICollectionView.CellRegistration<

@@ -14,7 +14,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         }
     }
 
-    private let calendarDateService = CalendarDateService()
+    private let calendarDateService: CalendarDateService
 
     @State private var monthStripHeight: CGFloat = 0
     @State private var expandDragStarted = false
@@ -24,6 +24,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     @State private var expandButtonHeight: CGFloat = 0
 
     @Binding private var focusedDate: Date
+    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
     private var maxMonthStripHeight: CGFloat {
@@ -32,15 +33,18 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 
     public init(
         focusedDate: Binding<Date>,
+        calendar: Calendar = .current,
         viewFactory: ViewFactory = YoteiStripViewFactory()
     ) {
         _focusedDate = focusedDate
+        self.calendar = calendar
+        calendarDateService = CalendarDateService(calendar: calendar)
         self.viewFactory = viewFactory
-        selectedWeekPageDate = Calendar.current.dateInterval(
+        selectedWeekPageDate = calendar.dateInterval(
             of: .weekOfMonth,
             for: focusedDate.wrappedValue
         )!.start
-        selectedMonthPageDate = Calendar.current.dateInterval(
+        selectedMonthPageDate = calendar.dateInterval(
             of: .month,
             for: focusedDate.wrappedValue
         )!.start
@@ -171,14 +175,14 @@ private extension YoteiStripContainerView {
                     .toolbar(.visible, for: .navigationBar)
             },
             previousDate: { date in
-                Calendar.current.date(
+                calendar.date(
                     byAdding: component,
                     value: -1,
                     to: date
                 )!
             },
             nextDate: { date in
-                Calendar.current.date(
+                calendar.date(
                     byAdding: component,
                     value: 1,
                     to: date
@@ -188,7 +192,7 @@ private extension YoteiStripContainerView {
     }
 
     func calculateMonthStripHeight() {
-        let numberOfWeeks = CGFloat(Calendar.current.range(
+        let numberOfWeeks = CGFloat(calendar.range(
             of: .weekOfMonth,
             in: .month,
             for: focusedDate
@@ -197,7 +201,7 @@ private extension YoteiStripContainerView {
     }
 
     func weekOffset() -> CGFloat {
-        let week = focusedDate.weekOfMonth(in: .current)
+        let week = focusedDate.weekOfMonth(in: calendar)
         return CGFloat(week) * (viewFactory.dayCellViewHeight() + viewFactory.weekInteritemVerticalSpacing())
     }
 
@@ -218,7 +222,7 @@ private extension YoteiStripContainerView {
     }
 
     func generateSelectedWeekPageDate() {
-        let startDate = Calendar.current.dateInterval(
+        let startDate = calendar.dateInterval(
             of: .weekOfMonth,
             for: focusedDate
         )!.start
@@ -230,7 +234,7 @@ private extension YoteiStripContainerView {
     }
 
     func generateSelectedMonthPageDate() {
-        let startDate = Calendar.current.dateInterval(
+        let startDate = calendar.dateInterval(
             of: .month,
             for: focusedDate
         )!.start

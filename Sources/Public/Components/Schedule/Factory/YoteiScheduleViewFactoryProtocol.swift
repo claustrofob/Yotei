@@ -8,10 +8,18 @@ import SwiftUI
 @MainActor
 public protocol YoteiScheduleViewFactoryProtocol {
     associatedtype EventCellView: View
-    func eventCellView(date: Date, event: YoteiEvent) -> EventCellView
+    func eventCellView(
+        date: Date,
+        event: YoteiEvent,
+        calendar: Calendar
+    ) -> EventCellView
 
     associatedtype AllDayEventCellView: View
-    func allDayEventCellView(date: Date, event: YoteiEvent) -> AllDayEventCellView
+    func allDayEventCellView(
+        date: Date,
+        event: YoteiEvent,
+        calendar: Calendar
+    ) -> AllDayEventCellView
 
     associatedtype EmptyCellView: View
     func emptyCellView(date: Date) -> EmptyCellView
@@ -32,12 +40,28 @@ public protocol YoteiScheduleViewFactoryProtocol {
 }
 
 public extension YoteiScheduleViewFactoryProtocol {
-    func eventCellView(date: Date, event: YoteiEvent) -> some View {
-        YoteiScheduleEventCellDefaultView(cellDate: date, event: event)
+    func eventCellView(
+        date: Date,
+        event: YoteiEvent,
+        calendar: Calendar
+    ) -> some View {
+        YoteiScheduleEventCellDefaultView(
+            cellDate: date,
+            event: event,
+            calendar: calendar
+        )
     }
 
-    func allDayEventCellView(date: Date, event: YoteiEvent) -> some View {
-        YoteiScheduleAllDayEventCellDefaultView(cellDate: date, event: event)
+    func allDayEventCellView(
+        date: Date,
+        event: YoteiEvent,
+        calendar: Calendar
+    ) -> some View {
+        YoteiScheduleAllDayEventCellDefaultView(
+            cellDate: date,
+            event: event,
+            calendar: calendar
+        )
     }
 
     func emptyCellView(date _: Date) -> some View {

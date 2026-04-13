@@ -14,6 +14,7 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
     @Binding private var focusedDate: Date
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
+    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
     @State private var viewData: YoteiScheduleViewData?
@@ -22,15 +23,17 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?,
+        calendar: Calendar = .current,
         viewFactory: ViewFactory = YoteiScheduleViewFactory()
     ) {
         _focusedDate = Binding(get: {
-            Calendar.current.startOfDay(for: focusedDate.wrappedValue)
+            calendar.startOfDay(for: focusedDate.wrappedValue)
         }, set: {
             focusedDate.wrappedValue = $0
         })
         _data = data
         self.delegate = delegate
+        self.calendar = calendar
         self.viewFactory = viewFactory
     }
 
@@ -39,6 +42,7 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
             YoteiScheduleCollectionView(
                 data: viewData,
                 delegate: delegate,
+                calendar: calendar,
                 viewFactory: viewFactory
             ) {
                 viewData?.focusedDate = $0
@@ -75,7 +79,7 @@ private extension YoteiScheduleView {
             return
         }
 
-        let data = YoteiDaysSequence(interval: dateInterval).map { date in
+        let data = YoteiDaysSequence(interval: dateInterval, calendar: calendar).map { date in
             let items: [YoteiScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
                 [.init(date: date, kind: .loading)]
             } else if let events = data.events[date], !events.isEmpty {

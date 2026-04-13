@@ -12,6 +12,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
     @Binding private var data: YoteiEventsInterval
     @Binding private var contentOffset: CGPoint?
     private weak var delegate: YoteiDelegate?
+    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
     private let dateSequence: YoteiDaysSequence
@@ -33,6 +34,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
         delegate: YoteiDelegate?,
+        calendar: Calendar = .current,
         viewFactory: ViewFactory = YoteiDayEventsViewFactory()
     ) {
         startOfDay = startDate
@@ -40,8 +42,9 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
         _data = data
         _contentOffset = contentOffset
         self.delegate = delegate
+        self.calendar = calendar
         self.viewFactory = viewFactory
-        dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
+        dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays, calendar: calendar)
     }
 
     public var body: some View {
@@ -174,7 +177,7 @@ private extension YoteiDayEventsView {
 
     func calculateInitialContentOffset(currentDate: Date, scrollViewHeight: CGFloat) -> CGPoint {
         let pointsPerMinute = hourSlotHeight / 60
-        let startOfDay = Calendar.current.startOfDay(for: currentDate)
+        let startOfDay = calendar.startOfDay(for: currentDate)
         let minutesFromMidnight = currentDate.timeIntervalSince(startOfDay) / 60
         let currentDateOffsetY = minutesFromMidnight * pointsPerMinute
         let scrollViewInsets = viewFactory.insetsForScrollView()
@@ -190,7 +193,7 @@ private extension YoteiDayEventsView {
         startTimeInterval: TimeInterval,
         duration: TimeInterval
     ) {
-        guard let date = Calendar.current.date(byAdding: .day, value: dayIndex, to: startOfDay) else {
+        guard let date = calendar.date(byAdding: .day, value: dayIndex, to: startOfDay) else {
             return
         }
         let startTimestamp = date.timeIntervalSince1970 + startTimeInterval
@@ -199,7 +202,7 @@ private extension YoteiDayEventsView {
             start: Date(timeIntervalSince1970: startTimestamp),
             end: Date(timeIntervalSince1970: endTimestamp)
         )
-        placeholderEvent = YoteiDayEventsPlaceholderEvent(dateInterval: dateInterval)
+        placeholderEvent = YoteiDayEventsPlaceholderEvent(dateInterval: dateInterval, calendar: calendar)
         delegate?.calendarDidSelect(dateInterval: dateInterval)
     }
 }

@@ -6,9 +6,11 @@
 import Foundation
 
 struct CalendarDateService {
-    private let calendar = Calendar.current
+    private let calendar: Calendar
 
-    init() {}
+    init(calendar: Calendar) {
+        self.calendar = calendar
+    }
 }
 
 extension CalendarDateService {

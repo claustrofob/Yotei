@@ -10,9 +10,10 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
+    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
-    private let dateSequence: YoteiDaysSequence
+    private let daysSequence: YoteiDaysSequence
 
     @State private var otherEventsCount: [Date: Int] = [:]
     @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
@@ -22,13 +23,15 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?,
+        calendar: Calendar = .current,
         viewFactory: ViewFactory = YoteiAllDayEventsTopViewFactory()
     ) {
         _data = data
         self.numberOfDays = numberOfDays
         self.delegate = delegate
+        self.calendar = calendar
         self.viewFactory = viewFactory
-        dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays)
+        daysSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays, calendar: calendar)
     }
 
     public var body: some View {
@@ -43,7 +46,7 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         }
         .frame(maxWidth: .infinity)
         .onChange(of: data, initial: true, isAsync: true) {
-            let events = dateSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
+            let events = daysSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
                 guard let events = data.events[date]?.filter(\.isAllDay), !events.isEmpty else {
                     return
                 }
@@ -76,7 +79,7 @@ private extension YoteiAllDayEventsTopView {
             }
 
             GridRow {
-                ForEach(dateSequence, id: \.self) { date in
+                ForEach(daysSequence, id: \.self) { date in
                     if let count = otherEventsCount[date], count > 0 {
                         viewFactory.moreEventsView(count: count)
                     } else {
@@ -89,7 +92,7 @@ private extension YoteiAllDayEventsTopView {
 
     func dayButtonsView() -> some View {
         HStack(spacing: 0) {
-            ForEach(dateSequence, id: \.self) { date in
+            ForEach(daysSequence, id: \.self) { date in
                 Button(action: {
                     delegate?.calendarDidSelectAllDay(date: date)
                 }) {
@@ -117,7 +120,7 @@ private extension YoteiAllDayEventsTopView {
             var day = 0
             var data = [YoteiAllDayEventsTopViewModel]()
             while day < numberOfDays {
-                let date = dateSequence[day]
+                let date = daysSequence[day]
                 if
                     !events[date, default: []].isEmpty,
                     let event = events[date]?.removeFirst()

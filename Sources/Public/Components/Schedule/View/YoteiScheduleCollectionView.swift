@@ -9,11 +9,13 @@ import UIKit
 struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UIViewRepresentable {
     let data: YoteiScheduleViewData?
     let delegate: YoteiDelegate?
+    let calendar: Calendar
     let viewFactory: ViewFactory
     let focusedDateUpdate: (Date) -> Void
 
     func makeUIView(context _: Context) -> YoteiScheduleUICollectionView<ViewFactory> {
         YoteiScheduleUICollectionView(
+            calendar: calendar,
             viewFactory: viewFactory,
             delegate: delegate,
             focusedDateUpdate: focusedDateUpdate

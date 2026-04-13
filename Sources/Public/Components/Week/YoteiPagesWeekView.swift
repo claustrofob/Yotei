@@ -7,22 +7,26 @@ import SwiftUI
 
 public struct YoteiPagesWeekView<Content: View>: View {
     @Binding private var focusedDate: Date
+    private let calendar: Calendar
     @ViewBuilder private let content: (Date) -> Content
 
-    private let calendarDateService = CalendarDateService()
+    private let calendarDateService: CalendarDateService
     @State private var selectedPageDate: Date
 
     public init(
         focusedDate: Binding<Date>,
+        calendar: Calendar = .current,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
         _focusedDate = Binding(get: {
-            Calendar.current.startOfDay(for: focusedDate.wrappedValue)
+            calendar.startOfDay(for: focusedDate.wrappedValue)
         }, set: {
             focusedDate.wrappedValue = $0
         })
+        self.calendar = calendar
+        calendarDateService = CalendarDateService(calendar: calendar)
         self.content = content
-        selectedPageDate = Calendar.current.dateInterval(
+        selectedPageDate = calendar.dateInterval(
             of: .weekOfMonth,
             for: focusedDate.wrappedValue
         )!.start
@@ -39,10 +43,10 @@ public struct YoteiPagesWeekView<Content: View>: View {
                     .toolbar(.visible, for: .navigationBar)
             },
             previousDate: { date in
-                Calendar.current.date(byAdding: .weekOfMonth, value: -1, to: date)!
+                calendar.date(byAdding: .weekOfMonth, value: -1, to: date)!
             },
             nextDate: { date in
-                Calendar.current.date(byAdding: .weekOfMonth, value: 1, to: date)!
+                calendar.date(byAdding: .weekOfMonth, value: 1, to: date)!
             }
         )
         .ignoresSafeArea()
@@ -50,7 +54,7 @@ public struct YoteiPagesWeekView<Content: View>: View {
             focusedDate = calendarDateService.weekFocusedDate(for: value, currentFocusedDate: focusedDate)
         }
         .onChange(of: focusedDate) { value in
-            let startDate = Calendar.current.dateInterval(
+            let startDate = calendar.dateInterval(
                 of: .weekOfMonth,
                 for: value
             )!.start

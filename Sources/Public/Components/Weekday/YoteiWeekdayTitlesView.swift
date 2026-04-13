@@ -6,12 +6,16 @@
 import SwiftUI
 
 public struct YoteiWeekdayTitlesView: View {
-    public init() {}
+    private let calendar: Calendar
+
+    public init(calendar: Calendar = .current) {
+        self.calendar = calendar
+    }
 
     public var body: some View {
         HStack(spacing: 0) {
-            ForEach(Calendar.current.weekdayIndices, id: \.self) { index in
-                Text("\(Calendar.current.veryShortStandaloneWeekdaySymbols[index - 1])")
+            ForEach(calendar.weekdayIndices, id: \.self) { index in
+                Text("\(calendar.veryShortStandaloneWeekdaySymbols[index - 1])")
                     .frame(maxWidth: .infinity)
                     .font(.system(.caption))
                     .foregroundStyle(.secondary)
