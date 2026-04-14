@@ -104,7 +104,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
                 for: indexPath.section
             ) ?? Date()
             cell.contentConfiguration = UIHostingConfiguration {
-                viewFactory.dayHeaderView(date: date)
+                viewFactory.dayHeaderView(date: date, calendar: calendar)
             }.margins(.all, 0)
         }
 

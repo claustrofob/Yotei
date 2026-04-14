@@ -6,11 +6,6 @@
 import SwiftUI
 
 public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: View {
-    private let dateFormatStyle = Date.FormatStyle()
-        .month(.wide)
-        .day()
-        .weekday(.wide)
-
     @Binding private var focusedDate: Date
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?

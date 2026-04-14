@@ -20,7 +20,11 @@ public protocol YoteiDatePickerFactoryProtocol {
     func weekInteritemVerticalSpacing() -> CGFloat
 
     associatedtype MonthSelectorButtonView: View
-    func monthSelectorButtonView(date: Date, isExpanded: Bool) -> MonthSelectorButtonView
+    func monthSelectorButtonView(
+        date: Date,
+        isExpanded: Bool,
+        calendar: Calendar
+    ) -> MonthSelectorButtonView
 
     associatedtype MonthBackButtonView: View
     func monthBackButtonView() -> MonthBackButtonView
@@ -54,8 +58,16 @@ public extension YoteiDatePickerFactoryProtocol {
         8
     }
 
-    func monthSelectorButtonView(date: Date, isExpanded: Bool) -> some View {
-        YoteiMonthSelectorButtonDefaultView(date: date, isExpanded: isExpanded)
+    func monthSelectorButtonView(
+        date: Date,
+        isExpanded: Bool,
+        calendar: Calendar
+    ) -> some View {
+        YoteiMonthSelectorButtonDefaultView(
+            date: date,
+            isExpanded: isExpanded,
+            calendar: calendar
+        )
     }
 
     func monthBackButtonView() -> some View {

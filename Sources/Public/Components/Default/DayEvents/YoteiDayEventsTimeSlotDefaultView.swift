@@ -6,18 +6,20 @@
 import SwiftUI
 
 public struct YoteiDayEventsTimeSlotDefaultView: View {
-    private let timeFormatStyle = Date.FormatStyle()
-        .hour(.twoDigits(amPM: .omitted))
-        .minute(.twoDigits)
-        .locale(Locale.time24Hour)
-
     private let date: Date
+    private let calendar: Calendar
 
-    public init(date: Date) {
+    public init(date: Date, calendar: Calendar) {
         self.date = date
+        self.calendar = calendar
     }
 
     public var body: some View {
+        let timeFormatStyle = Date.FormatStyle(calendar: calendar)
+            .hour(.twoDigits(amPM: .omitted))
+            .minute(.twoDigits)
+            .locale(Locale.time24Hour)
+
         HStack(spacing: 6) {
             Text(date.formatted(timeFormatStyle))
                 .font(.system(.caption))

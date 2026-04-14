@@ -161,7 +161,7 @@ private extension YoteiDayEventsView {
     func timeSlotView(index: Int) -> some View {
         let x = TimeInterval(3600 * Double(index))
         let date = startOfDay.addingTimeInterval(x)
-        viewFactory.timeSlotView(date: date)
+        viewFactory.timeSlotView(date: date, calendar: calendar)
             .frame(height: 0)
     }
 

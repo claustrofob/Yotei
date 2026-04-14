@@ -12,16 +12,6 @@ public struct YoteiScheduleEventCellDefaultView: View {
         event.dateInterval.start ..< event.dateInterval.end
     }
 
-    private let timeIntervalShortFormatStyle = Date.IntervalFormatStyle()
-        .hour(.twoDigits(amPM: .omitted))
-        .minute()
-
-    private let timeIntervalLongFormatStyle = Date.IntervalFormatStyle()
-        .day()
-        .month(.abbreviated)
-        .hour(.twoDigits(amPM: .omitted))
-        .minute()
-
     private let cellDate: Date
     private let event: YoteiEvent
     private let calendar: Calendar
@@ -42,8 +32,15 @@ public struct YoteiScheduleEventCellDefaultView: View {
 
         VStack(alignment: .leading, spacing: 4) {
             let dateStyle = dateInterval.start.isInSameDay(as: dateInterval.end, in: calendar)
-                ? timeIntervalShortFormatStyle
-                : timeIntervalLongFormatStyle
+                ? Date.IntervalFormatStyle()
+                .hour(.twoDigits(amPM: .omitted))
+                .minute()
+                : Date.IntervalFormatStyle()
+                .day()
+                .month(.abbreviated)
+                .hour(.twoDigits(amPM: .omitted))
+                .minute()
+
             Text(dateRange.formatted(dateStyle))
                 .font(.system(.caption2))
             Text(event.title)

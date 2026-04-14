@@ -17,7 +17,6 @@ public struct YoteiDayCellDefaultView: View {
     private let focusedDate: Date?
     private let isEnabled: Bool
     private let calendar: Calendar
-    private let dayFormatStyle: Date.FormatStyle
 
     public init(
         date: Date,
@@ -31,11 +30,11 @@ public struct YoteiDayCellDefaultView: View {
         self.focusedDate = focusedDate
         self.isEnabled = isEnabled
         self.calendar = calendar
-        dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
     }
 
     public var body: some View {
         let style = dayStyle(date: date)
+        let dayFormatStyle = Date.FormatStyle(calendar: calendar).day()
         Text(date.formatted(dayFormatStyle))
             .font(.system(.subheadline))
             .foregroundStyle(style.foregroundColor)

@@ -28,7 +28,7 @@ public protocol YoteiScheduleViewFactoryProtocol {
     func loadingCellView(date: Date) -> LoadingCellView
 
     associatedtype DayHeaderView: View
-    func dayHeaderView(date: Date) -> DayHeaderView
+    func dayHeaderView(date: Date, calendar: Calendar) -> DayHeaderView
 
     func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize
     func emptyViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
@@ -72,8 +72,12 @@ public extension YoteiScheduleViewFactoryProtocol {
         YoteiScheduleLoadingCellDefaultView()
     }
 
-    func dayHeaderView(date: Date) -> some View {
-        YoteiScheduleSectionHeaderDefaultView(date: date, sectionInsets: insetsForSection())
+    func dayHeaderView(date: Date, calendar: Calendar) -> some View {
+        YoteiScheduleSectionHeaderDefaultView(
+            date: date,
+            sectionInsets: insetsForSection(),
+            calendar: calendar
+        )
     }
 
     func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize {
