@@ -13,7 +13,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/claustrofob/Eventually.git", branch: "main"),
+        .package(url: "https://github.com/claustrofob/Eventually.git", branch: "1.0.1"),
     ],
     targets: [
         .target(

@@ -7,7 +7,6 @@ import SwiftUI
 
 public struct YoteiScheduleEventCellDefaultView: View {
     private let nowDate = Date.now
-
     private var dateRange: Range<Date> {
         event.dateInterval.start ..< event.dateInterval.end
     }

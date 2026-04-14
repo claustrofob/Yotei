@@ -1,13 +1,13 @@
 {
-  "originHash" : "478d79c0cfc5c9c816e7f9237b5143f7a0b72fba205fc979ff0687b690a6fe25",
+  "originHash" : "11c1dccdb5da32b09faae16ff5a757258a396b1f5c4f5fcacb37bb8f5027b2d9",
   "pins" : [
     {
       "identity" : "eventually",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/claustrofob/Eventually.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "2aa3925a67cf68cf80dfc66634403c2a949c77b0"
+        "branch" : "1.0.1",
+        "revision" : "2bd6f9453c7edadc64f5206254f82a20dc90ce71"
       }
     }
   ],
