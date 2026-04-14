@@ -51,31 +51,38 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
         GeometryReader { proxy in
             ScrollView(.vertical) {
                 ZStack {
-                    hoursGridView()
-                    eventsLayoutView()
-                        .overlay(alignment: .topLeading) {
-                            if let event = placeholderEvent {
-                                let frame = event.frame(
-                                    hourSlotHeight: hourSlotHeight,
-                                    daySlotWidth: daySlotWidth,
-                                    initialDate: startOfDay
-                                )
-                                viewFactory.placeholderView(
-                                    coordinateSpace: .named(scrollCoordinateSpaceName)
-                                )
-                                .frame(width: frame.width, height: frame.height)
-                                .offset(x: frame.minX, y: frame.minY)
-                            }
+                    HoursGridView(
+                        startOfDay: startOfDay,
+                        calendar: calendar,
+                        viewFactory: viewFactory
+                    )
+                    EventsLayoutView(
+                        events: events,
+                        dateSequence: dateSequence,
+                        numberOfDays: numberOfDays,
+                        calendar: calendar,
+                        viewFactory: viewFactory
+                    )
+                    .overlay(alignment: .topLeading) {
+                        if let event = placeholderEvent {
+                            PlaceHolderView(
+                                startOfDay: startOfDay,
+                                event: event,
+                                daySlotWidth: daySlotWidth,
+                                scrollCoordinateSpaceName: scrollCoordinateSpaceName,
+                                viewFactory: viewFactory
+                            )
                         }
-                        .onGeometryChange(for: CGSize.self) {
-                            $0.size
-                        } action: { newValue in
-                            timelineWidth = newValue.width
-                        }
-                        .contentShape(Rectangle())
-                        .gesture(tapGesture())
-                        .coordinateSpace(name: scrollCoordinateSpaceName)
-                        .padding(viewFactory.insetsForViewsLayout())
+                    }
+                    .onGeometryChange(for: CGSize.self) {
+                        $0.size
+                    } action: { newValue in
+                        timelineWidth = newValue.width
+                    }
+                    .contentShape(Rectangle())
+                    .gesture(tapGesture())
+                    .coordinateSpace(name: scrollCoordinateSpaceName)
+                    .padding(viewFactory.insetsForViewsLayout())
                 }
                 .padding(viewFactory.insetsForScrollView())
                 .scrollViewPosition(Binding(get: {
@@ -89,6 +96,109 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
             events = dateSequence.reduce(into: [:]) { result, date in
                 result[date] = data.events[date]?.filter { !$0.isAllDay } ?? []
             }
+        }
+    }
+}
+
+private extension YoteiDayEventsView {
+    struct HoursGridView: View {
+        let startOfDay: Date
+        let calendar: Calendar
+        let viewFactory: ViewFactory
+
+        var body: some View {
+            VStack(spacing: 0) {
+                ForEach(0 ..< 24, id: \.self) { index in
+                    timeSlotView(index: index)
+                        .padding(.bottom, viewFactory.hourSlotHeight())
+                }
+                timeSlotView(index: 0)
+            }
+        }
+
+        @ViewBuilder
+        private func timeSlotView(index: Int) -> some View {
+            let x = TimeInterval(3600 * Double(index))
+            let date = startOfDay.addingTimeInterval(x)
+            viewFactory.timeSlotView(date: date, calendar: calendar)
+                .frame(height: 0)
+        }
+    }
+
+    struct EventsLayoutView: View {
+        let events: [Date: [YoteiEvent]]
+        let dateSequence: YoteiDaysSequence
+        let numberOfDays: Int
+        let calendar: Calendar
+        let viewFactory: ViewFactory
+        weak var delegate: YoteiDelegate?
+
+        var body: some View {
+            HStack(spacing: 0) {
+                let data = Array(dateSequence.enumerated())
+                ForEach(data, id: \.element) { index, date in
+                    EventuallyLayout(
+                        startOfDay: date,
+                        hourSlotHeight: viewFactory.hourSlotHeight()
+                    ) {
+                        if let events = events[date] {
+                            ForEach(events, id: \.id) { event in
+                                Button(action: {
+                                    delegate?.calendarDidSelectEvent(with: event.id)
+                                }) {
+                                    viewFactory.eventView(event: event)
+                                }
+                                .eventuallyDateIntervalLayout(event.dateInterval)
+                                .zIndex(event.start.timeIntervalSince1970)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .overlay(alignment: .top) {
+                        TimelineView(.everyMinute) { context in
+                            if date.isInSameDay(as: context.date, in: calendar) {
+                                timelineMarker(startOfDay: date, date: context.date)
+                            }
+                        }
+                    }
+
+                    if (numberOfDays - 1) != index {
+                        viewFactory.daysDelimiterView()
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+        }
+
+        @ViewBuilder
+        private func timelineMarker(startOfDay: Date, date: Date) -> some View {
+            let pointsPerMinute = viewFactory.hourSlotHeight() / 60
+            let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
+            let offsetY = minutesFromMidnight * pointsPerMinute
+            viewFactory.currentTimeMarkerView()
+                .frame(height: 0)
+                .offset(y: offsetY)
+        }
+    }
+
+    struct PlaceHolderView: View {
+        let startOfDay: Date
+        let event: YoteiDayEventsPlaceholderEvent
+        let daySlotWidth: CGFloat
+        let scrollCoordinateSpaceName: String
+        let viewFactory: ViewFactory
+
+        var body: some View {
+            let frame = event.frame(
+                hourSlotHeight: viewFactory.hourSlotHeight(),
+                daySlotWidth: daySlotWidth,
+                initialDate: startOfDay
+            )
+            viewFactory.placeholderView(
+                coordinateSpace: .named(scrollCoordinateSpaceName)
+            )
+            .frame(width: frame.width, height: frame.height)
+            .offset(x: frame.minX, y: frame.minY)
         }
     }
 }
@@ -108,71 +218,6 @@ private extension YoteiDayEventsView {
                 duration: 3600
             )
         }
-    }
-
-    func eventsLayoutView() -> some View {
-        HStack(spacing: 0) {
-            let data = Array(dateSequence.enumerated())
-            ForEach(data, id: \.element) { index, date in
-                EventuallyLayout(
-                    startOfDay: date,
-                    hourSlotHeight: hourSlotHeight
-                ) {
-                    if let events = events[date] {
-                        ForEach(events, id: \.id) { event in
-                            Button(action: {
-                                delegate?.calendarDidSelectEvent(with: event.id)
-                            }) {
-                                viewFactory.eventView(event: event)
-                            }
-                            .eventuallyDateIntervalLayout(event.dateInterval)
-                            .zIndex(event.start.timeIntervalSince1970)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .overlay(alignment: .top) {
-                    TimelineView(.everyMinute) { context in
-                        if date.isInSameDay(as: context.date, in: calendar) {
-                            timelineMarker(startOfDay: date, date: context.date)
-                        }
-                    }
-                }
-
-                if (numberOfDays - 1) != index {
-                    viewFactory.daysDelimiterView()
-                }
-            }
-        }
-        .buttonStyle(.plain)
-    }
-
-    func hoursGridView() -> some View {
-        VStack(spacing: 0) {
-            ForEach(0 ..< 24, id: \.self) { index in
-                timeSlotView(index: index)
-                    .padding(.bottom, hourSlotHeight)
-            }
-            timeSlotView(index: 0)
-        }
-    }
-
-    @ViewBuilder
-    func timeSlotView(index: Int) -> some View {
-        let x = TimeInterval(3600 * Double(index))
-        let date = startOfDay.addingTimeInterval(x)
-        viewFactory.timeSlotView(date: date, calendar: calendar)
-            .frame(height: 0)
-    }
-
-    @ViewBuilder
-    func timelineMarker(startOfDay: Date, date: Date) -> some View {
-        let pointsPerMinute = hourSlotHeight / 60
-        let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
-        let offsetY = minutesFromMidnight * pointsPerMinute
-        viewFactory.currentTimeMarkerView()
-            .frame(height: 0)
-            .offset(y: offsetY)
     }
 
     func calculateInitialContentOffset(currentDate: Date, scrollViewHeight: CGFloat) -> CGPoint {

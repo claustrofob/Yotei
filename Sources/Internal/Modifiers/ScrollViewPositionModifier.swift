@@ -35,8 +35,12 @@ struct ScrollViewPositionModifier: ViewModifier {
                     // KVO can fire during SwiftUI layout updates
                     // Push the binding update to the next runloop tick
                     DispatchQueue.main.async {
-                        contentOffset = change.newValue ?? .zero
-                        lastContentOffset = contentOffset
+                        let newContentOffset = change.newValue ?? .zero
+                        guard lastContentOffset != newContentOffset else {
+                            return
+                        }
+                        contentOffset = newContentOffset
+                        lastContentOffset = newContentOffset
                     }
                 }
             }
