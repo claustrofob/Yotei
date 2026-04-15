@@ -36,11 +36,8 @@ struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
         return vc
     }
 
-    func updateUIViewController(_ uiViewController: UIPageViewController, context _: Context) {
-        guard
-            let pageController = uiViewController.viewControllers?.first as? PageController,
-            pageController.date != selection
-        else {
+    func updateUIViewController(_ uiViewController: UIPageViewController, context: Context) {
+        guard context.coordinator.currentPageDate != selection else {
             uiViewController.viewControllers?.compactMap {
                 $0 as? PageController
             }.forEach {
@@ -48,50 +45,46 @@ struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
             }
             return
         }
+
         uiViewController.setViewControllers(
             [PageController(date: selection, content: content(selection))],
-            direction: pageController.date < selection ? .forward : .reverse,
+            direction: context.coordinator.currentPageDate < selection ? .forward : .reverse,
             animated: true
         )
+        context.coordinator.currentPageDate = selection
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(
+            selection: $selection,
             content: content,
             previousDate: previousDate,
-            nextDate: nextDate,
-            onChange: { newDate in
-                // Defer binding update to the next run loop tick
-                // Updating it synchronously here can trigger:
-                // "Publishing changes from within view updates is not allowed"
-                DispatchQueue.main.async {
-                    guard selection != newDate else {
-                        return
-                    }
-                    selection = newDate
-                }
-            }
+            nextDate: nextDate
         )
     }
 }
 
 extension CalendarTabView {
     final class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+        @Binding private var selection: Date
         private let content: (Date) -> Content
         private let previousDate: (Date) -> Date
         private let nextDate: (Date) -> Date
-        private let onChange: (Date) -> Void
+
+        var currentPageDate: Date
 
         init(
+            selection: Binding<Date>,
             @ViewBuilder content: @escaping (Date) -> Content,
             previousDate: @escaping (Date) -> Date,
-            nextDate: @escaping (Date) -> Date,
-            onChange: @escaping (Date) -> Void
+            nextDate: @escaping (Date) -> Date
         ) {
+            _selection = selection
             self.content = content
             self.previousDate = previousDate
             self.nextDate = nextDate
-            self.onChange = onChange
+
+            currentPageDate = selection.wrappedValue
         }
 
         func pageViewController(
@@ -133,7 +126,13 @@ extension CalendarTabView {
             guard let pageController = pageViewController.viewControllers?.first as? PageController else {
                 return
             }
-            onChange(pageController.date)
+            DispatchQueue.main.async {
+                guard self.selection != pageController.date else {
+                    return
+                }
+                self.currentPageDate = pageController.date
+                self.selection = pageController.date
+            }
         }
     }
 }
