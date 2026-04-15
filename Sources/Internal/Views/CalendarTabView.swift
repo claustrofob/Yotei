@@ -48,9 +48,6 @@ struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
             }
             return
         }
-        // sometimes when prev animation not finished and a new vc is set, UIPageViewController gets broken
-        // and does not render the final vc. Calling setViewControllers without animation for current vc seems to fix it.
-        uiViewController.setViewControllers([pageController], direction: .forward, animated: false)
         uiViewController.setViewControllers(
             [PageController(date: selection, content: content(selection))],
             direction: pageController.date < selection ? .forward : .reverse,
