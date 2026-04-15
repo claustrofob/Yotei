@@ -12,9 +12,9 @@ public enum CalendarViewType: String, CaseIterable {
 
     var icon: Image {
         switch self {
-        case .schedule: Image(systemName: "inset.filled.topthird.middlethird.bottomthird.rectangle")
-        case .day: Image(systemName: "calendar.day.timeline.left")
-        case .week: Image(systemName: "inset.filled.leftthird.middlethird.rightthird.rectangle")
+        case .schedule: Image(.scheduleIcon)
+        case .day: Image(.dayIcon)
+        case .week: Image(.weekIcon)
         }
     }
 
