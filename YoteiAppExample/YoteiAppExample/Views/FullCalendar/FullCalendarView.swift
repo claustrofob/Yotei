@@ -46,6 +46,11 @@ struct FullCalendarView: View {
         )
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                Button("Today") {
+                    viewModel.viewDidSelectToday()
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Menu(content: {
                     ForEach(CalendarViewType.allCases, id: \.self) { value in
                         Button(action: {

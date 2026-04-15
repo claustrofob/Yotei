@@ -94,4 +94,8 @@ extension FullCalendarViewModelModel {
         fetchRemoteEvents(in: dateInterval)
         fetchLocalEvents(in: dateInterval)
     }
+
+    func viewDidSelectToday() {
+        focusedDate = Date()
+    }
 }
