@@ -6,11 +6,9 @@
 import SwiftUI
 
 public struct YoteiWeekdayTitlesView: View {
-    private let calendar: Calendar
+    @Environment(\.calendar) private var calendar
 
-    public init(calendar: Calendar) {
-        self.calendar = calendar
-    }
+    public init() {}
 
     public var body: some View {
         HStack(spacing: 0) {

@@ -6,21 +6,17 @@
 import SwiftUI
 
 public struct YoteiPagesDayView<Content: View>: View {
+    @Environment(\.calendar) private var calendar
+
     @Binding private var focusedDate: Date
-    private let calendar: Calendar
     @ViewBuilder private let content: (Date) -> Content
 
     public init(
         focusedDate: Binding<Date>,
-        calendar: Calendar,
+        calendar _: Calendar,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
-        _focusedDate = Binding(get: {
-            calendar.startOfDay(for: focusedDate.wrappedValue)
-        }, set: {
-            focusedDate.wrappedValue = $0
-        })
-        self.calendar = calendar
+        _focusedDate = focusedDate
         self.content = content
     }
 

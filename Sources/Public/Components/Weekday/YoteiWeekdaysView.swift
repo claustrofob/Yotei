@@ -6,19 +6,20 @@
 import SwiftUI
 
 public struct YoteiWeekdaysView<ViewFactory: YoteiWeekdayViewFactoryProtocol>: View {
+    @Environment(\.calendar) private var calendar
+
     private let weekStartDate: Date
-    private let daysSequence: YoteiDaysSequence
-    private let calendar: Calendar
+    private var daysSequence: YoteiDaysSequence {
+        YoteiDaysSequence(startDate: weekStartDate, days: 7, calendar: calendar)
+    }
+
     private let viewFactory: ViewFactory
 
     public init(
         weekStartDate: Date,
-        calendar: Calendar,
         viewFactory: ViewFactory = YoteiWeekdayViewFactory()
     ) {
         self.weekStartDate = weekStartDate
-        self.calendar = calendar
-        daysSequence = YoteiDaysSequence(startDate: weekStartDate, days: 7, calendar: calendar)
         self.viewFactory = viewFactory
     }
 

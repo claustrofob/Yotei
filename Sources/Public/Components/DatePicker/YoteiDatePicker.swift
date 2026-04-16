@@ -73,7 +73,7 @@ private extension YoteiDatePicker {
             self.minDate = minDate
             self.maxDate = maxDate
             self.viewFactory = viewFactory
-            _selectedPageDate = State(initialValue: initialPageDate)
+            selectedPageDate = initialPageDate
         }
 
         var body: some View {

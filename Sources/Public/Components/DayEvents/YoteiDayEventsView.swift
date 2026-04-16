@@ -7,15 +7,19 @@ import Eventually
 import SwiftUI
 
 public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>: View {
-    private let startOfDay: Date
+    @Environment(\.calendar) private var calendar
+
+    private let dayDate: Date
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval
     @Binding private var contentOffset: CGPoint?
     private weak var delegate: YoteiDelegate?
-    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
-    private let dateSequence: YoteiDaysSequence
+    private var dateSequence: YoteiDaysSequence {
+        YoteiDaysSequence(startDate: dayDate, days: numberOfDays, calendar: calendar)
+    }
+
     private let scrollCoordinateSpaceName = "scrollViewContent"
     @State private var events: [Date: [YoteiEvent]] = [:]
     @State private var placeholderEvent: YoteiDayEventsPlaceholderEvent?
@@ -28,23 +32,24 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
         viewFactory.hourSlotHeight()
     }
 
+    private var startOfDay: Date {
+        calendar.startOfDay(for: dayDate)
+    }
+
     public init(
-        startDate: Date,
+        dayDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval>,
         contentOffset: Binding<CGPoint?>,
         delegate: YoteiDelegate?,
-        calendar: Calendar,
         viewFactory: ViewFactory = YoteiDayEventsViewFactory()
     ) {
-        startOfDay = startDate
+        self.dayDate = dayDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
         self.delegate = delegate
-        self.calendar = calendar
         self.viewFactory = viewFactory
-        dateSequence = YoteiDaysSequence(startDate: startDate, days: numberOfDays, calendar: calendar)
     }
 
     public var body: some View {

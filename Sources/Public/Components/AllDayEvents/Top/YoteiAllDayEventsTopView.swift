@@ -31,7 +31,6 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
 
     public var body: some View {
         MainView(
-            startDate: startDate,
             numberOfDays: numberOfDays,
             data: $data,
             delegate: delegate,
@@ -45,7 +44,6 @@ private extension YoteiAllDayEventsTopView {
     struct MainView: View {
         @Environment(\.calendar) private var calendar
 
-        let startDate: Date
         let numberOfDays: Int
         @Binding var data: YoteiEventsInterval
         weak var delegate: YoteiDelegate?

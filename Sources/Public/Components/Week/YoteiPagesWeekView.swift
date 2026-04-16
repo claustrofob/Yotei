@@ -6,63 +6,83 @@
 import SwiftUI
 
 public struct YoteiPagesWeekView<Content: View>: View {
-    @Binding private var focusedDate: Date
-    private let calendar: Calendar
-    @ViewBuilder private let content: (Date) -> Content
+    @Environment(\.calendar) private var calendar
 
-    private let calendarDateService: DateService
-    @State private var selectedPageDate: Date
+    @Binding private var focusedDate: Date
+    @ViewBuilder private let content: (Date) -> Content
 
     public init(
         focusedDate: Binding<Date>,
-        calendar: Calendar,
         @ViewBuilder content: @escaping (Date) -> Content
     ) {
-        _focusedDate = Binding(get: {
-            calendar.startOfDay(for: focusedDate.wrappedValue)
-        }, set: {
-            focusedDate.wrappedValue = $0
-        })
-        self.calendar = calendar
-        calendarDateService = DateService(calendar: calendar)
+        _focusedDate = focusedDate
         self.content = content
-        selectedPageDate = calendar.dateInterval(
-            of: .weekOfMonth,
-            for: focusedDate.wrappedValue
-        )!.start
     }
 
     public var body: some View {
-        DateTabView(
-            selection: $selectedPageDate,
-            content: { date in
-                content(date)
-                    // Keep the navigation bar explicitly visible
-                    // This view is hosted inside a UIPageViewController, and during some
-                    // page transitions the navigation bar may be hidden unexpectedly
-                    .toolbar(.visible, for: .navigationBar)
-            },
-            previousDate: { date in
-                calendar.date(byAdding: .weekOfMonth, value: -1, to: date)!
-            },
-            nextDate: { date in
-                calendar.date(byAdding: .weekOfMonth, value: 1, to: date)!
-            }
-        )
-        .ignoresSafeArea()
-        .onChange(of: selectedPageDate) { value in
-            focusedDate = calendarDateService.weekFocusedDate(for: value, currentFocusedDate: focusedDate)
-        }
-        .onChange(of: focusedDate) { value in
-            let startDate = calendar.dateInterval(
+        MainView(
+            focusedDate: $focusedDate,
+            initialPageDate: calendar.dateInterval(
                 of: .weekOfMonth,
-                for: value
-            )!.start
+                for: focusedDate
+            )!.start,
+            content: content
+        )
+    }
+}
 
-            guard startDate != selectedPageDate else {
-                return
+private extension YoteiPagesWeekView {
+    struct MainView: View {
+        @Environment(\.calendar) private var calendar
+
+        @Binding var focusedDate: Date
+        @ViewBuilder let content: (Date) -> Content
+
+        @State private var selectedPageDate: Date
+
+        init(
+            focusedDate: Binding<Date>,
+            initialPageDate: Date,
+            content: @escaping (Date) -> Content
+        ) {
+            _focusedDate = focusedDate
+            selectedPageDate = initialPageDate
+            self.content = content
+        }
+
+        var body: some View {
+            DateTabView(
+                selection: $selectedPageDate,
+                content: { date in
+                    content(date)
+                        // Keep the navigation bar explicitly visible
+                        // This view is hosted inside a UIPageViewController, and during some
+                        // page transitions the navigation bar may be hidden unexpectedly
+                        .toolbar(.visible, for: .navigationBar)
+                },
+                previousDate: { date in
+                    calendar.date(byAdding: .weekOfMonth, value: -1, to: date)!
+                },
+                nextDate: { date in
+                    calendar.date(byAdding: .weekOfMonth, value: 1, to: date)!
+                }
+            )
+            .ignoresSafeArea()
+            .onChange(of: selectedPageDate) { value in
+                let calendarDateService = DateService(calendar: calendar)
+                focusedDate = calendarDateService.weekFocusedDate(for: value, currentFocusedDate: focusedDate)
             }
-            selectedPageDate = startDate
+            .onChange(of: focusedDate) { value in
+                let startDate = calendar.dateInterval(
+                    of: .weekOfMonth,
+                    for: value
+                )!.start
+
+                guard startDate != selectedPageDate else {
+                    return
+                }
+                selectedPageDate = startDate
+            }
         }
     }
 }
