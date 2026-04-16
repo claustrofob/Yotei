@@ -81,7 +81,7 @@ struct FullCalendarView: View {
     private func scheduleView() -> some View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
-            YoteiStripContainerView(focusedDate: $viewModel.focusedDate, calendar: .current)
+            YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiScheduleView(
                 focusedDate: $viewModel.focusedDate,
                 data: $viewModel.data,
@@ -94,7 +94,7 @@ struct FullCalendarView: View {
     private func dayView() -> some View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
-            YoteiStripContainerView(focusedDate: $viewModel.focusedDate, calendar: .current)
+            YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiPagesDayView(
                 focusedDate: $viewModel.focusedDate, calendar: .current
             ) { date in
