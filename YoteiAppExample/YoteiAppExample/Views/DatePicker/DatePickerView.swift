@@ -14,8 +14,7 @@ struct DatePickerView: View {
         YoteiDatePicker(
             selectedDate: $selectedDate,
             minDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
-            maxDate: Calendar.current.date(byAdding: .month, value: 2, to: Date())!,
-            calendar: .current
+            maxDate: Calendar.current.date(byAdding: .month, value: 2, to: Date())!
         )
         .padding()
         .navigationTitle(selectedDate.formatted(dateFormatStyle))

@@ -12,12 +12,12 @@ public struct YoteiMonthYearPicker: UIViewRepresentable {
         static var numberOfYears: Int { 4000 }
     }
 
-    @Binding private var date: Date
-    private let calendar: Calendar
+    @Environment(\.calendar) private var calendar
 
-    init(date: Binding<Date>, calendar: Calendar) {
+    @Binding private var date: Date
+
+    init(date: Binding<Date>) {
         _date = date
-        self.calendar = calendar
     }
 
     public func makeUIView(context: Context) -> UIPickerView {

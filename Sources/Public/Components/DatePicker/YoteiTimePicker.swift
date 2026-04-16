@@ -6,18 +6,14 @@
 import SwiftUI
 
 public struct YoteiTimePicker: UIViewRepresentable {
+    @Environment(\.calendar) private var calendar
+
     @Binding private var date: Date
     private let minuteInterval: Int
-    private let calendar: Calendar
 
-    public init(
-        date: Binding<Date>,
-        minuteInterval: Int,
-        calendar: Calendar
-    ) {
+    public init(date: Binding<Date>, minuteInterval: Int) {
         _date = date
         self.minuteInterval = minuteInterval
-        self.calendar = calendar
     }
 
     public func makeUIView(context: Context) -> UIDatePicker {

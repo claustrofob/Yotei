@@ -104,8 +104,7 @@ struct FullCalendarView: View {
                         startDate: date,
                         numberOfDays: 1,
                         data: $viewModel.data,
-                        delegate: nil,
-                        calendar: .current
+                        delegate: nil
                     )
                     .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
                     .background {
@@ -146,8 +145,7 @@ struct FullCalendarView: View {
                         startDate: date,
                         numberOfDays: 7,
                         data: $viewModel.data,
-                        delegate: nil,
-                        calendar: .current
+                        delegate: nil
                     )
                     .padding(Constants.weekTitlesViewInsets)
                     YoteiDayEventsView(

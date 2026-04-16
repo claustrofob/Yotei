@@ -6,129 +6,161 @@
 import SwiftUI
 
 public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View {
-    private enum Constants {
+    enum Constants {
         static var maxNumberOfWeeks: CGFloat { 6 }
     }
+
+    @Environment(\.calendar) private var calendar
 
     @Binding private var selectedDate: Date
     private let minDate: Date?
     private let maxDate: Date?
     private let viewFactory: ViewFactory
 
-    @State private var selectedPageDate: Date
-    @State private var isMonthYearPickerExpanded = false
-    private let calendar: Calendar
-
-    private var maxMonthHeight: CGFloat {
-        viewFactory.dayCellViewHeight() * Constants.maxNumberOfWeeks
-            + viewFactory.weekInteritemVerticalSpacing() * (Constants.maxNumberOfWeeks - 1)
-    }
+    @State var initialPageDate: Date?
 
     public init(
         selectedDate: Binding<Date>,
         minDate: Date? = nil,
         maxDate: Date? = nil,
-        calendar: Calendar,
         viewFactory: ViewFactory = YoteiDatePickerFactory()
     ) {
-        self.calendar = calendar
         _selectedDate = selectedDate
-        _selectedPageDate = State(initialValue: calendar.dateInterval(
-            of: .month,
-            for: selectedDate.wrappedValue
-        )!.start)
         self.viewFactory = viewFactory
         self.minDate = minDate
         self.maxDate = maxDate
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                monthYearButton()
-                Spacer()
-                if !isMonthYearPickerExpanded {
-                    backForwardButtons()
-                }
-            }
-            .foregroundStyle(.primary)
-            HStack {
-                if isMonthYearPickerExpanded {
-                    YoteiMonthYearPicker(date: $selectedDate, calendar: calendar)
-                } else {
-                    DateTabView(
-                        selection: $selectedPageDate,
-                        content: { date in
-                            YoteiDatePickerMonth(
-                                selectedDate: $selectedDate,
-                                dateInMonth: date,
-                                minDate: minDate,
-                                maxDate: maxDate,
-                                calendar: calendar,
-                                viewFactory: viewFactory
-                            )
-                        },
-                        previousDate: { date in
-                            calendar.date(byAdding: .month, value: -1, to: date)!
-                        },
-                        nextDate: { date in
-                            calendar.date(byAdding: .month, value: 1, to: date)!
-                        }
-                    )
-                }
-            }
-            .frame(height: maxMonthHeight, alignment: .center)
-        }
-        .animation(.default, value: isMonthYearPickerExpanded)
-        .onChange(of: selectedDate) { _ in
-            generateSelectedPageDate()
-        }
-        .onAppear {
-            generateSelectedPageDate()
-        }
+        MainView(
+            selectedDate: $selectedDate,
+            minDate: minDate,
+            maxDate: maxDate,
+            viewFactory: viewFactory,
+            initialPageDate: calendar.dateInterval(
+                of: .month,
+                for: selectedDate
+            )!.start
+        )
     }
 }
 
 private extension YoteiDatePicker {
-    func generateSelectedPageDate() {
-        selectedPageDate = calendar.dateInterval(
-            of: .month,
-            for: selectedDate
-        )!.start
-    }
+    struct MainView: View {
+        @Environment(\.calendar) private var calendar
 
-    func monthYearButton() -> some View {
-        Button(action: {
-            isMonthYearPickerExpanded.toggle()
-        }) {
-            viewFactory.monthSelectorButtonView(
-                date: selectedPageDate,
-                isExpanded: isMonthYearPickerExpanded,
-                calendar: calendar
-            )
+        @Binding var selectedDate: Date
+        let minDate: Date?
+        let maxDate: Date?
+        let viewFactory: ViewFactory
+
+        @State var selectedPageDate: Date
+        @State var isMonthYearPickerExpanded = false
+
+        var maxMonthHeight: CGFloat {
+            viewFactory.dayCellViewHeight() * Constants.maxNumberOfWeeks
+                + viewFactory.weekInteritemVerticalSpacing() * (Constants.maxNumberOfWeeks - 1)
         }
-    }
 
-    func backForwardButtons() -> some View {
-        HStack(spacing: 4) {
-            Button(action: {
-                selectedPageDate = calendar.date(
-                    byAdding: .month,
-                    value: -1,
-                    to: selectedPageDate
-                )!
-            }) {
-                viewFactory.monthBackButtonView()
+        init(
+            selectedDate: Binding<Date>,
+            minDate: Date?,
+            maxDate: Date?,
+            viewFactory: ViewFactory,
+            initialPageDate: Date
+        ) {
+            _selectedDate = selectedDate
+            self.minDate = minDate
+            self.maxDate = maxDate
+            self.viewFactory = viewFactory
+            _selectedPageDate = State(initialValue: initialPageDate)
+        }
+
+        var body: some View {
+            VStack(spacing: 0) {
+                HStack {
+                    monthYearButton()
+                    Spacer()
+                    if !isMonthYearPickerExpanded {
+                        backForwardButtons()
+                    }
+                }
+                .foregroundStyle(.primary)
+                HStack {
+                    if isMonthYearPickerExpanded {
+                        YoteiMonthYearPicker(date: $selectedPageDate)
+                    } else {
+                        DateTabView(
+                            selection: $selectedPageDate,
+                            content: { date in
+                                YoteiDatePickerMonth(
+                                    selectedDate: $selectedDate,
+                                    dateInMonth: date,
+                                    minDate: minDate,
+                                    maxDate: maxDate,
+                                    viewFactory: viewFactory
+                                )
+                            },
+                            previousDate: { date in
+                                calendar.date(byAdding: .month, value: -1, to: date)!
+                            },
+                            nextDate: { date in
+                                calendar.date(byAdding: .month, value: 1, to: date)!
+                            }
+                        )
+                    }
+                }
+                .frame(height: maxMonthHeight, alignment: .center)
             }
+            .animation(.default, value: isMonthYearPickerExpanded)
+            .onChange(of: selectedDate) { _ in
+                generateSelectedPageDate()
+            }
+            .onAppear {
+                generateSelectedPageDate()
+            }
+        }
 
+        func generateSelectedPageDate() {
+            selectedPageDate = calendar.dateInterval(
+                of: .month,
+                for: selectedDate
+            )!.start
+        }
+
+        func monthYearButton() -> some View {
             Button(action: {
-                selectedPageDate = calendar.date(
-                    byAdding: .month,
-                    value: 1,
-                    to: selectedPageDate
-                )!
+                isMonthYearPickerExpanded.toggle()
             }) {
-                viewFactory.monthForwardButtonView()
+                viewFactory.monthSelectorButtonView(
+                    date: selectedPageDate,
+                    isExpanded: isMonthYearPickerExpanded,
+                    calendar: calendar
+                )
+            }
+        }
+
+        func backForwardButtons() -> some View {
+            HStack(spacing: 4) {
+                Button(action: {
+                    selectedPageDate = calendar.date(
+                        byAdding: .month,
+                        value: -1,
+                        to: selectedPageDate
+                    )!
+                }) {
+                    viewFactory.monthBackButtonView()
+                }
+
+                Button(action: {
+                    selectedPageDate = calendar.date(
+                        byAdding: .month,
+                        value: 1,
+                        to: selectedPageDate
+                    )!
+                }) {
+                    viewFactory.monthForwardButtonView()
+                }
             }
         }
     }
