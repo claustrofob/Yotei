@@ -6,51 +6,65 @@
 import SwiftUI
 
 public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: View {
-    private let weekInterval: DateInterval
-    private let calendar: Calendar
-    private let daysSequence: YoteiDaysSequence
+    @Environment(\.calendar) private var calendar
 
     @Binding private var focusedDate: Date
+    private let date: Date
     private let viewFactory: ViewFactory
 
     public init(
         focusedDate: Binding<Date>,
         date: Date,
-        calendar: Calendar,
         viewFactory: ViewFactory = YoteiStripViewFactory()
     ) {
         _focusedDate = focusedDate
+        self.date = date
         self.viewFactory = viewFactory
-        self.calendar = calendar
-        weekInterval = calendar.dateInterval(of: .weekOfMonth, for: date)!
+    }
 
+    public var body: some View {
         let startDate = calendar.dateInterval(
             of: .weekOfMonth,
             for: date
         )!.start
-        daysSequence = YoteiDaysSequence(startDate: startDate, days: 7, calendar: calendar)
-    }
 
-    public var body: some View {
-        TimelineView(.everyMinute) { context in
-            Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
-                GridRow {
-                    ForEach(daysSequence, id: \.self) { date in
-                        Button(action: {
-                            focusedDate = date
-                        }, label: {
-                            viewFactory.dayCellView(
-                                date: date,
-                                todayDate: context.date,
-                                focusedDate: focusedDate,
-                                isEnabled: true,
-                                calendar: calendar
-                            )
-                        })
+        MainView(
+            focusedDate: $focusedDate,
+            daysSequence: YoteiDaysSequence(startDate: startDate, days: 7, calendar: calendar),
+            viewFactory: viewFactory
+        )
+    }
+}
+
+private extension YoteiStripWeekView {
+    struct MainView: View {
+        @Environment(\.calendar) private var calendar
+
+        @Binding var focusedDate: Date
+        let daysSequence: YoteiDaysSequence
+        let viewFactory: ViewFactory
+
+        var body: some View {
+            TimelineView(.everyMinute) { context in
+                Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
+                    GridRow {
+                        ForEach(daysSequence, id: \.self) { date in
+                            Button(action: {
+                                focusedDate = date
+                            }, label: {
+                                viewFactory.dayCellView(
+                                    date: date,
+                                    todayDate: context.date,
+                                    focusedDate: focusedDate,
+                                    isEnabled: true,
+                                    calendar: calendar
+                                )
+                            })
+                        }
                     }
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
     }
 }

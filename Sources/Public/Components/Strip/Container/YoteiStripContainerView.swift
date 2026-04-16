@@ -63,7 +63,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                                     YoteiStripMonthView(
                                         focusedDate: $focusedDate,
                                         date: date,
-                                        calendar: calendar,
                                         viewFactory: viewFactory
                                     )
                                     .frame(maxHeight: .infinity, alignment: .top)
@@ -76,7 +75,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                                     YoteiStripWeekView(
                                         focusedDate: $focusedDate,
                                         date: date,
-                                        calendar: calendar,
                                         viewFactory: viewFactory
                                     )
                                     .frame(maxHeight: .infinity, alignment: .top)
