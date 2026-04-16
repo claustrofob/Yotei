@@ -36,9 +36,11 @@ Or add it through Xcode: **File > Add Package Dependencies** and enter the repos
 
 Upcoming in the next release:
 
-- [ ] Theme, colors, and fonts customization for every single component
-- [ ] Custom views for events
-- [ ] Stability improvements
+- [x] Colors customization for every single component
+- [ ] Fonts customization
+- [x] Custom views for events
+- [x] Stability improvements
+- [ ] Accessibility
 
 ## License
 
