@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
+struct DateTabView<Content: View>: UIViewControllerRepresentable {
     @Binding private var selection: Date
     @ViewBuilder private let content: (Date) -> Content
     private let previousDate: (Date) -> Date
@@ -64,7 +64,7 @@ struct CalendarTabView<Content: View>: UIViewControllerRepresentable {
     }
 }
 
-extension CalendarTabView {
+extension DateTabView {
     final class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
         @Binding private var selection: Date
         private let content: (Date) -> Content
@@ -137,7 +137,7 @@ extension CalendarTabView {
     }
 }
 
-extension CalendarTabView {
+extension DateTabView {
     final class PageController: UIHostingController<Content> {
         let date: Date
 

@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct CalendarDateService {
+struct DateService {
     private let calendar: Calendar
 
     init(calendar: Calendar) {
@@ -13,7 +13,7 @@ struct CalendarDateService {
     }
 }
 
-extension CalendarDateService {
+extension DateService {
     func monthFocusedDate(for dateInMonth: Date, currentFocusedDate: Date) -> Date {
         let monthInterval = calendar.dateInterval(of: .month, for: currentFocusedDate)!
         let startDate = calendar.dateInterval(

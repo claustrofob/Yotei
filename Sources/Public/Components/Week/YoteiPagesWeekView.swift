@@ -10,7 +10,7 @@ public struct YoteiPagesWeekView<Content: View>: View {
     private let calendar: Calendar
     @ViewBuilder private let content: (Date) -> Content
 
-    private let calendarDateService: CalendarDateService
+    private let calendarDateService: DateService
     @State private var selectedPageDate: Date
 
     public init(
@@ -24,7 +24,7 @@ public struct YoteiPagesWeekView<Content: View>: View {
             focusedDate.wrappedValue = $0
         })
         self.calendar = calendar
-        calendarDateService = CalendarDateService(calendar: calendar)
+        calendarDateService = DateService(calendar: calendar)
         self.content = content
         selectedPageDate = calendar.dateInterval(
             of: .weekOfMonth,
@@ -33,7 +33,7 @@ public struct YoteiPagesWeekView<Content: View>: View {
     }
 
     public var body: some View {
-        CalendarTabView(
+        DateTabView(
             selection: $selectedPageDate,
             content: { date in
                 content(date)

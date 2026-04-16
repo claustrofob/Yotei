@@ -25,7 +25,7 @@ public struct YoteiPagesDayView<Content: View>: View {
     }
 
     public var body: some View {
-        CalendarTabView(
+        DateTabView(
             selection: $focusedDate,
             content: { date in
                 content(date)

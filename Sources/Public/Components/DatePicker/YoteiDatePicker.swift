@@ -56,7 +56,7 @@ public struct YoteiDatePicker<ViewFactory: YoteiDatePickerFactoryProtocol>: View
                 if isMonthYearPickerExpanded {
                     YoteiMonthYearPicker(date: $selectedDate, calendar: calendar)
                 } else {
-                    CalendarTabView(
+                    DateTabView(
                         selection: $selectedPageDate,
                         content: { date in
                             YoteiDatePickerMonth(

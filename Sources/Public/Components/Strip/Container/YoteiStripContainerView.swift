@@ -14,7 +14,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         }
     }
 
-    private let calendarDateService: CalendarDateService
+    private let calendarDateService: DateService
 
     @State private var monthStripHeight: CGFloat = 0
     @State private var expandDragStarted = false
@@ -38,7 +38,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     ) {
         _focusedDate = focusedDate
         self.calendar = calendar
-        calendarDateService = CalendarDateService(calendar: calendar)
+        calendarDateService = DateService(calendar: calendar)
         self.viewFactory = viewFactory
         selectedWeekPageDate = calendar.dateInterval(
             of: .weekOfMonth,
@@ -167,7 +167,7 @@ private extension YoteiStripContainerView {
         component: Calendar.Component,
         content: @escaping (Date) -> some View
     ) -> some View {
-        CalendarTabView(
+        DateTabView(
             selection: selection,
             content: { date in
                 content(date)
