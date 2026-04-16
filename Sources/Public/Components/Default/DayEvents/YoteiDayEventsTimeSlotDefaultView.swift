@@ -6,16 +6,16 @@
 import SwiftUI
 
 public struct YoteiDayEventsTimeSlotDefaultView: View {
-    private let date: Date
-    private let calendar: Calendar
+    @Environment(\.calendar) private var calendar
 
-    public init(date: Date, calendar: Calendar) {
+    private let date: Date
+
+    public init(date: Date) {
         self.date = date
-        self.calendar = calendar
     }
 
     public var body: some View {
-        let timeFormatStyle = Date.FormatStyle(calendar: calendar)
+        let timeFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone)
             .hour(.twoDigits(amPM: .omitted))
             .minute(.twoDigits)
             .locale(Locale.time24Hour)

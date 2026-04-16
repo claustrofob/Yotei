@@ -21,9 +21,12 @@ final class FullCalendarViewModelModel: ObservableObject {
     @Published var focusedDate = Date()
     @Published var data = YoteiEventsInterval()
     @Published var viewType: CalendarViewType = .day
+    @Published var isTimezoneSelectorActive = false
+    @Published var calendar = Calendar.current
 
     init(eventsLocalRepository: EventsLocalRepositoryProtocol) {
         self.eventsLocalRepository = eventsLocalRepository
+        focusedDate = calendar.startOfDay(for: Date())
     }
 
     private func fetchRemoteEvents(in dateInterval: DateInterval) {
@@ -62,26 +65,26 @@ final class FullCalendarViewModelModel: ObservableObject {
 
     private func fetchLocalEvents(in dateInterval: DateInterval) {
         Task {
-            data.events = await eventsLocalRepository.events(in: dateInterval)
+            data.events = await eventsLocalRepository.events(in: dateInterval, calendar: calendar)
         }
     }
 }
 
 extension FullCalendarViewModelModel {
     func viewDidChangeFocusedDate() {
-        let monthInterval = Calendar.current.dateInterval(of: .month, for: focusedDate)!
+        let monthInterval = calendar.dateInterval(of: .month, for: focusedDate)!
         guard monthInterval != self.monthInterval else {
             return
         }
 
         self.monthInterval = monthInterval
 
-        let startDate = Calendar.current.date(
+        let startDate = calendar.date(
             byAdding: .day,
             value: Constants.monthIntervalMinDay,
             to: monthInterval.start
         )!
-        let endDate = Calendar.current.date(
+        let endDate = calendar.date(
             byAdding: .day,
             value: Constants.monthIntervalMaxDay,
             to: monthInterval.end
@@ -96,6 +99,15 @@ extension FullCalendarViewModelModel {
     }
 
     func viewDidSelectToday() {
-        focusedDate = Date()
+        focusedDate = calendar.startOfDay(for: Date())
+    }
+
+    func viewDidSelectTimezoneSelector() {
+        isTimezoneSelectorActive = true
+    }
+
+    func viewDidSelectTimezone(with id: String) {
+        calendar.timeZone = TimeZone(identifier: id)!
+        isTimezoneSelectorActive = false
     }
 }

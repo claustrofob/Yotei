@@ -7,5 +7,5 @@ import Foundation
 import Yotei
 
 protocol EventsLocalRepositoryProtocol {
-    func events(in dateInterval: DateInterval) async -> [Date: [YoteiEvent]]
+    func events(in dateInterval: DateInterval, calendar: Calendar) async -> [Date: [YoteiEvent]]
 }

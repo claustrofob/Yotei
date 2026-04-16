@@ -58,14 +58,12 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
                 ZStack {
                     HoursGridView(
                         startOfDay: startOfDay,
-                        calendar: calendar,
                         viewFactory: viewFactory
                     )
                     EventsLayoutView(
                         events: events,
                         dateSequence: dateSequence,
                         numberOfDays: numberOfDays,
-                        calendar: calendar,
                         viewFactory: viewFactory
                     )
                     .overlay(alignment: .topLeading) {
@@ -107,8 +105,9 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
 
 private extension YoteiDayEventsView {
     struct HoursGridView: View {
+        @Environment(\.calendar) private var calendar
+
         let startOfDay: Date
-        let calendar: Calendar
         let viewFactory: ViewFactory
 
         var body: some View {
@@ -125,16 +124,17 @@ private extension YoteiDayEventsView {
         private func timeSlotView(index: Int) -> some View {
             let x = TimeInterval(3600 * Double(index))
             let date = startOfDay.addingTimeInterval(x)
-            viewFactory.timeSlotView(date: date, calendar: calendar)
+            viewFactory.timeSlotView(date: date)
                 .frame(height: 0)
         }
     }
 
     struct EventsLayoutView: View {
+        @Environment(\.calendar) private var calendar
+
         let events: [Date: [YoteiEvent]]
         let dateSequence: YoteiDaysSequence
         let numberOfDays: Int
-        let calendar: Calendar
         let viewFactory: ViewFactory
         weak var delegate: YoteiDelegate?
 

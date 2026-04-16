@@ -14,8 +14,6 @@ struct FullCalendarView: View {
     }
 
     private let hapticFeedbackGenerator = UISelectionFeedbackGenerator()
-    private let currentMonthFormatStyle = Date.FormatStyle().month(.wide)
-    private let monthYearFormatStyle = Date.FormatStyle().month().year(.defaultDigits)
 
     @StateObject private var viewModel = FullCalendarViewModelModel(
         eventsLocalRepository: EventsLocalRepository()
@@ -36,18 +34,31 @@ struct FullCalendarView: View {
         }
         .fontDesign(.serif)
         .navigationTitle(
-            Calendar.current.isDate(
+            viewModel.calendar.isDate(
                 viewModel.focusedDate,
                 equalTo: Date(),
                 toGranularity: .year
             )
-                ? viewModel.focusedDate.formatted(currentMonthFormatStyle)
-                : viewModel.focusedDate.formatted(monthYearFormatStyle)
+                ? viewModel.focusedDate.formatted(Date.FormatStyle(
+                    calendar: viewModel.calendar,
+                    timeZone: viewModel.calendar.timeZone
+                ).month(.wide))
+                : viewModel.focusedDate.formatted(Date.FormatStyle(
+                    calendar: viewModel.calendar,
+                    timeZone: viewModel.calendar.timeZone
+                ).month().year(.defaultDigits))
         )
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Today") {
                     viewModel.viewDidSelectToday()
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    viewModel.viewDidSelectTimezoneSelector()
+                }) {
+                    Image(.timezoneIcon)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -68,12 +79,23 @@ struct FullCalendarView: View {
                 }
             }
         }
+        .environment(\.calendar, viewModel.calendar)
         .onChange(of: viewModel.focusedDate) { _ in
             hapticFeedbackGenerator.selectionChanged()
             viewModel.viewDidChangeFocusedDate()
         }
         .onAppear {
             viewModel.viewDidChangeFocusedDate()
+        }
+        .sheet(isPresented: $viewModel.isTimezoneSelectorActive) {
+            TimezoneSelectorView(timezone: Binding(get: {
+                viewModel.calendar.timeZone.identifier
+            }, set: {
+                guard let id = $0 else {
+                    return
+                }
+                viewModel.viewDidSelectTimezone(with: id)
+            }))
         }
     }
 

@@ -20,7 +20,7 @@ public struct YoteiMonthSelectorButtonDefaultView: View {
     }
 
     public var body: some View {
-        let monthYearFormatStyle = Date.FormatStyle(calendar: calendar)
+        let monthYearFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone)
             .month(.wide)
             .year(.defaultDigits)
 

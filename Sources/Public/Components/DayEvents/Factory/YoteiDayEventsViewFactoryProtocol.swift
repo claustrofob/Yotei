@@ -11,7 +11,7 @@ public protocol YoteiDayEventsViewFactoryProtocol {
     func eventView(event: YoteiEvent) -> EventView
 
     associatedtype TimeSlotView: View
-    func timeSlotView(date: Date, calendar: Calendar) -> TimeSlotView
+    func timeSlotView(date: Date) -> TimeSlotView
 
     associatedtype DaysDelimiterView: View
     func daysDelimiterView() -> DaysDelimiterView
@@ -32,8 +32,8 @@ public extension YoteiDayEventsViewFactoryProtocol {
         YoteiDayEventsEventDefaultView(event: event)
     }
 
-    func timeSlotView(date: Date, calendar: Calendar) -> some View {
-        YoteiDayEventsTimeSlotDefaultView(date: date, calendar: calendar)
+    func timeSlotView(date: Date) -> some View {
+        YoteiDayEventsTimeSlotDefaultView(date: date)
     }
 
     func daysDelimiterView() -> some View {

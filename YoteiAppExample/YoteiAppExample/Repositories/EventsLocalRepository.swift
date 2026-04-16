@@ -47,7 +47,7 @@ actor EventsLocalRepository {
         return calendar
     }()
 
-    private func generateEvents(for date: Date) -> [Date: [YoteiEvent]] {
+    private func generateEvents(for date: Date, calendar: Calendar) -> [Date: [YoteiEvent]] {
         let numberOfEvents = Int.random(in: 0 ..< 6)
         var result = [Date: [YoteiEvent]]()
         for _ in 0 ..< numberOfEvents {
@@ -55,8 +55,8 @@ actor EventsLocalRepository {
             let isLongEvent = Int.random(in: 0 ..< 4) == 0
             let duration = isLongEvent ? Int.random(in: 12 ..< 48) * 30 : Int.random(in: 1 ..< 6) * 30
 
-            var startDate = Calendar.current.date(byAdding: .minute, value: startTime, to: date)!
-            var endDate = Calendar.current.date(byAdding: .minute, value: duration, to: startDate)!
+            var startDate = calendar.date(byAdding: .minute, value: startTime, to: date)!
+            var endDate = calendar.date(byAdding: .minute, value: duration, to: startDate)!
 
             let isAllDay = Int.random(in: 0 ..< 4) == 0
             if isAllDay {
@@ -84,11 +84,11 @@ actor EventsLocalRepository {
 }
 
 extension EventsLocalRepository: EventsLocalRepositoryProtocol {
-    func events(in dateInterval: DateInterval) -> [Date: [YoteiEvent]] {
+    func events(in dateInterval: DateInterval, calendar: Calendar) -> [Date: [YoteiEvent]] {
         var result = [Date: [YoteiEvent]]()
         for date in YoteiDaysSequence(interval: dateInterval) {
             if events[date] == nil {
-                events = events.merging(generateEvents(for: date)) { $0 + $1 }
+                events = events.merging(generateEvents(for: date, calendar: calendar)) { $0 + $1 }
             }
             result[date] = events[date]
         }

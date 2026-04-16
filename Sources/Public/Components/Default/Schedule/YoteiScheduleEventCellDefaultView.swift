@@ -27,10 +27,10 @@ public struct YoteiScheduleEventCellDefaultView: View {
 
         VStack(alignment: .leading, spacing: 4) {
             let dateStyle = dateInterval.start.isInSameDay(as: dateInterval.end, in: calendar)
-                ? Date.IntervalFormatStyle()
+                ? Date.IntervalFormatStyle(calendar: calendar, timeZone: calendar.timeZone)
                 .hour(.twoDigits(amPM: .omitted))
                 .minute()
-                : Date.IntervalFormatStyle()
+                : Date.IntervalFormatStyle(calendar: calendar, timeZone: calendar.timeZone)
                 .day()
                 .month(.abbreviated)
                 .hour(.twoDigits(amPM: .omitted))

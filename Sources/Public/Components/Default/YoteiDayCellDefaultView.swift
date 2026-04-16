@@ -33,7 +33,7 @@ public struct YoteiDayCellDefaultView: View {
 
     public var body: some View {
         let style = dayStyle(date: date)
-        let dayFormatStyle = Date.FormatStyle(calendar: calendar).day()
+        let dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
         Text(date.formatted(dayFormatStyle))
             .font(.system(.subheadline))
             .foregroundStyle(style.foregroundColor)

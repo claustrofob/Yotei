@@ -17,7 +17,7 @@ public struct YoteiScheduleSectionHeaderDefaultView: View {
     }
 
     public var body: some View {
-        let dateFormatStyle = Date.FormatStyle(calendar: calendar)
+        let dateFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone)
             .month(.wide)
             .day()
             .weekday(.wide)
