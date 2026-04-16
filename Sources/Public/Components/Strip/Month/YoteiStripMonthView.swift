@@ -77,8 +77,7 @@ private extension YoteiStripMonthView {
                                         date: date,
                                         todayDate: context.date,
                                         focusedDate: focusedDate,
-                                        isEnabled: isEnabled,
-                                        calendar: calendar
+                                        isEnabled: isEnabled
                                     )
                                 })
                                 .disabled(!isEnabled)

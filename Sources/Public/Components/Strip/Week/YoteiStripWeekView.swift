@@ -56,8 +56,7 @@ private extension YoteiStripWeekView {
                                     date: date,
                                     todayDate: context.date,
                                     focusedDate: focusedDate,
-                                    isEnabled: true,
-                                    calendar: calendar
+                                    isEnabled: true
                                 )
                             })
                         }

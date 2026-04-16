@@ -103,8 +103,7 @@ private extension YoteiDatePickerMonth {
                                         date: date,
                                         todayDate: todayDate,
                                         focusedDate: selectedDate,
-                                        isEnabled: isEnabled,
-                                        calendar: calendar
+                                        isEnabled: isEnabled
                                     )
                                 })
                                 .disabled(!isEnabled)

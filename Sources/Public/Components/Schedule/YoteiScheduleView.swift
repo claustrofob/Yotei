@@ -6,10 +6,11 @@
 import SwiftUI
 
 public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: View {
+    @Environment(\.calendar) private var calendar
+
     @Binding private var focusedDate: Date
     @Binding private var data: YoteiEventsInterval
     private weak var delegate: YoteiDelegate?
-    private let calendar: Calendar
     private let viewFactory: ViewFactory
 
     @State private var viewData: YoteiScheduleViewData?
@@ -18,17 +19,11 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval>,
         delegate: YoteiDelegate?,
-        calendar: Calendar,
         viewFactory: ViewFactory = YoteiScheduleViewFactory()
     ) {
-        _focusedDate = Binding(get: {
-            calendar.startOfDay(for: focusedDate.wrappedValue)
-        }, set: {
-            focusedDate.wrappedValue = $0
-        })
+        _focusedDate = focusedDate
         _data = data
         self.delegate = delegate
-        self.calendar = calendar
         self.viewFactory = viewFactory
     }
 
@@ -37,7 +32,6 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
             YoteiScheduleCollectionView(
                 data: viewData,
                 delegate: delegate,
-                calendar: calendar,
                 viewFactory: viewFactory
             ) {
                 viewData?.focusedDate = $0

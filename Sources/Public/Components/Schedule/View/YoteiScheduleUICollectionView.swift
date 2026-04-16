@@ -13,7 +13,6 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     private var focusedDate: Date?
 
     private let focusedDateUpdate: (Date) -> Void
-    private let calendar: Calendar
     private let viewFactory: ViewFactory
     private weak var calendarDelegate: YoteiDelegate?
     private var items: [YoteiScheduleViewModel] = []
@@ -30,12 +29,10 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     >()
 
     init(
-        calendar: Calendar,
         viewFactory: ViewFactory,
         delegate: YoteiDelegate?,
         focusedDateUpdate: @escaping (Date) -> Void
     ) {
-        self.calendar = calendar
         self.viewFactory = viewFactory
         calendarDelegate = delegate
         self.focusedDateUpdate = focusedDateUpdate
@@ -62,24 +59,16 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
 
         let eventCellRegistration = UICollectionView.CellRegistration<
             UICollectionViewCell, (Date, YoteiEvent)
-        > { [viewFactory, calendar] cell, _, event in
+        > { [viewFactory] cell, _, event in
             cell.contentConfiguration = UIHostingConfiguration {
-                viewFactory.eventCellView(
-                    date: event.0,
-                    event: event.1,
-                    calendar: calendar
-                )
+                viewFactory.eventCellView(date: event.0, event: event.1)
             }.margins(.all, 0)
         }
         let allDayEventCellRegistration = UICollectionView.CellRegistration<
             UICollectionViewCell, (Date, YoteiEvent)
-        > { [viewFactory, calendar] cell, _, event in
+        > { [viewFactory] cell, _, event in
             cell.contentConfiguration = UIHostingConfiguration {
-                viewFactory.allDayEventCellView(
-                    date: event.0,
-                    event: event.1,
-                    calendar: calendar
-                )
+                viewFactory.allDayEventCellView(date: event.0, event: event.1)
             }.margins(.all, 0)
         }
         let emptyCellRegistration = UICollectionView.CellRegistration<
@@ -104,7 +93,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
                 for: indexPath.section
             ) ?? Date()
             cell.contentConfiguration = UIHostingConfiguration {
-                viewFactory.dayHeaderView(date: date, calendar: calendar)
+                viewFactory.dayHeaderView(date: date)
             }.margins(.all, 0)
         }
 

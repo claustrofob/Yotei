@@ -6,18 +6,14 @@
 import SwiftUI
 
 public struct YoteiScheduleSectionHeaderDefaultView: View {
+    @Environment(\.calendar) private var calendar
+
     private let date: Date
     private let sectionInsets: UIEdgeInsets
-    private let calendar: Calendar
 
-    public init(
-        date: Date,
-        sectionInsets: UIEdgeInsets,
-        calendar: Calendar
-    ) {
+    public init(date: Date, sectionInsets: UIEdgeInsets) {
         self.date = date
         self.sectionInsets = sectionInsets
-        self.calendar = calendar
     }
 
     public var body: some View {

@@ -8,18 +8,10 @@ import SwiftUI
 @MainActor
 public protocol YoteiScheduleViewFactoryProtocol {
     associatedtype EventCellView: View
-    func eventCellView(
-        date: Date,
-        event: YoteiEvent,
-        calendar: Calendar
-    ) -> EventCellView
+    func eventCellView(date: Date, event: YoteiEvent) -> EventCellView
 
     associatedtype AllDayEventCellView: View
-    func allDayEventCellView(
-        date: Date,
-        event: YoteiEvent,
-        calendar: Calendar
-    ) -> AllDayEventCellView
+    func allDayEventCellView(date: Date, event: YoteiEvent) -> AllDayEventCellView
 
     associatedtype EmptyCellView: View
     func emptyCellView(date: Date) -> EmptyCellView
@@ -28,7 +20,7 @@ public protocol YoteiScheduleViewFactoryProtocol {
     func loadingCellView(date: Date) -> LoadingCellView
 
     associatedtype DayHeaderView: View
-    func dayHeaderView(date: Date, calendar: Calendar) -> DayHeaderView
+    func dayHeaderView(date: Date) -> DayHeaderView
 
     func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent) -> CGSize
     func emptyViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
@@ -40,28 +32,12 @@ public protocol YoteiScheduleViewFactoryProtocol {
 }
 
 public extension YoteiScheduleViewFactoryProtocol {
-    func eventCellView(
-        date: Date,
-        event: YoteiEvent,
-        calendar: Calendar
-    ) -> some View {
-        YoteiScheduleEventCellDefaultView(
-            cellDate: date,
-            event: event,
-            calendar: calendar
-        )
+    func eventCellView(date: Date, event: YoteiEvent) -> some View {
+        YoteiScheduleEventCellDefaultView(cellDate: date, event: event)
     }
 
-    func allDayEventCellView(
-        date: Date,
-        event: YoteiEvent,
-        calendar: Calendar
-    ) -> some View {
-        YoteiScheduleAllDayEventCellDefaultView(
-            cellDate: date,
-            event: event,
-            calendar: calendar
-        )
+    func allDayEventCellView(date: Date, event: YoteiEvent) -> some View {
+        YoteiScheduleAllDayEventCellDefaultView(cellDate: date, event: event)
     }
 
     func emptyCellView(date _: Date) -> some View {
@@ -72,11 +48,10 @@ public extension YoteiScheduleViewFactoryProtocol {
         YoteiScheduleLoadingCellDefaultView()
     }
 
-    func dayHeaderView(date: Date, calendar: Calendar) -> some View {
+    func dayHeaderView(date: Date) -> some View {
         YoteiScheduleSectionHeaderDefaultView(
             date: date,
-            sectionInsets: insetsForSection(),
-            calendar: calendar
+            sectionInsets: insetsForSection()
         )
     }
 

@@ -134,8 +134,7 @@ private extension YoteiDatePicker {
             }) {
                 viewFactory.monthSelectorButtonView(
                     date: selectedPageDate,
-                    isExpanded: isMonthYearPickerExpanded,
-                    calendar: calendar
+                    isExpanded: isMonthYearPickerExpanded
                 )
             }
         }

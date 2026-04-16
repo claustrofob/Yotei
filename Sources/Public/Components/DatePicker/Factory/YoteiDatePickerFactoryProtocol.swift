@@ -12,19 +12,14 @@ public protocol YoteiDatePickerFactoryProtocol {
         date: Date,
         todayDate: Date,
         focusedDate: Date?,
-        isEnabled: Bool,
-        calendar: Calendar
+        isEnabled: Bool
     ) -> DayCellView
 
     func dayCellViewHeight() -> CGFloat
     func weekInteritemVerticalSpacing() -> CGFloat
 
     associatedtype MonthSelectorButtonView: View
-    func monthSelectorButtonView(
-        date: Date,
-        isExpanded: Bool,
-        calendar: Calendar
-    ) -> MonthSelectorButtonView
+    func monthSelectorButtonView(date: Date, isExpanded: Bool) -> MonthSelectorButtonView
 
     associatedtype MonthBackButtonView: View
     func monthBackButtonView() -> MonthBackButtonView
@@ -38,15 +33,13 @@ public extension YoteiDatePickerFactoryProtocol {
         date: Date,
         todayDate: Date,
         focusedDate: Date?,
-        isEnabled: Bool,
-        calendar: Calendar
+        isEnabled: Bool
     ) -> some View {
         YoteiDayCellDefaultView(
             date: date,
             todayDate: todayDate,
             focusedDate: focusedDate,
-            isEnabled: isEnabled,
-            calendar: calendar
+            isEnabled: isEnabled
         )
     }
 
@@ -58,16 +51,8 @@ public extension YoteiDatePickerFactoryProtocol {
         8
     }
 
-    func monthSelectorButtonView(
-        date: Date,
-        isExpanded: Bool,
-        calendar: Calendar
-    ) -> some View {
-        YoteiMonthSelectorButtonDefaultView(
-            date: date,
-            isExpanded: isExpanded,
-            calendar: calendar
-        )
+    func monthSelectorButtonView(date: Date, isExpanded: Bool) -> some View {
+        YoteiMonthSelectorButtonDefaultView(date: date, isExpanded: isExpanded)
     }
 
     func monthBackButtonView() -> some View {

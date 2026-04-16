@@ -12,24 +12,23 @@ public struct YoteiDayCellDefaultView: View {
         isEventsVisible: Bool
     )
 
+    @Environment(\.calendar) private var calendar
+
     private let date: Date
     private let todayDate: Date
     private let focusedDate: Date?
     private let isEnabled: Bool
-    private let calendar: Calendar
 
     public init(
         date: Date,
         todayDate: Date,
         focusedDate: Date? = nil,
-        isEnabled: Bool = true,
-        calendar: Calendar
+        isEnabled: Bool = true
     ) {
         self.date = date
         self.todayDate = todayDate
         self.focusedDate = focusedDate
         self.isEnabled = isEnabled
-        self.calendar = calendar
     }
 
     public var body: some View {

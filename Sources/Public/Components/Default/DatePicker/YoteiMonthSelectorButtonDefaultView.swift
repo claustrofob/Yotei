@@ -6,18 +6,17 @@
 import SwiftUI
 
 public struct YoteiMonthSelectorButtonDefaultView: View {
+    @Environment(\.calendar) private var calendar
+
     private let date: Date
     private let isExpanded: Bool
-    private let calendar: Calendar
 
     public init(
         date: Date,
-        isExpanded: Bool,
-        calendar: Calendar
+        isExpanded: Bool
     ) {
         self.date = date
         self.isExpanded = isExpanded
-        self.calendar = calendar
     }
 
     public var body: some View {

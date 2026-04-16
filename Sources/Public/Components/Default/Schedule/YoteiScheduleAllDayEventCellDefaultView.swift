@@ -6,20 +6,16 @@
 import SwiftUI
 
 public struct YoteiScheduleAllDayEventCellDefaultView: View {
+    @Environment(\.calendar) private var calendar
+
     private let nowDate = Date.now
 
     private let cellDate: Date
     private let event: YoteiEvent
-    private let calendar: Calendar
 
-    public init(
-        cellDate: Date,
-        event: YoteiEvent,
-        calendar: Calendar
-    ) {
+    public init(cellDate: Date, event: YoteiEvent) {
         self.cellDate = cellDate
         self.event = event
-        self.calendar = calendar
     }
 
     public var body: some View {

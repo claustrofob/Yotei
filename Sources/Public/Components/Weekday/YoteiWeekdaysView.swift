@@ -27,7 +27,7 @@ public struct YoteiWeekdaysView<ViewFactory: YoteiWeekdayViewFactoryProtocol>: V
         TimelineView(.everyMinute) { context in
             HStack(spacing: 0) {
                 ForEach(daysSequence, id: \.self) { date in
-                    viewFactory.dayCellView(date: date, todayDate: context.date, calendar: calendar)
+                    viewFactory.dayCellView(date: date, todayDate: context.date)
                 }
             }
         }
