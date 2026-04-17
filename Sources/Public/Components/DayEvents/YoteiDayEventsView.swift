@@ -64,7 +64,8 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
                         events: events,
                         dateSequence: dateSequence,
                         numberOfDays: numberOfDays,
-                        viewFactory: viewFactory
+                        viewFactory: viewFactory,
+                        delegate: delegate
                     )
                     .overlay(alignment: .topLeading) {
                         if let event = placeholderEvent {

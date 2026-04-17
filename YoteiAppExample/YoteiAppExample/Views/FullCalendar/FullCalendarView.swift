@@ -118,7 +118,7 @@ struct FullCalendarView: View {
             YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiPagesDayView(
-                focusedDate: $viewModel.focusedDate, calendar: .current
+                focusedDate: $viewModel.focusedDate
             ) { date in
                 VStack(spacing: 0) {
                     YoteiAllDayEventsTopView(

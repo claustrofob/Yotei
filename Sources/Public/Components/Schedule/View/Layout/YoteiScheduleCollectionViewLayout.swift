@@ -9,7 +9,6 @@ import UIKit
 // but for calendar scroll to work properly, it is required that inside `targetContentOffsetForProposedContentOffset` delegate method
 // we can get updated `layoutAttributesForSupplementaryElement`. Compositional layout returns old attributes in that case.
 final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
-    private var contentOffset: CGPoint = .zero
     private var lastWidth: CGFloat = -1
     private var attributeSectionIndexOffset: [Int] = []
     private var layoutAttributes: [UICollectionViewLayoutAttributes] = []
@@ -143,9 +142,8 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
     }
 
     // this should always be true for `invalidationContext(forBoundsChange newBounds: CGRect)` to be called
-    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        contentOffset = newBounds.origin
-        return true
+    override func shouldInvalidateLayout(forBoundsChange _: CGRect) -> Bool {
+        true
     }
 
     override func invalidationContext(forBoundsChange newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {

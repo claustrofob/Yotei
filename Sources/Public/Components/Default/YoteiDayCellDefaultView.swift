@@ -8,8 +8,7 @@ import SwiftUI
 public struct YoteiDayCellDefaultView: View {
     private typealias CellStyle = (
         backgroundColor: AnyShapeStyle,
-        foregroundColor: AnyShapeStyle,
-        isEventsVisible: Bool
+        foregroundColor: AnyShapeStyle
     )
 
     @Environment(\.calendar) private var calendar
@@ -46,13 +45,13 @@ public struct YoteiDayCellDefaultView: View {
 
     private func dayStyle(date: Date) -> CellStyle {
         if date.isInSameDay(as: todayDate, in: calendar) {
-            (AnyShapeStyle(.tint), AnyShapeStyle(.background), false)
+            (AnyShapeStyle(.tint), AnyShapeStyle(.background))
         } else if !isEnabled {
-            (AnyShapeStyle(.clear), AnyShapeStyle(.tertiary), false)
+            (AnyShapeStyle(.clear), AnyShapeStyle(.tertiary))
         } else if let focusedDate, date.isInSameDay(as: focusedDate, in: calendar) {
-            (AnyShapeStyle(.tint.opacity(0.2)), AnyShapeStyle(.secondary), false)
+            (AnyShapeStyle(.tint.opacity(0.2)), AnyShapeStyle(.secondary))
         } else {
-            (AnyShapeStyle(.clear), AnyShapeStyle(.primary), true)
+            (AnyShapeStyle(.clear), AnyShapeStyle(.primary))
         }
     }
 }

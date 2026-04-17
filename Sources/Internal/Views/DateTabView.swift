@@ -175,12 +175,10 @@ extension DateTabView {
 
 extension DateTabView {
     final class PageController: UIHostingController<Content> {
-        var date: Date
-        let content: Content
+        let date: Date
 
         init(date: Date, content: Content) {
             self.date = date
-            self.content = content
             super.init(rootView: content)
         }
 

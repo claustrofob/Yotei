@@ -9,7 +9,6 @@ import UIKit
 final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UICollectionView, UICollectionViewDelegateFlowLayout {
     private let layout: YoteiScheduleCollectionViewLayout
 
-    private var lastUserScrollOffset: CGFloat = 0
     private var focusedDate: Date?
 
     private let focusedDateUpdate: (Date) -> Void
@@ -18,7 +17,6 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     private var items: [YoteiScheduleViewModel] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
-    private var isScrollDetectionDisabled = false
     private var autoUpdateTask: Task<Void, Never>?
 
     private var diffableDataSource: YoteiScheduleDataSource!
@@ -315,7 +313,6 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         else {
             return
         }
-        lastUserScrollOffset = scrollView.contentOffset.y
 
         if date != focusedDate {
             focusedDate = date
