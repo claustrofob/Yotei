@@ -74,7 +74,7 @@ actor EventsLocalRepository {
                 isAllDay: isAllDay
             )
             let eventDateInterval = event.displayableDateInterval()
-            for date in YoteiDaysSequence(interval: eventDateInterval) {
+            for date in YoteiDaysSequence(interval: eventDateInterval, calendar: calendar) {
                 result[date, default: []].append(event)
             }
         }
@@ -86,7 +86,7 @@ actor EventsLocalRepository {
 extension EventsLocalRepository: EventsLocalRepositoryProtocol {
     func events(in dateInterval: DateInterval, calendar: Calendar) -> [Date: [YoteiEvent]] {
         var result = [Date: [YoteiEvent]]()
-        for date in YoteiDaysSequence(interval: dateInterval) {
+        for date in YoteiDaysSequence(interval: dateInterval, calendar: calendar) {
             if events[date] == nil {
                 events = events.merging(generateEvents(for: date, calendar: calendar)) { $0 + $1 }
             }

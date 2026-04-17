@@ -6,21 +6,20 @@
 import SwiftUI
 
 struct DateTabView<Content: View>: UIViewControllerRepresentable {
+    @Environment(\.calendar) private var calendar
+
     @Binding private var selection: Date
     @ViewBuilder private let content: (Date) -> Content
-    private let previousDate: (Date) -> Date
-    private let nextDate: (Date) -> Date
+    private let component: Calendar.Component
 
     init(
         selection: Binding<Date>,
-        @ViewBuilder content: @escaping (Date) -> Content,
-        previousDate: @escaping (Date) -> Date,
-        nextDate: @escaping (Date) -> Date
+        component: Calendar.Component,
+        @ViewBuilder content: @escaping (Date) -> Content
     ) {
         _selection = selection
+        self.component = component
         self.content = content
-        self.previousDate = previousDate
-        self.nextDate = nextDate
     }
 
     func makeUIViewController(context: Context) -> UIPageViewController {
@@ -37,7 +36,16 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIPageViewController, context: Context) {
-        guard context.coordinator.currentPageDate != selection else {
+        let normalizedCurrentPageDate = calendar.dateInterval(
+            of: component,
+            for: context.coordinator.currentPageDate
+        )!.start
+        let normalizedSelection = calendar.dateInterval(
+            of: component,
+            for: selection
+        )!.start
+
+        guard normalizedCurrentPageDate != normalizedSelection else {
             uiViewController.viewControllers?.compactMap {
                 $0 as? PageController
             }.forEach {
@@ -48,7 +56,7 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
 
         uiViewController.setViewControllers(
             [PageController(date: selection, content: content(selection))],
-            direction: context.coordinator.currentPageDate < selection ? .forward : .reverse,
+            direction: normalizedCurrentPageDate < normalizedSelection ? .forward : .reverse,
             animated: true
         )
         context.coordinator.currentPageDate = selection
@@ -57,9 +65,9 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(
             selection: $selection,
-            content: content,
-            previousDate: previousDate,
-            nextDate: nextDate
+            calendar: calendar,
+            component: component,
+            content: content
         )
     }
 }
@@ -67,24 +75,32 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
 extension DateTabView {
     final class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
         @Binding private var selection: Date
+        private var calendar: Calendar
         private let content: (Date) -> Content
-        private let previousDate: (Date) -> Date
-        private let nextDate: (Date) -> Date
+        private let component: Calendar.Component
 
         var currentPageDate: Date
 
         init(
             selection: Binding<Date>,
-            @ViewBuilder content: @escaping (Date) -> Content,
-            previousDate: @escaping (Date) -> Date,
-            nextDate: @escaping (Date) -> Date
+            calendar: Calendar,
+            component: Calendar.Component,
+            @ViewBuilder content: @escaping (Date) -> Content
         ) {
             _selection = selection
+            self.calendar = calendar
+            self.component = component
             self.content = content
-            self.previousDate = previousDate
-            self.nextDate = nextDate
 
             currentPageDate = selection.wrappedValue
+        }
+
+        private func nextDate(for date: Date, value: Int) -> Date {
+            calendar.date(
+                byAdding: component,
+                value: value,
+                to: date
+            )!
         }
 
         func pageViewController(
@@ -94,7 +110,7 @@ extension DateTabView {
             guard let pageController = viewController as? PageController else {
                 return nil
             }
-            let date = previousDate(pageController.date)
+            let date = nextDate(for: pageController.date, value: -1)
             return PageController(date: date, content: content(date))
         }
 
@@ -105,7 +121,7 @@ extension DateTabView {
             guard let pageController = viewController as? PageController else {
                 return nil
             }
-            let date = nextDate(pageController.date)
+            let date = nextDate(for: pageController.date, value: 1)
             return PageController(date: date, content: content(date))
         }
 
@@ -126,12 +142,26 @@ extension DateTabView {
             guard let pageController = pageViewController.viewControllers?.first as? PageController else {
                 return
             }
+
+            let normalizedCurrentPageDate = calendar.dateInterval(
+                of: component,
+                for: pageController.date
+            )!.start
+            let normalizedSelection = calendar.dateInterval(
+                of: component,
+                for: selection
+            )!.start
+
+            guard normalizedCurrentPageDate != normalizedSelection else {
+                return
+            }
+
+            let value = normalizedCurrentPageDate < normalizedSelection ? -1 : 1
+            let date = nextDate(for: selection, value: value)
+
             DispatchQueue.main.async {
-                guard self.selection != pageController.date else {
-                    return
-                }
-                self.currentPageDate = pageController.date
-                self.selection = pageController.date
+                self.currentPageDate = date
+                self.selection = date
             }
         }
     }
@@ -139,7 +169,7 @@ extension DateTabView {
 
 extension DateTabView {
     final class PageController: UIHostingController<Content> {
-        let date: Date
+        var date: Date
 
         init(date: Date, content: Content) {
             self.date = date

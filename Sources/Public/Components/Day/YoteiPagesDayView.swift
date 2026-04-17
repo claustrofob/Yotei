@@ -23,18 +23,13 @@ public struct YoteiPagesDayView<Content: View>: View {
     public var body: some View {
         DateTabView(
             selection: $focusedDate,
+            component: .day,
             content: { date in
                 content(date)
                     // Keep the navigation bar explicitly visible
                     // This view is hosted inside a UIPageViewController, and during some
                     // page transitions the navigation bar may be hidden unexpectedly
                     .toolbar(.visible, for: .navigationBar)
-            },
-            previousDate: { date in
-                calendar.date(byAdding: .day, value: -1, to: date)!
-            },
-            nextDate: { date in
-                calendar.date(byAdding: .day, value: 1, to: date)!
             }
         )
         .ignoresSafeArea()

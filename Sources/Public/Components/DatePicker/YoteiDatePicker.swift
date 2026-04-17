@@ -92,6 +92,7 @@ private extension YoteiDatePicker {
                     } else {
                         DateTabView(
                             selection: $selectedPageDate,
+                            component: .month,
                             content: { date in
                                 YoteiDatePickerMonth(
                                     selectedDate: $selectedDate,
@@ -100,12 +101,6 @@ private extension YoteiDatePicker {
                                     maxDate: maxDate,
                                     viewFactory: viewFactory
                                 )
-                            },
-                            previousDate: { date in
-                                calendar.date(byAdding: .month, value: -1, to: date)!
-                            },
-                            nextDate: { date in
-                                calendar.date(byAdding: .month, value: 1, to: date)!
                             }
                         )
                     }

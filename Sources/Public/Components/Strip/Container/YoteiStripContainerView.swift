@@ -30,15 +30,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     public var body: some View {
         MainView(
             focusedDate: $focusedDate,
-            viewFactory: viewFactory,
-            initialWeekPageDate: calendar.dateInterval(
-                of: .weekOfMonth,
-                for: focusedDate
-            )!.start,
-            initialMonthPageDate: calendar.dateInterval(
-                of: .month,
-                for: focusedDate
-            )!.start
+            viewFactory: viewFactory
         )
     }
 }
@@ -49,9 +41,6 @@ private extension YoteiStripContainerView {
 
         @Binding var focusedDate: Date
         let viewFactory: ViewFactory
-
-        @State var selectedWeekPageDate: Date
-        @State var selectedMonthPageDate: Date
 
         @State private var monthStripHeight: CGFloat = 0
         @State private var expandDragStarted = false
@@ -64,14 +53,10 @@ private extension YoteiStripContainerView {
 
         init(
             focusedDate: Binding<Date>,
-            viewFactory: ViewFactory,
-            initialWeekPageDate: Date,
-            initialMonthPageDate: Date
+            viewFactory: ViewFactory
         ) {
             _focusedDate = focusedDate
             self.viewFactory = viewFactory
-            selectedWeekPageDate = initialWeekPageDate
-            selectedMonthPageDate = initialMonthPageDate
         }
 
         var body: some View {
@@ -83,7 +68,7 @@ private extension YoteiStripContainerView {
                         ZStack(alignment: .top) {
                             Group {
                                 if isExpanded {
-                                    tabView(selection: $selectedMonthPageDate, component: .month) { date in
+                                    tabView(selection: $focusedDate, component: .month) { date in
                                         YoteiStripMonthView(
                                             focusedDate: $focusedDate,
                                             date: date,
@@ -95,7 +80,7 @@ private extension YoteiStripContainerView {
                                     }
                                     .zIndex(1)
                                 } else {
-                                    tabView(selection: $selectedWeekPageDate, component: .weekOfMonth) { date in
+                                    tabView(selection: $focusedDate, component: .weekOfMonth) { date in
                                         YoteiStripWeekView(
                                             focusedDate: $focusedDate,
                                             date: date,
@@ -144,21 +129,10 @@ private extension YoteiStripContainerView {
                 .frame(height: viewFactory.dayCellViewHeight() + expandButtonHeight, alignment: .top)
             }
             .onAppear {
-                generateSelectedWeekPageDate()
-                generateSelectedMonthPageDate()
-                calculateMonthStripHeight()
-            }
-            .onChange(of: selectedWeekPageDate) { _ in
-                updateSelectedPageDate()
-                calculateMonthStripHeight()
-            }
-            .onChange(of: selectedMonthPageDate) { _ in
-                updateSelectedPageDate()
                 calculateMonthStripHeight()
             }
             .onChange(of: focusedDate) { _ in
-                generateSelectedWeekPageDate()
-                generateSelectedMonthPageDate()
+                calculateMonthStripHeight()
             }
             .simultaneousGesture(DragGesture().onChanged { value in
                 guard !expandDragStarted else {
@@ -189,26 +163,13 @@ private extension YoteiStripContainerView {
         ) -> some View {
             DateTabView(
                 selection: selection,
+                component: component,
                 content: { date in
                     content(date)
                         // Keep the navigation bar explicitly visible
                         // This view is hosted inside a UIPageViewController, and during some
                         // page transitions the navigation bar may be hidden unexpectedly
                         .toolbar(.visible, for: .navigationBar)
-                },
-                previousDate: { date in
-                    calendar.date(
-                        byAdding: component,
-                        value: -1,
-                        to: date
-                    )!
-                },
-                nextDate: { date in
-                    calendar.date(
-                        byAdding: component,
-                        value: 1,
-                        to: date
-                    )!
                 }
             )
         }
@@ -237,41 +198,8 @@ private extension YoteiStripContainerView {
                 .onTapGesture {
                     withAnimation {
                         isExpanded.toggle()
-                        generateSelectedWeekPageDate()
-                        generateSelectedMonthPageDate()
                     }
                 }
-        }
-
-        func generateSelectedWeekPageDate() {
-            let startDate = calendar.dateInterval(
-                of: .weekOfMonth,
-                for: focusedDate
-            )!.start
-
-            guard startDate != selectedWeekPageDate else {
-                return
-            }
-            selectedWeekPageDate = startDate
-        }
-
-        func generateSelectedMonthPageDate() {
-            let startDate = calendar.dateInterval(
-                of: .month,
-                for: focusedDate
-            )!.start
-
-            guard startDate != selectedMonthPageDate else {
-                return
-            }
-            selectedMonthPageDate = startDate
-        }
-
-        func updateSelectedPageDate() {
-            let calendarDateService = DateService(calendar: calendar)
-            focusedDate = isExpanded
-                ? calendarDateService.monthFocusedDate(for: selectedMonthPageDate, currentFocusedDate: focusedDate)
-                : calendarDateService.weekFocusedDate(for: selectedWeekPageDate, currentFocusedDate: focusedDate)
         }
 
         func viewDidSelectExpand() {
@@ -279,8 +207,6 @@ private extension YoteiStripContainerView {
                 return
             }
             isExpanded = true
-            generateSelectedWeekPageDate()
-            generateSelectedMonthPageDate()
         }
 
         func viewDidSelectCollapse() {
@@ -288,8 +214,6 @@ private extension YoteiStripContainerView {
                 return
             }
             isExpanded = false
-            generateSelectedWeekPageDate()
-            generateSelectedMonthPageDate()
         }
     }
 }

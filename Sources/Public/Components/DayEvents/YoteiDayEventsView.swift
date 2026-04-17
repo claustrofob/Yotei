@@ -17,7 +17,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
     private let viewFactory: ViewFactory
 
     private var dateSequence: YoteiDaysSequence {
-        YoteiDaysSequence(startDate: dayDate, days: numberOfDays, calendar: calendar)
+        YoteiDaysSequence(startDate: startOfDay, days: numberOfDays, calendar: calendar)
     }
 
     private let scrollCoordinateSpaceName = "scrollViewContent"
