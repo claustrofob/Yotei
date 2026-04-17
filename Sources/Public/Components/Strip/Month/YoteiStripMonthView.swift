@@ -37,56 +37,36 @@ public struct YoteiStripMonthView<ViewFactory: YoteiStripViewFactoryProtocol>: V
             of: .weekOfMonth,
             for: monthInterval.start
         )!.start
-        MainView(
-            focusedDate: $focusedDate,
-            monthInterval: monthInterval,
-            numberOfWeeks: numberOfWeeks,
-            daysSequence: YoteiDaysSequence(
-                startDate: startDate,
-                days: numberOfWeeks * Constants.numberOfDaysPerWeek,
-                calendar: calendar
-            ),
-            viewFactory: viewFactory
+        let daysSequence = YoteiDaysSequence(
+            startDate: startDate,
+            days: numberOfWeeks * Constants.numberOfDaysPerWeek,
+            calendar: calendar
         )
-    }
-}
 
-private extension YoteiStripMonthView {
-    struct MainView: View {
-        @Environment(\.calendar) private var calendar
-
-        @Binding var focusedDate: Date
-        let monthInterval: DateInterval
-        let numberOfWeeks: Int
-        let daysSequence: YoteiDaysSequence
-        let viewFactory: ViewFactory
-
-        var body: some View {
-            TimelineView(.everyMinute) { context in
-                Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
-                    ForEach(0 ..< numberOfWeeks, id: \.self) { row in
-                        GridRow {
-                            ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                                let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
-                                // monthInterval.end equals the start date of the next day
-                                let isEnabled = monthInterval.contains(date) && monthInterval.end != date
-                                Button(action: {
-                                    focusedDate = date
-                                }, label: {
-                                    viewFactory.dayCellView(
-                                        date: date,
-                                        todayDate: context.date,
-                                        focusedDate: focusedDate,
-                                        isEnabled: isEnabled
-                                    )
-                                })
-                                .disabled(!isEnabled)
-                            }
+        TimelineView(.everyMinute) { context in
+            Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
+                ForEach(0 ..< numberOfWeeks, id: \.self) { row in
+                    GridRow {
+                        ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                            let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
+                            // monthInterval.end equals the start date of the next day
+                            let isEnabled = monthInterval.contains(date) && monthInterval.end != date
+                            Button(action: {
+                                focusedDate = date
+                            }, label: {
+                                viewFactory.dayCellView(
+                                    date: date,
+                                    todayDate: context.date,
+                                    focusedDate: focusedDate,
+                                    isEnabled: isEnabled
+                                )
+                            })
+                            .disabled(!isEnabled)
                         }
                     }
                 }
-                .buttonStyle(.plain)
             }
+            .buttonStyle(.plain)
         }
     }
 }

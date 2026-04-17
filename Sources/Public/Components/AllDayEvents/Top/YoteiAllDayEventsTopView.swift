@@ -15,6 +15,13 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     private weak var delegate: YoteiDelegate?
     private let viewFactory: ViewFactory
 
+    @State private var otherEventsCount: [Date: Int] = [:]
+    @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
+
+    private var daysSequence: YoteiDaysSequence {
+        YoteiDaysSequence(startDate: startDate, days: numberOfDays, calendar: calendar)
+    }
+
     public init(
         startDate: Date,
         numberOfDays: Int,
@@ -30,140 +37,117 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     }
 
     public var body: some View {
-        MainView(
-            numberOfDays: numberOfDays,
-            data: $data,
-            delegate: delegate,
-            viewFactory: viewFactory,
-            daysSequence: YoteiDaysSequence(startDate: startDate, days: numberOfDays, calendar: calendar)
-        )
+        ZStack {
+            if !viewData.isEmpty {
+                eventsGridView()
+                    .overlay {
+                        dayButtonsView()
+                    }
+                    .padding(viewFactory.insets())
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .onChange(of: data, initial: true, isAsync: true) {
+            let events = daysSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
+                guard let events = data.events[date]?.filter(\.isAllDay), !events.isEmpty else {
+                    return
+                }
+                result[date] = events
+            }
+            generateViewData(for: events)
+        }
     }
 }
 
 private extension YoteiAllDayEventsTopView {
-    struct MainView: View {
-        @Environment(\.calendar) private var calendar
-
-        let numberOfDays: Int
-        @Binding var data: YoteiEventsInterval
-        weak var delegate: YoteiDelegate?
-        let viewFactory: ViewFactory
-        let daysSequence: YoteiDaysSequence
-
-        @State private var otherEventsCount: [Date: Int] = [:]
-        @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
-
-        var body: some View {
-            ZStack {
-                if !viewData.isEmpty {
-                    eventsGridView()
-                        .overlay {
-                            dayButtonsView()
-                        }
-                        .padding(viewFactory.insets())
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .onChange(of: data, initial: true, isAsync: true) {
-                let events = daysSequence.reduce(into: [Date: [YoteiEvent]]()) { result, date in
-                    guard let events = data.events[date]?.filter(\.isAllDay), !events.isEmpty else {
-                        return
-                    }
-                    result[date] = events
-                }
-                generateViewData(for: events)
-            }
-        }
-
-        func eventsGridView() -> some View {
-            Grid(
-                horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
-                verticalSpacing: viewFactory.interitemVerticalSpacing()
-            ) {
-                ForEach(0 ..< viewData.count, id: \.self) { rowIndex in
-                    let rowData = viewData[rowIndex]
-                    GridRow {
-                        ForEach(rowData, id: \.id) { item in
-                            switch item {
-                            case let .event(event: event, cols: cols):
-                                viewFactory.eventView(event: event)
-                                    .gridCellColumns(cols)
-                            case .empty:
-                                emptyView()
-                            }
-                        }
-                    }
-                }
-
+    func eventsGridView() -> some View {
+        Grid(
+            horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
+            verticalSpacing: viewFactory.interitemVerticalSpacing()
+        ) {
+            ForEach(0 ..< viewData.count, id: \.self) { rowIndex in
+                let rowData = viewData[rowIndex]
                 GridRow {
-                    ForEach(daysSequence, id: \.self) { date in
-                        if let count = otherEventsCount[date], count > 0 {
-                            viewFactory.moreEventsView(count: count)
-                        } else {
+                    ForEach(rowData, id: \.id) { item in
+                        switch item {
+                        case let .event(event: event, cols: cols):
+                            viewFactory.eventView(event: event)
+                                .gridCellColumns(cols)
+                        case .empty:
                             emptyView()
                         }
                     }
                 }
             }
-        }
 
-        func dayButtonsView() -> some View {
-            HStack(spacing: 0) {
+            GridRow {
                 ForEach(daysSequence, id: \.self) { date in
-                    Button(action: {
-                        delegate?.calendarDidSelectAllDay(date: date)
-                    }) {
-                        Color.clear
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            }.frame(maxWidth: .infinity)
-        }
-
-        func emptyView() -> some View {
-            Color.clear
-                .frame(height: 0)
-                .frame(maxWidth: .infinity)
-        }
-
-        func generateViewData(for events: [Date: [YoteiEvent]]) {
-            var events = events
-            guard !events.isEmpty else {
-                viewData = []
-                return
-            }
-            var processedEventIDs = Set<YoteiEvent.ID>()
-            viewData = (0 ..< 2).map { _ in
-                var day = 0
-                var data = [YoteiAllDayEventsTopViewModel]()
-                while day < numberOfDays {
-                    let date = daysSequence[day]
-                    if
-                        !events[date, default: []].isEmpty,
-                        let event = events[date]?.removeFirst()
-                    {
-                        let eventDateInterval = event.displayableDateInterval()
-                        if
-                            processedEventIDs.contains(event.id) ||
-                            (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date, in: calendar))
-                        {
-                            continue
-                        }
-                        let dateInterval = DateInterval(start: date, end: eventDateInterval.end)
-                        let durationInDays = min(dateInterval.durationInDays(in: calendar) + 1, numberOfDays - day)
-                        data.append(.event(event: event, cols: durationInDays))
-                        day += durationInDays
-                        processedEventIDs.insert(event.id)
+                    if let count = otherEventsCount[date], count > 0 {
+                        viewFactory.moreEventsView(count: count)
                     } else {
-                        data.append(.empty(index: day))
-                        day += 1
+                        emptyView()
                     }
                 }
-                return data
             }
-            otherEventsCount = events.reduce(into: [:]) { result, pair in
-                result[pair.key] = pair.value.count
+        }
+    }
+
+    func dayButtonsView() -> some View {
+        HStack(spacing: 0) {
+            ForEach(daysSequence, id: \.self) { date in
+                Button(action: {
+                    delegate?.calendarDidSelectAllDay(date: date)
+                }) {
+                    Color.clear
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+        }.frame(maxWidth: .infinity)
+    }
+
+    func emptyView() -> some View {
+        Color.clear
+            .frame(height: 0)
+            .frame(maxWidth: .infinity)
+    }
+
+    func generateViewData(for events: [Date: [YoteiEvent]]) {
+        var events = events
+        guard !events.isEmpty else {
+            viewData = []
+            return
+        }
+        var processedEventIDs = Set<YoteiEvent.ID>()
+        viewData = (0 ..< 2).map { _ in
+            var day = 0
+            var data = [YoteiAllDayEventsTopViewModel]()
+            while day < numberOfDays {
+                let date = daysSequence[day]
+                if
+                    !events[date, default: []].isEmpty,
+                    let event = events[date]?.removeFirst()
+                {
+                    let eventDateInterval = event.displayableDateInterval()
+                    if
+                        processedEventIDs.contains(event.id) ||
+                        (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date, in: calendar))
+                    {
+                        continue
+                    }
+                    let dateInterval = DateInterval(start: date, end: eventDateInterval.end)
+                    let durationInDays = min(dateInterval.durationInDays(in: calendar) + 1, numberOfDays - day)
+                    data.append(.event(event: event, cols: durationInDays))
+                    day += durationInDays
+                    processedEventIDs.insert(event.id)
+                } else {
+                    data.append(.empty(index: day))
+                    day += 1
+                }
+            }
+            return data
+        }
+        otherEventsCount = events.reduce(into: [:]) { result, pair in
+            result[pair.key] = pair.value.count
         }
     }
 }
