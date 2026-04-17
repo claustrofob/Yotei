@@ -22,7 +22,7 @@ final class FullCalendarViewModelModel: ObservableObject {
     @Published var data = YoteiEventsInterval()
     @Published var viewType: CalendarViewType = .day
     @Published var isTimezoneSelectorActive = false
-    @Published var calendar = Calendar.current
+    @Published var calendar = Calendar.autoupdatingCurrent
 
     init(eventsLocalRepository: EventsLocalRepositoryProtocol) {
         self.eventsLocalRepository = eventsLocalRepository
