@@ -22,7 +22,7 @@ final class FullCalendarViewModelModel: ObservableObject {
     @Published var data = YoteiEventsInterval()
     @Published var viewType: CalendarViewType = .day
     @Published var isTimezoneSelectorActive = false
-    @Published var calendar = Calendar.autoupdatingCurrent
+    @Published var calendar = Calendar.current
 
     init(eventsLocalRepository: EventsLocalRepositoryProtocol) {
         self.eventsLocalRepository = eventsLocalRepository
@@ -120,5 +120,11 @@ extension FullCalendarViewModelModel {
         if let dateInterval = data.dateInterval {
             fetchLocalEvents(in: dateInterval, shouldReset: true)
         }
+    }
+
+    func viewDidUpdateLocale() {
+        var newCalendar = Calendar.current
+        newCalendar.timeZone = calendar.timeZone
+        calendar = newCalendar
     }
 }

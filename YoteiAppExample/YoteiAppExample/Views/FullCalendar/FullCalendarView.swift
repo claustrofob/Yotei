@@ -97,6 +97,9 @@ struct FullCalendarView: View {
                 viewModel.viewDidSelectTimezone(with: id)
             }))
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSLocale.currentLocaleDidChangeNotification)) { _ in
+            viewModel.viewDidUpdateLocale()
+        }
     }
 
     @ViewBuilder
