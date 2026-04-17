@@ -63,8 +63,11 @@ final class FullCalendarViewModelModel: ObservableObject {
         }
     }
 
-    private func fetchLocalEvents(in dateInterval: DateInterval) {
+    private func fetchLocalEvents(in dateInterval: DateInterval, shouldReset: Bool = false) {
         Task {
+            if shouldReset {
+                await eventsLocalRepository.resetCache()
+            }
             data.events = await eventsLocalRepository.events(in: dateInterval, calendar: calendar)
         }
     }
@@ -107,7 +110,15 @@ extension FullCalendarViewModelModel {
     }
 
     func viewDidSelectTimezone(with id: String) {
+        defer {
+            isTimezoneSelectorActive = false
+        }
+        guard calendar.timeZone.identifier != id else {
+            return
+        }
         calendar.timeZone = TimeZone(identifier: id)!
-        isTimezoneSelectorActive = false
+        if let dateInterval = data.dateInterval {
+            fetchLocalEvents(in: dateInterval, shouldReset: true)
+        }
     }
 }

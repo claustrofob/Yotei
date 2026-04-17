@@ -29,7 +29,8 @@ public struct YoteiMonthYearPicker: UIViewRepresentable {
         return view
     }
 
-    public func updateUIView(_ uiView: UIPickerView, context _: Context) {
+    public func updateUIView(_ uiView: UIPickerView, context: Context) {
+        context.coordinator.calendar = calendar
         selectCurrentDate(uiView: uiView, animated: true)
     }
 
@@ -48,7 +49,7 @@ public struct YoteiMonthYearPicker: UIViewRepresentable {
 public extension YoteiMonthYearPicker {
     class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         @Binding private var date: Date
-        private let calendar: Calendar
+        var calendar: Calendar
 
         init(date: Binding<Date>, calendar: Calendar) {
             _date = date

@@ -95,4 +95,8 @@ extension EventsLocalRepository: EventsLocalRepositoryProtocol {
 
         return result
     }
+
+    func resetCache() {
+        events = [:]
+    }
 }
