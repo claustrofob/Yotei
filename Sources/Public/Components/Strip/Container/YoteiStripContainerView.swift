@@ -159,7 +159,7 @@ private extension YoteiStripContainerView {
         func tabView(
             selection: Binding<Date>,
             component: Calendar.Component,
-            content: @escaping (Date) -> some View
+            @ViewBuilder content: @escaping (Date) -> some View
         ) -> some View {
             DateTabView(
                 selection: selection,

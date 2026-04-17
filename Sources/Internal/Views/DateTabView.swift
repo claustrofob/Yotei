@@ -36,6 +36,10 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIPageViewController, context: Context) {
+        context.coordinator.calendar = calendar
+        context.coordinator.content = content
+        context.coordinator.component = component
+
         let normalizedCurrentPageDate = calendar.dateInterval(
             of: component,
             for: context.coordinator.currentPageDate
@@ -46,11 +50,7 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
         )!.start
 
         guard normalizedCurrentPageDate != normalizedSelection else {
-            uiViewController.viewControllers?.compactMap {
-                $0 as? PageController
-            }.forEach {
-                $0.rootView = content($0.date)
-            }
+            context.coordinator.refresh(viewControllers: uiViewController.viewControllers ?? [])
             return
         }
 
@@ -75,9 +75,9 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
 extension DateTabView {
     final class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
         @Binding private var selection: Date
-        private var calendar: Calendar
-        private let content: (Date) -> Content
-        private let component: Calendar.Component
+        var calendar: Calendar
+        var content: (Date) -> Content
+        var component: Calendar.Component
 
         var currentPageDate: Date
 
@@ -126,17 +126,13 @@ extension DateTabView {
         }
 
         func pageViewController(_: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-            pendingViewControllers.compactMap {
-                $0 as? PageController
-            }.forEach {
-                $0.rootView = content($0.date)
-            }
+            refresh(viewControllers: pendingViewControllers)
         }
 
         func pageViewController(
             _ pageViewController: UIPageViewController,
             didFinishAnimating _: Bool,
-            previousViewControllers _: [UIViewController],
+            previousViewControllers: [UIViewController],
             transitionCompleted _: Bool
         ) {
             guard let pageController = pageViewController.viewControllers?.first as? PageController else {
@@ -162,6 +158,16 @@ extension DateTabView {
             DispatchQueue.main.async {
                 self.currentPageDate = date
                 self.selection = date
+
+                self.refresh(viewControllers: previousViewControllers)
+            }
+        }
+
+        func refresh(viewControllers: [UIViewController]) {
+            viewControllers.compactMap {
+                $0 as? PageController
+            }.forEach {
+                $0.rootView = content($0.date)
             }
         }
     }
@@ -170,9 +176,11 @@ extension DateTabView {
 extension DateTabView {
     final class PageController: UIHostingController<Content> {
         var date: Date
+        let content: Content
 
         init(date: Date, content: Content) {
             self.date = date
+            self.content = content
             super.init(rootView: content)
         }
 
