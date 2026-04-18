@@ -1,5 +1,10 @@
 # Yotei[^1]
 
+[![Swift](https://img.shields.io/badge/Swift-6.2+-orange.svg)](https://swift.org)
+[![Platform](https://img.shields.io/badge/Platform-iOS%2016+-lightgrey.svg)](https://developer.apple.com)
+[![SPM](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A highly modular, highly customizable calendar package for iOS. Built with SwiftUI and UIKit under the hood for the best performance and native feel.
 
 Every component can be used on its own or composed into a full calendar app. Pick only what you need — a date picker, a schedule list, a day timeline, an all-day grid — or wire them all together.
