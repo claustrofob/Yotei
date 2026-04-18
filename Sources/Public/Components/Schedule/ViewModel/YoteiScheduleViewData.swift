@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct YoteiScheduleViewData {
+struct YoteiScheduleViewData<Data: YoteiEventData> {
     var focusedDate: Date
-    var data: [(section: Date, items: [YoteiScheduleViewModel])]
+    var data: [(section: Date, items: [YoteiScheduleViewModel<Data>])]
 }

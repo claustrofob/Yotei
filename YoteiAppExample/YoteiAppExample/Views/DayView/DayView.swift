@@ -9,7 +9,7 @@ import Yotei
 struct DayView: View {
     @State private var focusedDate = Calendar.current.startOfDay(for: Date())
     @State private var contentOffset: CGPoint?
-    @State private var data = YoteiEventsInterval()
+    @State private var data = YoteiEventsInterval<EventData>()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +26,8 @@ struct DayView: View {
                         startDate: date,
                         numberOfDays: 1,
                         data: $data,
-                        delegate: nil
+                        delegate: nil,
+                        viewFactory: YoteiAllDayEventsTopViewFactory()
                     )
                     .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
                     .background {
@@ -91,7 +92,7 @@ struct DayView: View {
     }
 }
 
-private extension YoteiEvent {
+private extension YoteiEvent<EventData> {
     init(
         title: String,
         startOfDay: Date,
@@ -107,7 +108,8 @@ private extension YoteiEvent {
             title: title,
             start: interval.start,
             end: interval.end,
-            isAllDay: false
+            isAllDay: false,
+            data: EventData()
         )
     }
 }

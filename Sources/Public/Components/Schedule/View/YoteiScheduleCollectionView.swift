@@ -6,15 +6,15 @@
 import SwiftUI
 import UIKit
 
-struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UIViewRepresentable {
+struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: UIViewRepresentable {
     @Environment(\.calendar) private var calendar
 
-    let data: YoteiScheduleViewData?
-    let delegate: YoteiDelegate?
+    let data: YoteiScheduleViewData<Data>?
+    let delegate: (any YoteiDelegate<Data>)?
     let viewFactory: ViewFactory
     let focusedDateUpdate: (Date) -> Void
 
-    func makeUIView(context _: Context) -> YoteiScheduleUICollectionView<ViewFactory> {
+    func makeUIView(context _: Context) -> YoteiScheduleUICollectionView<ViewFactory, Data> {
         YoteiScheduleUICollectionView(
             viewFactory: viewFactory,
             delegate: delegate,
@@ -23,7 +23,7 @@ struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol
         )
     }
 
-    func updateUIView(_ uiView: YoteiScheduleUICollectionView<ViewFactory>, context _: Context) {
+    func updateUIView(_ uiView: YoteiScheduleUICollectionView<ViewFactory, Data>, context _: Context) {
         uiView.calendar = calendar
         uiView.viewFactory = viewFactory
         uiView.focusedDateUpdate = focusedDateUpdate

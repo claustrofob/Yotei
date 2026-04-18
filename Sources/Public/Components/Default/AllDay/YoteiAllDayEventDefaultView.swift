@@ -5,10 +5,10 @@
 
 import SwiftUI
 
-public struct YoteiAllDayEventDefaultView: View {
-    private let event: YoteiEvent
+public struct YoteiAllDayEventDefaultView<Data: YoteiEventData>: View {
+    private let event: YoteiEvent<Data>
 
-    public init(event: YoteiEvent) {
+    public init(event: YoteiEvent<Data>) {
         self.event = event
     }
 

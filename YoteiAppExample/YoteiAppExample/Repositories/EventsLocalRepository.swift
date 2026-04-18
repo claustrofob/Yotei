@@ -40,16 +40,16 @@ actor EventsLocalRepository {
         "Failure Friday: Chaos Engineering Demo",
     ]
 
-    private var events: [Date: [YoteiEvent]] = [:]
+    private var events: [Date: [YoteiEvent<EventData>]] = [:]
     private var utcCalendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = .gmt
         return calendar
     }()
 
-    private func generateEvents(for date: Date, calendar: Calendar) -> [Date: [YoteiEvent]] {
+    private func generateEvents(for date: Date, calendar: Calendar) -> [Date: [YoteiEvent<EventData>]] {
         let numberOfEvents = Int.random(in: 0 ..< 6)
-        var result = [Date: [YoteiEvent]]()
+        var result = [Date: [YoteiEvent<EventData>]]()
         result[date] = []
         for _ in 0 ..< numberOfEvents {
             let startTime = Int.random(in: 32 ..< 72) * 15
@@ -72,7 +72,8 @@ actor EventsLocalRepository {
                 title: eventTitles[Int.random(in: 0 ..< eventTitles.count)],
                 start: startDate,
                 end: endDate,
-                isAllDay: isAllDay
+                isAllDay: isAllDay,
+                data: EventData()
             )
             let eventDateInterval = event.displayableDateInterval()
             for date in YoteiDaysSequence(interval: eventDateInterval, calendar: calendar) {
@@ -85,8 +86,8 @@ actor EventsLocalRepository {
 }
 
 extension EventsLocalRepository: EventsLocalRepositoryProtocol {
-    func events(in dateInterval: DateInterval, calendar: Calendar) -> [Date: [YoteiEvent]] {
-        var result = [Date: [YoteiEvent]]()
+    func events(in dateInterval: DateInterval, calendar: Calendar) -> [Date: [YoteiEvent<EventData>]] {
+        var result = [Date: [YoteiEvent<EventData>]]()
         for date in YoteiDaysSequence(interval: dateInterval, calendar: calendar) {
             if events[date] == nil {
                 events = events.merging(generateEvents(for: date, calendar: calendar)) { $0 + $1 }

@@ -5,25 +5,28 @@
 
 import Foundation
 
-public struct YoteiEvent: Equatable, Identifiable, Sendable {
+public struct YoteiEvent<Data: YoteiEventData>: Equatable, Identifiable, Sendable {
     public let id: String
     public let title: String
     public let start: Date
     public let end: Date
     public let isAllDay: Bool
+    public let data: Data
 
     public init(
         id: String,
         title: String,
         start: Date,
         end: Date,
-        isAllDay: Bool
+        isAllDay: Bool,
+        data: Data
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
         self.isAllDay = isAllDay
+        self.data = data
     }
 }
 

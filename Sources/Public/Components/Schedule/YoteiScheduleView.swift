@@ -5,26 +5,39 @@
 
 import SwiftUI
 
-public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: View {
+public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     @Environment(\.calendar) private var calendar
 
     @Binding private var focusedDate: Date
-    @Binding private var data: YoteiEventsInterval
-    private weak var delegate: YoteiDelegate?
+    @Binding private var data: YoteiEventsInterval<Data>
+    private weak var delegate: (any YoteiDelegate<Data>)?
     private let viewFactory: ViewFactory
 
-    @State private var viewData: YoteiScheduleViewData?
+    @State private var viewData: YoteiScheduleViewData<Data>?
 
     public init(
         focusedDate: Binding<Date>,
-        data: Binding<YoteiEventsInterval>,
-        delegate: YoteiDelegate?,
-        viewFactory: ViewFactory = YoteiScheduleViewFactory()
+        data: Binding<YoteiEventsInterval<Data>>,
+        delegate: (any YoteiDelegate<Data>)?,
+        viewFactory: ViewFactory
     ) {
         _focusedDate = focusedDate
         _data = data
         self.delegate = delegate
         self.viewFactory = viewFactory
+    }
+
+    public init(
+        focusedDate: Binding<Date>,
+        data: Binding<YoteiEventsInterval<Data>>,
+        delegate: (any YoteiDelegate<Data>)?
+    ) where ViewFactory == YoteiScheduleViewFactory<Data> {
+        self.init(
+            focusedDate: focusedDate,
+            data: data,
+            delegate: delegate,
+            viewFactory: YoteiScheduleViewFactory()
+        )
     }
 
     public var body: some View {
@@ -63,13 +76,13 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol>: 
 }
 
 private extension YoteiScheduleView {
-    func viewDidChange(data: YoteiEventsInterval) {
+    func viewDidChange(data: YoteiEventsInterval<Data>) {
         guard let dateInterval = data.dateInterval else {
             return
         }
 
         let data = YoteiDaysSequence(interval: dateInterval, calendar: calendar).map { date in
-            let items: [YoteiScheduleViewModel] = if data.dateLoadingInterval?.contains(date) ?? false {
+            let items: [YoteiScheduleViewModel<Data>] = if data.dateLoadingInterval?.contains(date) ?? false {
                 [.init(date: date, kind: .loading)]
             } else if let events = data.events[date], !events.isEmpty {
                 events.sorted(using: [

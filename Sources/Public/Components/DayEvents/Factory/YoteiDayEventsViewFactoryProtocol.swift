@@ -6,9 +6,11 @@
 import SwiftUI
 
 @MainActor
-public protocol YoteiDayEventsViewFactoryProtocol {
+public protocol YoteiDayEventsViewFactoryProtocol<Data> {
+    associatedtype Data: YoteiEventData
+
     associatedtype EventView: View
-    func eventView(event: YoteiEvent) -> EventView
+    func eventView(event: YoteiEvent<Data>) -> EventView
 
     associatedtype TimeSlotView: View
     func timeSlotView(date: Date) -> TimeSlotView
@@ -28,7 +30,7 @@ public protocol YoteiDayEventsViewFactoryProtocol {
 }
 
 public extension YoteiDayEventsViewFactoryProtocol {
-    func eventView(event: YoteiEvent) -> some View {
+    func eventView(event: YoteiEvent<Data>) -> some View {
         YoteiDayEventsEventDefaultView(event: event)
     }
 

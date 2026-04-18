@@ -6,14 +6,14 @@
 import Eventually
 import SwiftUI
 
-public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>: View {
+public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     @Environment(\.calendar) private var calendar
 
     private let dayDate: Date
     private let numberOfDays: Int
-    @Binding private var data: YoteiEventsInterval
+    @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
-    private weak var delegate: YoteiDelegate?
+    private weak var delegate: (any YoteiDelegate<Data>)?
     private let viewFactory: ViewFactory
 
     private var dateSequence: YoteiDaysSequence {
@@ -21,7 +21,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
     }
 
     private let scrollCoordinateSpaceName = "scrollViewContent"
-    @State private var events: [Date: [YoteiEvent]] = [:]
+    @State private var events: [Date: [YoteiEvent<Data>]] = [:]
     @State private var placeholderEvent: YoteiDayEventsPlaceholderEvent?
     @State private var timelineWidth: CGFloat = 0
     private var daySlotWidth: CGFloat {
@@ -39,10 +39,10 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
     public init(
         dayDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval>,
+        data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
-        delegate: YoteiDelegate?,
-        viewFactory: ViewFactory = YoteiDayEventsViewFactory()
+        delegate: (any YoteiDelegate<Data>)?,
+        viewFactory: ViewFactory
     ) {
         self.dayDate = dayDate
         self.numberOfDays = numberOfDays
@@ -50,6 +50,23 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol>
         _contentOffset = contentOffset
         self.delegate = delegate
         self.viewFactory = viewFactory
+    }
+
+    public init(
+        dayDate: Date,
+        numberOfDays: Int,
+        data: Binding<YoteiEventsInterval<Data>>,
+        contentOffset: Binding<CGPoint?>,
+        delegate: (any YoteiDelegate<Data>)?
+    ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
+        self.init(
+            dayDate: dayDate,
+            numberOfDays: numberOfDays,
+            data: data,
+            contentOffset: contentOffset,
+            delegate: delegate,
+            viewFactory: YoteiDayEventsViewFactory()
+        )
     }
 
     public var body: some View {
@@ -133,11 +150,11 @@ private extension YoteiDayEventsView {
     struct EventsLayoutView: View {
         @Environment(\.calendar) private var calendar
 
-        let events: [Date: [YoteiEvent]]
+        let events: [Date: [YoteiEvent<Data>]]
         let dateSequence: YoteiDaysSequence
         let numberOfDays: Int
         let viewFactory: ViewFactory
-        weak var delegate: YoteiDelegate?
+        weak var delegate: (any YoteiDelegate<Data>)?
 
         var body: some View {
             HStack(spacing: 0) {

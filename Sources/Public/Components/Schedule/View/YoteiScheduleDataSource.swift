@@ -5,13 +5,13 @@
 
 import UIKit
 
-final class YoteiScheduleDataSource: UICollectionViewDiffableDataSource<
+final class YoteiScheduleDataSource<Data: YoteiEventData>: UICollectionViewDiffableDataSource<
     Date.ID,
-    YoteiScheduleViewModel.ID
+    YoteiScheduleViewModel<Data>.ID
 > {
     private(set) var isUpdating = false
 
-    func apply(snapshot: NSDiffableDataSourceSnapshot<Date.ID, YoteiScheduleViewModel.ID>, animatingDifferences: Bool) {
+    func apply(snapshot: NSDiffableDataSourceSnapshot<Date.ID, YoteiScheduleViewModel<Data>.ID>, animatingDifferences: Bool) {
         // `targetContentOffsetForProposedContentOffset` requires `animatingDifferences = true`,
         let applySnapshot = {
             self.isUpdating = true

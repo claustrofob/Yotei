@@ -5,8 +5,10 @@
 
 import Foundation
 
-public protocol YoteiDelegate: AnyObject {
-    func calendarDidSelectEvent(with id: YoteiEvent.ID)
+public protocol YoteiDelegate<Data>: AnyObject {
+    associatedtype Data: YoteiEventData
+
+    func calendarDidSelectEvent(with id: YoteiEvent<Data>.ID)
     func calendarDidSelectAllDay(date: Date)
     func calendarDidSelect(dateInterval: DateInterval, completion: () -> Void)
 }

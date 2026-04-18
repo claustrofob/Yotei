@@ -6,9 +6,11 @@
 import SwiftUI
 
 @MainActor
-public protocol YoteiAllDayEventsTopViewFactoryProtocol {
+public protocol YoteiAllDayEventsTopViewFactoryProtocol<Data> {
+    associatedtype Data: YoteiEventData
+
     associatedtype EventView: View
-    func eventView(event: YoteiEvent) -> EventView
+    func eventView(event: YoteiEvent<Data>) -> EventView
 
     associatedtype MoreEventsView: View
     func moreEventsView(count: Int) -> MoreEventsView
@@ -19,7 +21,7 @@ public protocol YoteiAllDayEventsTopViewFactoryProtocol {
 }
 
 public extension YoteiAllDayEventsTopViewFactoryProtocol {
-    func eventView(event: YoteiEvent) -> some View {
+    func eventView(event: YoteiEvent<Data>) -> some View {
         YoteiAllDayEventDefaultView(event: event)
     }
 

@@ -13,7 +13,7 @@ struct DayEventsViewFactory: YoteiDayEventsViewFactoryProtocol {
         DayEventsTimeSlotView(date: date)
     }
 
-    func eventView(event: YoteiEvent) -> some View {
+    func eventView(event: YoteiEvent<EventData>) -> some View {
         let index = abs(event.id.hashValue) % colors.count
         let color = colors[index]
 

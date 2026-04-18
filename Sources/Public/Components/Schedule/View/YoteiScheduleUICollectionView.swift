@@ -6,31 +6,31 @@
 import SwiftUI
 import UIKit
 
-final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol>: UICollectionView, UICollectionViewDelegateFlowLayout {
+final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: UICollectionView, UICollectionViewDelegateFlowLayout {
     private let layout: YoteiScheduleCollectionViewLayout
 
     private var focusedDate: Date?
 
-    private var items: [YoteiScheduleViewModel] = []
+    private var items: [YoteiScheduleViewModel<Data>] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
     private var autoUpdateTask: Task<Void, Never>?
 
-    private var diffableDataSource: YoteiScheduleDataSource!
+    private var diffableDataSource: YoteiScheduleDataSource<Data>!
 
     private let diffableDataStorage = DiffableDataStorage<
         Date,
-        YoteiScheduleViewModel
+        YoteiScheduleViewModel<Data>
     >()
 
     var calendar: Calendar
     var focusedDateUpdate: (Date) -> Void
     var viewFactory: ViewFactory
-    weak var calendarDelegate: YoteiDelegate?
+    weak var calendarDelegate: (any YoteiDelegate<Data>)?
 
     init(
         viewFactory: ViewFactory,
-        delegate: YoteiDelegate?,
+        delegate: (any YoteiDelegate<Data>)?,
         calendar: Calendar,
         focusedDateUpdate: @escaping (Date) -> Void
     ) {
@@ -183,7 +183,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         }
     }
 
-    private func apply(data: [(section: Date, items: [YoteiScheduleViewModel])]) {
+    private func apply(data: [(section: Date, items: [YoteiScheduleViewModel<Data>])]) {
         let sections = data.map(\.section)
         let items = data.map(\.items).flatMap(\.self)
         guard sections != self.sections || items != self.items else {
@@ -225,7 +225,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         }
     }
 
-    func apply(data: YoteiScheduleViewData) {
+    func apply(data: YoteiScheduleViewData<Data>) {
         if focusedDate == nil {
             focusedDate = data.focusedDate
         }

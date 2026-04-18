@@ -19,7 +19,7 @@ final class FullCalendarViewModelModel: ObservableObject {
     private var lastRemoteLoadedDateInterval: DateInterval?
 
     @Published var focusedDate = Date()
-    @Published var data = YoteiEventsInterval()
+    @Published var data = YoteiEventsInterval<EventData>()
     @Published var viewType: CalendarViewType = .day
     @Published var isTimezoneSelectorActive = false
     @Published var calendar = Calendar.current

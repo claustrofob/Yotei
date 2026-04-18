@@ -3,6 +3,6 @@
 //  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
-public struct YoteiAllDayEventsTopViewFactory: YoteiAllDayEventsTopViewFactoryProtocol {
+public struct YoteiAllDayEventsTopViewFactory<Data: YoteiEventData>: YoteiAllDayEventsTopViewFactoryProtocol<Data> {
     public init() {}
 }

@@ -3,6 +3,6 @@
 //  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
-public struct YoteiScheduleViewFactory: YoteiScheduleViewFactoryProtocol {
+public struct YoteiScheduleViewFactory<Data: YoteiEventData>: YoteiScheduleViewFactoryProtocol<Data> {
     public init() {}
 }

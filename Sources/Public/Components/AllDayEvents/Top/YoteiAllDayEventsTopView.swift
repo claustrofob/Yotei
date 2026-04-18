@@ -6,17 +6,17 @@
 import Foundation
 import SwiftUI
 
-public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFactoryProtocol>: View {
+public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     @Environment(\.calendar) private var calendar
 
     private let startDate: Date
     private let numberOfDays: Int
-    @Binding private var data: YoteiEventsInterval
-    private weak var delegate: YoteiDelegate?
+    @Binding private var data: YoteiEventsInterval<Data>
+    private weak var delegate: (any YoteiDelegate<Data>)?
     private let viewFactory: ViewFactory
 
     @State private var otherEventsCount: [Date: Int] = [:]
-    @State private var viewData: [[YoteiAllDayEventsTopViewModel]] = []
+    @State private var viewData: [[YoteiAllDayEventsTopViewModel<Data>]] = []
 
     private var daysSequence: YoteiDaysSequence {
         YoteiDaysSequence(startDate: startDate, days: numberOfDays, calendar: calendar)
@@ -25,9 +25,9 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     public init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval>,
-        delegate: YoteiDelegate?,
-        viewFactory: ViewFactory = YoteiAllDayEventsTopViewFactory()
+        data: Binding<YoteiEventsInterval<Data>>,
+        delegate: (any YoteiDelegate<Data>)?,
+        viewFactory: ViewFactory
     ) {
         _data = data
         self.startDate = startDate
@@ -35,6 +35,23 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         self.delegate = delegate
         self.viewFactory = viewFactory
     }
+
+    public init(
+        startDate: Date,
+        numberOfDays: Int,
+        data: Binding<YoteiEventsInterval<Data>>,
+        delegate: (any YoteiDelegate<Data>)?
+    ) where ViewFactory == YoteiAllDayEventsTopViewFactory<Data> {
+        self.init(
+            startDate: startDate,
+            numberOfDays: numberOfDays,
+            data: data,
+            delegate: delegate,
+            viewFactory: YoteiAllDayEventsTopViewFactory()
+        )
+    }
+
+    // YoteiAllDayEventsTopViewFactory
 
     public var body: some View {
         ZStack {
@@ -111,16 +128,16 @@ private extension YoteiAllDayEventsTopView {
             .frame(maxWidth: .infinity)
     }
 
-    func generateViewData(for events: [Date: [YoteiEvent]]) {
+    func generateViewData(for events: [Date: [YoteiEvent<Data>]]) {
         var events = events
         guard !events.isEmpty else {
             viewData = []
             return
         }
-        var processedEventIDs = Set<YoteiEvent.ID>()
+        var processedEventIDs = Set<YoteiEvent<Data>.ID>()
         viewData = (0 ..< 2).map { _ in
             var day = 0
-            var data = [YoteiAllDayEventsTopViewModel]()
+            var data = [YoteiAllDayEventsTopViewModel<Data>]()
             while day < numberOfDays {
                 let date = daysSequence[day]
                 if
