@@ -213,8 +213,9 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         self.focusedDate = focusedDate
         sectionPosition = (focusedDate, 0)
 
+        let adjustedFocusedDate = calendar.startOfDay(for: focusedDate)
         if
-            let sectionIndex = diffableDataSource.snapshot().indexOfSection(focusedDate.id),
+            let sectionIndex = diffableDataSource.snapshot().indexOfSection(adjustedFocusedDate.id),
             let sectionFrame = layout.absoluteLayoutAttributesForSupplementaryView(
                 ofKind: UICollectionView.elementKindSectionHeader,
                 at: IndexPath(row: 0, section: sectionIndex)
@@ -278,10 +279,11 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
             return proposedContentOffset
         }
 
-        let sectionIndex = if let sectionIndex = snapshot.indexOfSection(sectionPosition.section.id) {
+        let adjustedSection = calendar.startOfDay(for: sectionPosition.section)
+        let sectionIndex = if let sectionIndex = snapshot.indexOfSection(adjustedSection.id) {
             // if saved section exists after update, set offset on it
             sectionIndex
-        } else if firstSectionIdentifier > sectionPosition.section.id {
+        } else if firstSectionIdentifier > adjustedSection.id {
             // if saved section does not exist, set offset on the first or last element of a new data set,
             // so we can perform a scroll animation to the target section with setContentOffset
             snapshot.indexOfSection(firstSectionIdentifier)
