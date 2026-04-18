@@ -7,6 +7,11 @@
 
 A highly modular, highly customizable calendar package for iOS. Built with SwiftUI and UIKit under the hood for the best performance and native feel.
 
+<p align="center">
+    <img width="250" height="250" alt="yotei-logo" src="https://github.com/user-attachments/assets/7b76a34f-d407-48cb-85fb-d6ee2eac9f8d" />
+</p>
+
+
 Every component can be used on its own or composed into a full calendar app. Pick only what you need — a date picker, a schedule list, a day timeline, an all-day grid — or wire them all together.
 
 <img width="160" src="https://github.com/user-attachments/assets/48167445-6f75-4d98-9e4d-b38a3f97b579" />
