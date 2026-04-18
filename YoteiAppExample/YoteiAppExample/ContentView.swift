@@ -9,6 +9,7 @@ struct ContentView: View {
     private enum Destination: Hashable {
         case fullCalendar
         case datePicker
+        case dayView
     }
 
     var body: some View {
@@ -16,6 +17,7 @@ struct ContentView: View {
             List {
                 NavigationLink("Full calendar", value: Destination.fullCalendar)
                 NavigationLink("Date Picker", value: Destination.datePicker)
+                NavigationLink("Customized Day View", value: Destination.dayView)
             }
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
@@ -23,6 +25,8 @@ struct ContentView: View {
                     FullCalendarView()
                 case .datePicker:
                     DatePickerView()
+                case .dayView:
+                    DayView()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
