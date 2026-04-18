@@ -50,6 +50,7 @@ actor EventsLocalRepository {
     private func generateEvents(for date: Date, calendar: Calendar) -> [Date: [YoteiEvent]] {
         let numberOfEvents = Int.random(in: 0 ..< 6)
         var result = [Date: [YoteiEvent]]()
+        result[date] = []
         for _ in 0 ..< numberOfEvents {
             let startTime = Int.random(in: 32 ..< 72) * 15
             let isLongEvent = Int.random(in: 0 ..< 4) == 0

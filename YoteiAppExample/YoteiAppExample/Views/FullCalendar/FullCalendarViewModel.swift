@@ -63,11 +63,8 @@ final class FullCalendarViewModelModel: ObservableObject {
         }
     }
 
-    private func fetchLocalEvents(in dateInterval: DateInterval, shouldReset: Bool = false) {
+    private func fetchLocalEvents(in dateInterval: DateInterval) {
         Task {
-            if shouldReset {
-                await eventsLocalRepository.resetCache()
-            }
             data.events = await eventsLocalRepository.events(in: dateInterval, calendar: calendar)
         }
     }
@@ -117,8 +114,10 @@ extension FullCalendarViewModelModel {
             return
         }
         calendar.timeZone = TimeZone(identifier: id)!
-        if let dateInterval = data.dateInterval {
-            fetchLocalEvents(in: dateInterval, shouldReset: true)
+        monthInterval = nil
+        Task {
+            await eventsLocalRepository.resetCache()
+            viewDidChangeFocusedDate()
         }
     }
 
