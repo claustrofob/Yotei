@@ -265,14 +265,6 @@ struct TintedDayEventsFactory: YoteiDayEventsViewFactoryProtocol {
 
 No casting, no `userInfo: [String: Any]`, no lookups into a sidecar dictionary keyed by `event.id`.
 
-### Benefits
-
-- **Type safety end-to-end.** The compiler guarantees that every view, factory, and delegate for a given calendar instance speaks the same `Data` type.
-- **Zero runtime cost.** No `Any`, no boxing, no dynamic casts on the hot path of the collection view.
-- **Sendable-correct.** `Data: Sendable` composes cleanly with `@MainActor` views and actor-isolated repositories — no `@unchecked` required.
-- **Diffing stays accurate.** Because `YoteiEvent` is `Equatable` and so is `Data`, changes inside your payload (e.g. a renamed attendee) correctly invalidate cells without forcing you to bump `id`.
-- **Own your domain.** You are not forced to flatten your model into `title` + `String?` extras; keep the shape that makes sense for your app.
-
 ### Don't need extra data?
 
 Use an empty marker struct:
