@@ -200,11 +200,9 @@ private extension YoteiDayEventsView {
                 daySlotWidth: daySlotWidth,
                 initialDate: startOfDay
             )
-            viewFactory.placeholderView(
-                coordinateSpace: .named(scrollCoordinateSpaceName)
-            )
-            .frame(width: frame.width, height: frame.height)
-            .offset(x: frame.minX, y: frame.minY)
+            viewFactory.placeholderView()
+                .frame(width: frame.width, height: frame.height)
+                .offset(x: frame.minX, y: frame.minY)
         }
     }
 }
@@ -254,6 +252,8 @@ private extension YoteiDayEventsView {
             end: Date(timeIntervalSince1970: endTimestamp)
         )
         placeholderEvent = YoteiDayEventsPlaceholderEvent(dateInterval: dateInterval, calendar: calendar)
-        delegate?.calendarDidSelect(dateInterval: dateInterval)
+        delegate?.calendarDidSelect(dateInterval: dateInterval) {
+            placeholderEvent = nil
+        }
     }
 }

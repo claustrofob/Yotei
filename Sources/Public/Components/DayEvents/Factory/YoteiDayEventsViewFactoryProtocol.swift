@@ -20,7 +20,7 @@ public protocol YoteiDayEventsViewFactoryProtocol {
     func currentTimeMarkerView() -> CurrentTimeMarkerView
 
     associatedtype PlaceholderView: View
-    func placeholderView(coordinateSpace: CoordinateSpace) -> PlaceholderView
+    func placeholderView() -> PlaceholderView
 
     func insetsForViewsLayout() -> EdgeInsets
     func insetsForScrollView() -> EdgeInsets
@@ -44,8 +44,8 @@ public extension YoteiDayEventsViewFactoryProtocol {
         YoteiDayEventsCurrentTimeMarkerDefaultView()
     }
 
-    func placeholderView(coordinateSpace: CoordinateSpace) -> some View {
-        YoteiDayEventsEventPlaceholderDefaultView(coordinateSpace: coordinateSpace)
+    func placeholderView() -> some View {
+        YoteiDayEventsEventPlaceholderDefaultView()
     }
 
     func insetsForViewsLayout() -> EdgeInsets {
