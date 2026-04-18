@@ -29,11 +29,12 @@ Every component can be used on its own or composed into a full calendar app. Pic
 ## Features
 
 - **Composable by design.** Each view is an independent SwiftUI `View` — use one, use several, arrange them however your layout requires.
-- **SwiftUI API, UIKit performance.** Heavy surfaces (scrolling schedule list, paging strip, date tabs) are backed by `UICollectionView` and `UIPageViewController` for smooth 60/120 Hz scrolling even with thousands of events.
+- **SwiftUI API, UIKit performance.** Heavy surfaces (scrolling schedule list, paging strip, date tabs) are backed by `UICollectionView` and `UIPageViewController` for smooth scrolling even with thousands of events.
 - **Deep customization via view factories.** Every cell, header, button, marker, and layout metric is produced by a protocol you can implement — no subclassing, no private API, no fighting the framework.
 - **Calendar-aware.** Respects the `\.calendar` environment, custom time zones, first-weekday settings, and locale-driven symbols.
 - **Drop-in defaults, escape hatches everywhere.** Start with `YoteiScheduleView(...)` and ship in two lines. Need a branded event pill? Implement one factory method. Need a fully custom day cell? Implement another. You are never locked in.
 - **Modern Swift.** Swift 6.2, strict concurrency, `@MainActor`-correct factories, `Sendable` domain types.
+- **Production ready.** Support for iOS 16+ makes Yotei available not only for modern startups but even for mature projects.
 
 ## Why Yotei
 
@@ -41,17 +42,6 @@ Most open-source iOS calendar libraries fall into one of two camps:
 
 - **"Monolithic" components** — one giant view that owns layout, data, theming, and gestures. Great for demos, painful once the design system pushes back.
 - **"Bring your own everything"** — low-level primitives that still require you to write the scrolling list, the page controller, and the event layout from scratch.
-
-Yotei aims at the gap between them:
-
-| | Monolithic calendars | Low-level primitives | **Yotei** |
-|---|---|---|---|
-| Composability | Low — take it or leave it | High — but you build it | High — pick components à la carte |
-| Performance | Mixed, pure-SwiftUI re-renders | You own it | UIKit-backed lists and pagers |
-| Customization | Config flags only | Everything, manually | View factories per component |
-| All-day / multi-day events | Often broken across time zones | Not provided | Timezone-safe out of the box |
-| Calendar/locale correctness | Often Gregorian-only | Depends | Uses `Calendar` / locale throughout |
-| Drop-in defaults | Yes | No | Yes — opinionated defaults on every factory |
 
 If you want a date picker today and a full-screen planner tomorrow without switching libraries, Yotei is built for that path.
 
@@ -213,15 +203,6 @@ Every view below is a public SwiftUI `View` that lives under `import Yotei`.
 
 Every event-aware component accepts a **view factory** — a protocol with default implementations. Override only the methods you care about; the rest stay at their defaults.
 
-Six factory protocols are available, one per component family:
-
-- `YoteiScheduleViewFactoryProtocol` — event cells, empty cells, loading cells, day headers, section insets, sizing.
-- `YoteiDayEventsViewFactoryProtocol` — event view, time-slot rows, days delimiter, current-time marker, placeholder, hour slot height.
-- `YoteiAllDayEventsTopViewFactoryProtocol` — all-day event view, "more events" pill, spacing, insets.
-- `YoteiDatePickerFactoryProtocol` — day cell, month selector button, back/forward buttons, cell height.
-- `YoteiStripViewFactoryProtocol` — expand/collapse indicator, strip day cell, heights.
-- `YoteiWeekdayViewFactoryProtocol` — weekday header cell.
-
 ### Example: custom-colored day-timeline events
 
 ```swift
@@ -297,36 +278,9 @@ final class CalendarCoordinator: YoteiDelegate {
 }
 ```
 
-## Domain Types
-
-Feeding events into Yotei boils down to populating a `YoteiEventsInterval`:
-
-```swift
-var data = YoteiEventsInterval()
-data.monthInterval = Calendar.current.dateInterval(of: .month, for: focusedDate)
-data.dateInterval = /* extended range loaded into memory */
-data.events = [
-    startOfDay: [
-        YoteiEvent(
-            id: "1",
-            title: "Stand-up",
-            start: start,
-            end: end,
-            isAllDay: false
-        )
-    ]
-]
-```
-
-`YoteiEvent.displayableDateInterval(in:)` converts a UTC all-day event into a calendar-correct interval for display, matching how Google Calendar and EventKit encode all-day events.
-
 ## Example App
 
-A full example app is bundled in `YoteiAppExample/`. It demonstrates:
-
-- A full calendar with schedule / day / week modes, timezone switching, and loading placeholders.
-- A standalone date picker with a limited date range.
-- A customized day view using a custom `YoteiDayEventsViewFactoryProtocol` and a custom strip factory.
+A full example app is bundled in `YoteiAppExample/`. It demonstrates different usage examples and possible customization options.
 
 To run it:
 
