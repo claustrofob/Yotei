@@ -21,7 +21,6 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - [Available Components](#available-components)
 - [Customization with View Factories](#customization-with-view-factories)
 - [Handling User Interaction](#handling-user-interaction)
-- [Domain Types](#domain-types)
 - [Example App](#example-app)
 - [Roadmap](#roadmap)
 - [License](#license)
