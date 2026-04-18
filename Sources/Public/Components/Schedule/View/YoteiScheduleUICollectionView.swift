@@ -11,9 +11,6 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
 
     private var focusedDate: Date?
 
-    private let focusedDateUpdate: (Date) -> Void
-    private let viewFactory: ViewFactory
-    private weak var calendarDelegate: YoteiDelegate?
     private var items: [YoteiScheduleViewModel] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
@@ -26,13 +23,20 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         YoteiScheduleViewModel
     >()
 
+    var calendar: Calendar
+    var focusedDateUpdate: (Date) -> Void
+    var viewFactory: ViewFactory
+    weak var calendarDelegate: YoteiDelegate?
+
     init(
         viewFactory: ViewFactory,
         delegate: YoteiDelegate?,
+        calendar: Calendar,
         focusedDateUpdate: @escaping (Date) -> Void
     ) {
         self.viewFactory = viewFactory
         calendarDelegate = delegate
+        self.calendar = calendar
         self.focusedDateUpdate = focusedDateUpdate
         layout = YoteiScheduleCollectionViewLayout()
         super.init(frame: .zero, collectionViewLayout: layout)

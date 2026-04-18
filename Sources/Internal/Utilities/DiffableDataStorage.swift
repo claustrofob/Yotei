@@ -5,18 +5,6 @@
 
 import UIKit
 
-/**
- This is the only wrapper you need to use with `UICollectionViewDiffableDataSource` and `UITableViewDiffableDataSource`.
- `NSDiffableDataSourceSnapshot` must adopt not the entire models by only their IDs, because data source is not able to detect modified models.
- For data source modified models look like brand new models and instead of updating them it removes/inserts them.
- In order to property support updating you must create snapshot with model IDs and then call `reconfigureItems` for updated models.
-
- This class encasulates this logic. Just pass your full data list to `apply()` method and get a snapshot that can be injected
- into `UICollectionViewDiffableDataSource` or `UITableViewDiffableDataSource`.
-
- For more info on how to properly work with snapshots see
- https://developer.apple.com/documentation/uikit/views_and_controls/collection_views/updating_collection_views_using_diffable_data_sources
- */
 final class DiffableDataStorage<Section: Identifiable, Item: Identifiable & Equatable> where Item.ID: Sendable, Section.ID: Sendable {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section.ID, Item.ID>
 
