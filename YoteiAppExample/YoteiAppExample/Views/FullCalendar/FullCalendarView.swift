@@ -97,8 +97,15 @@ struct FullCalendarView: View {
                 viewModel.viewDidSelectTimezone(with: id)
             }))
         }
+        .id(viewModel.viewID)
+        // reacting on system updates
         .onReceive(NotificationCenter.default.publisher(for: NSLocale.currentLocaleDidChangeNotification)) { _ in
-            viewModel.viewDidUpdateLocale()
+            viewModel.viewDidUpdateUserSettings()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .NSSystemClockDidChange)) { _ in
+            // TimelineView does not immediately fire updates if user sets system clock back.
+            // See comments in YoteiDayEventsView
+            viewModel.viewDidUpdateUserSettings()
         }
     }
 

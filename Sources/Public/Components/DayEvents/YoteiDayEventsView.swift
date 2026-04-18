@@ -161,6 +161,9 @@ private extension YoteiDayEventsView {
                     }
                     .frame(maxWidth: .infinity)
                     .overlay(alignment: .top) {
+                        // TimelineView resolves its values into concrete Date values. E.g. 10:01, 10:02 etc.
+                        // If user sets system clock 1h back, the next scheduled date is still at 10:01 and will be fired in 1h.
+                        // For this case it is better just to recreate calendar views.
                         TimelineView(.everyMinute) { context in
                             if date.isInSameDay(as: context.date, in: calendar) {
                                 timelineMarker(startOfDay: date, date: context.date)

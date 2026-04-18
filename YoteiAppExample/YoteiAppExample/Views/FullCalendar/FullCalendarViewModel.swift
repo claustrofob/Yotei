@@ -23,6 +23,7 @@ final class FullCalendarViewModelModel: ObservableObject {
     @Published var viewType: CalendarViewType = .day
     @Published var isTimezoneSelectorActive = false
     @Published var calendar = Calendar.current
+    @Published var viewID = UUID()
 
     init(eventsLocalRepository: EventsLocalRepositoryProtocol) {
         self.eventsLocalRepository = eventsLocalRepository
@@ -121,9 +122,11 @@ extension FullCalendarViewModelModel {
         }
     }
 
-    func viewDidUpdateLocale() {
+    func viewDidUpdateUserSettings() {
         var newCalendar = Calendar.current
         newCalendar.timeZone = calendar.timeZone
         calendar = newCalendar
+
+        viewID = UUID()
     }
 }
