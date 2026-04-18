@@ -270,7 +270,7 @@ No casting, no `userInfo: [String: Any]`, no lookups into a sidecar dictionary k
 Use an empty marker struct:
 
 ```swift
-struct EventData: Equatable, Sendable {}
+nonisolated struct EventData: Equatable, Sendable {}
 ```
 
 You pay nothing for the generic — the payload is a zero-sized field — and you can introduce real data later without rewriting any call sites.
