@@ -24,6 +24,7 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Available Components](#available-components)
+- [Typed Event Data](#typed-event-data)
 - [Customization with View Factories](#customization-with-view-factories)
 - [Handling User Interaction](#handling-user-interaction)
 - [Example App](#example-app)
@@ -198,10 +199,89 @@ Every view below is a public SwiftUI `View` that lives under `import Yotei`.
 
 | Type | Purpose |
 |---|---|
-| `YoteiEvent` | Immutable event model: `id`, `title`, `start`, `end`, `isAllDay`. Timezone-safe display helpers included. |
+| `YoteiEvent<Data>` | Immutable event model: `id`, `title`, `start`, `end`, `isAllDay`, and a generic `data` payload. Timezone-safe display helpers included. |
 | `YoteiEventsInterval` | The data envelope every events view reads from: visible interval, month interval, loading interval, and the `[Date: [YoteiEvent]]` bucket. |
 | `YoteiDelegate` | Single delegate protocol for event taps, all-day slot taps, and time-slot selection (tap-to-create). |
 | `YoteiDaysSequence` | A lazy, random-access `Collection` of `Date`s — useful when you iterate your own days. |
+
+## Typed Event Data
+
+`YoteiEvent` is generic over a `Data` payload so you can carry your own domain model alongside the calendar fields without subclassing, wrapping, or type-erasing:
+
+```swift
+public struct YoteiEvent<Data: YoteiEventData>: Equatable, Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    public let start: Date
+    public let end: Date
+    public let isAllDay: Bool
+    public let data: Data
+}
+
+public typealias YoteiEventData = Equatable & Sendable
+```
+
+`Data` is whatever you need — a color, a list of attendees, a remote ID, a source enum, a full DTO from your backend. The only requirement is that it is `Equatable` and `Sendable`.
+
+### Attach your domain model
+
+```swift
+nonisolated struct EventPayload: Equatable, Sendable {
+    let calendarID: String
+    let tint: Color
+    let attendees: [String]
+    let isReadOnly: Bool
+}
+
+let event = YoteiEvent(
+    id: "evt-42",
+    title: "Design review",
+    start: start,
+    end: end,
+    isAllDay: false,
+    data: EventPayload(
+        calendarID: "work",
+        tint: .indigo,
+        attendees: ["alex", "sam"],
+        isReadOnly: false
+    )
+)
+```
+
+The generic parameter propagates through the whole pipeline so your payload is available at every extension point, fully typed.
+
+### Read your payload inside factories
+
+```swift
+struct TintedDayEventsFactory: YoteiDayEventsViewFactoryProtocol {
+    func eventView(event: YoteiEvent<EventPayload>) -> some View {
+        YoteiDayEventsViewFactory()
+            .eventView(event: event)
+            .tint(event.data.tint)
+            .opacity(event.data.isReadOnly ? 0.6 : 1.0)
+    }
+}
+```
+
+No casting, no `userInfo: [String: Any]`, no lookups into a sidecar dictionary keyed by `event.id`.
+
+### Benefits
+
+- **Type safety end-to-end.** The compiler guarantees that every view, factory, and delegate for a given calendar instance speaks the same `Data` type.
+- **Zero runtime cost.** No `Any`, no boxing, no dynamic casts on the hot path of the collection view.
+- **Sendable-correct.** `Data: Sendable` composes cleanly with `@MainActor` views and actor-isolated repositories — no `@unchecked` required.
+- **Diffing stays accurate.** Because `YoteiEvent` is `Equatable` and so is `Data`, changes inside your payload (e.g. a renamed attendee) correctly invalidate cells without forcing you to bump `id`.
+- **Own your domain.** You are not forced to flatten your model into `title` + `String?` extras; keep the shape that makes sense for your app.
+
+### Don't need extra data?
+
+Use an empty marker struct:
+
+```swift
+struct EventData: Equatable, Sendable {}
+```
+
+You pay nothing for the generic — the payload is a zero-sized field — and you can introduce real data later without rewriting any call sites.
 
 ## Customization with View Factories
 
