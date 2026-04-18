@@ -203,6 +203,7 @@ private extension YoteiDayEventsView {
             viewFactory.placeholderView()
                 .frame(width: frame.width, height: frame.height)
                 .offset(x: frame.minX, y: frame.minY)
+                .zIndex(1000)
         }
     }
 }

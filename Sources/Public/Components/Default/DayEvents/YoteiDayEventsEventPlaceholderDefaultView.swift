@@ -14,7 +14,7 @@ public struct YoteiDayEventsEventPlaceholderDefaultView: View {
 
     public var body: some View {
         RoundedRectangle(cornerSize: .init(width: 4, height: 4))
-            .stroke(.tint, lineWidth: 2)
+            .stroke(.secondary, lineWidth: 2)
             .contentShape(Rectangle())
     }
 }
