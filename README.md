@@ -290,7 +290,7 @@ Every default view uses standard SwiftUI shape styles — `.tint`, `.background`
 You have a few options to set custiom colors in calendar:
 - apply the above modifiers globally on calendar component
 - aply them on individual default views in [custom view factories](#customization-with-view-factories)
-- use your custom views with custom colors in view modifiers.
+- use your custom views with custom colors in view factories.
 
 ### Examples
 
