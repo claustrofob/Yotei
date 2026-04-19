@@ -58,6 +58,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
         delegate = self
+        backgroundColor = .clear
 
         let eventCellRegistration = UICollectionView.CellRegistration<
             UICollectionViewCell, (Date, YoteiEvent)

@@ -29,6 +29,7 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - [Quick Start](#quick-start)
 - [Available Components](#available-components)
 - [Typed Event Data](#typed-event-data)
+- [Colors Customization](#colors-customization)
 - [Customization with View Factories](#customization-with-view-factories)
 - [Handling User Interaction](#handling-user-interaction)
 - [Example App](#example-app)
@@ -278,6 +279,55 @@ nonisolated struct EventData: Equatable, Sendable {}
 ```
 
 You pay nothing for the generic — the payload is a zero-sized field — and you can introduce real data later without rewriting any call sites.
+
+## Colors Customization
+
+Every default view uses standard SwiftUI shape styles — `.tint`, `.background`, `.primary`, `.secondary`, `.tertiary` — so you can re-color the calendar with the standart SwiftUI modifiers:
+- `.foregroundStyle(_:_:_:)` - redefine .primary, .secondary and .tertiary styles
+- `.backgroundStyle(_:)` - redefine .background style
+- `.tint(_:)` - redefine .tint style
+
+You have a few options to set custiom colors in calendar:
+- apply the above modifiers globally on calendar component
+- aply them on individual default views in [custom view factories](#customization-with-view-factories)
+- use your custom views with custom colors in view modifiers.
+
+### Examples
+
+```swift
+VStack(spacing: 0) {
+    YoteiWeekdayTitlesView()
+    YoteiStripContainerView(focusedDate: $focusedDate)
+    YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+}
+.tint(.purple)
+```
+
+Because `.tint` is a normal SwiftUI environment value, you can scope it to one component too — tint only the strip, only the schedule, only one page:
+
+```swift
+YoteiStripContainerView(focusedDate: $focusedDate)
+    .tint(.indigo)
+
+YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+    .tint(.orange)
+```
+
+Inside a view factory you can apply `.tint` on a per-event basis using the typed `event.data` payload — the default event view fills with `.tint`, so changing the tint changes the pill color:
+
+```swift
+struct BrandedDayEventsFactory: YoteiDayEventsViewFactoryProtocol {
+    func eventView(event: YoteiEvent<EventPayload>) -> some View {
+        YoteiDayEventsViewFactory()
+            .eventView(event: event)
+            .tint(event.data.tint)
+    }
+}
+```
+
+Default cells render text with `.primary` / `.secondary` / `.tertiary` and surfaces with `.background`, so they automatically follow the system's light/dark appearance and any `.preferredColorScheme(_:)` you set. To diverge from the system palette, wrap the default factory output and apply `.foregroundStyle(_:)` or `.background(_:)` on top — there is no need to re-implement the cell.
+
+For anything finer-grained — borders, gradients, conditional colors per state — drop into a [view factory](#customization-with-view-factories) and override only the method you need.
 
 ## Customization with View Factories
 

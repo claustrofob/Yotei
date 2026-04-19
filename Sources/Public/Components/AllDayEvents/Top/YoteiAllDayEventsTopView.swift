@@ -51,8 +51,6 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         )
     }
 
-    // YoteiAllDayEventsTopViewFactory
-
     public var body: some View {
         ZStack {
             if !viewData.isEmpty {
