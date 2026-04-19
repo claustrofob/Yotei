@@ -16,7 +16,7 @@ public struct YoteiDayEventsEventDefaultView<Data: YoteiEventData>: View {
         VStack(alignment: .leading) {
             Text(event.title)
                 .foregroundStyle(.background)
-                .font(.system(.caption2))
+                .font(.system(.caption))
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(height: 16)

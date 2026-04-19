@@ -61,7 +61,7 @@ public extension YoteiScheduleViewFactoryProtocol {
         let size = proposal.replacingUnspecifiedDimensions()
         let sectionInsets = insetsForSection()
         let width = size.width - sectionInsets.left - sectionInsets.right
-        return CGSize(width: width, height: event.isAllDay ? 16 : 52)
+        return CGSize(width: width, height: event.isAllDay ? 20 : 52)
     }
 
     func emptyViewSizeThatFits(proposal: ProposedViewSize, date _: Date) -> CGSize {
