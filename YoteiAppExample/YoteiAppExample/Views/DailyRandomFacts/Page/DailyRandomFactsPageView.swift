@@ -11,16 +11,20 @@ struct DailyRandomFactsPageView: View {
     @StateObject private var viewModel = DailyRandomFactsPageViewModel()
 
     var body: some View {
-        ZStack {
+        Text("Fact of the day")
+            .font(.title)
+        ScrollView(.vertical) {
             switch viewModel.state {
             case .loading:
                 ProgressView()
             case let .loaded(text):
                 Text(text)
-                    .font(.footnote)
+                    .font(.title2)
+                    .padding()
             case let .error(error):
                 Text(error.localizedDescription)
                     .foregroundColor(.red)
+                    .padding()
             }
         }
         .onAppear {
