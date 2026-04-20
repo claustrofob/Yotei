@@ -30,6 +30,7 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - [Available Components](#available-components)
 - [Typed Event Data](#typed-event-data)
 - [Colors Customization](#colors-customization)
+- [Fonts Customization](#fonts-customization)
 - [Customization with View Factories](#customization-with-view-factories)
 - [Handling User Interaction](#handling-user-interaction)
 - [Example App](#example-app)
@@ -329,6 +330,50 @@ Default cells render text with `.primary` / `.secondary` / `.tertiary` and surfa
 
 For anything finer-grained — borders, gradients, conditional colors per state — drop into a [view factory](#customization-with-view-factories) and override only the method you need.
 
+## Fonts Customization
+
+Every default view renders text using a small, shared set of font roles exposed via `YoteiFontStyle`.
+The active style lives in the SwiftUI environment under `\.yoteiFontStyle`, so you can override it globally on a calendar component, scope it to an individual view, or apply it inside a view factory.
+
+You have a few options to set custom fonts in calendar:
+- inject a custom `YoteiFontStyle` globally on calendar component via the `\.yoteiFontStyle` environment key
+- inject it on individual default views in [custom view factories](#customization-with-view-factories)
+- use your custom views with custom fonts in view factories.
+
+### Example
+
+Apply a branded font style to the whole calendar:
+
+```swift
+VStack(spacing: 0) {
+    YoteiWeekdayTitlesView()
+    YoteiStripContainerView(focusedDate: $focusedDate)
+    YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+}
+.environment(\.yoteiFontStyle, YoteiFontStyle(
+    caption: .system(.caption, design: .rounded),
+    caption2: .system(.caption2, design: .rounded),
+    body: .system(.body, design: .rounded),
+    headline: .system(.headline, design: .rounded).weight(.semibold),
+    subheadline: .system(.subheadline, design: .rounded)
+))
+```
+
+Scope styles to a single component:
+
+```swift
+YoteiStripContainerView(focusedDate: $focusedDate)
+    .environment(\.yoteiFontStyle, YoteiFontStyle(headline: .title3.bold()))
+```
+
+Override individual styles:
+
+```swift
+YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+    .environment(\.yoteiFontStyle.subheadline, .custom("Avenir-Heavy", size: 16))
+    .environment(\.yoteiFontStyle.caption2, .custom("Avenir-Book", size: 12))
+```
+
 ## Customization with View Factories
 
 Every event-aware component accepts a **view factory** — a protocol with default implementations. Override only the methods you care about; the rest stay at their defaults.
@@ -426,7 +471,7 @@ The example project depends on the local `Yotei` package at the repo root, so an
 - [x] Color customization for every component
 - [x] Custom views for events
 - [x] Stability improvements
-- [ ] Font customization
+- [x] Font customization
 - [ ] Accessibility
 
 ## License
