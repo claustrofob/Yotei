@@ -472,6 +472,8 @@ The example project depends on the local `Yotei` package at the repo root, so an
 - [x] Custom views for events
 - [x] Stability improvements
 - [x] Font customization
+- [ ] Drag/drop to update event time/duration
+- [ ] Month view
 - [ ] Accessibility
 
 ## License
