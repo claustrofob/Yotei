@@ -7,14 +7,14 @@ import SwiftUI
 import Yotei
 
 struct DailyRandomFactsView: View {
-    @StateObject var viewModel = DailyRandomFactsViewModel()
+    @StateObject private var viewModel = DailyRandomFactsViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
             YoteiPagesDayView(
                 focusedDate: $viewModel.focusedDate
-            ) { _ in
-                Text("\(Int.random(in: 0 ... 1000))")
+            ) { date in
+                DailyRandomFactsPageView(date: date)
             }
             Text(viewModel.focusedDate.formatted(Date.FormatStyle().month(.wide)))
             YoteiStripWeekView(focusedDate: $viewModel.focusedDate)
