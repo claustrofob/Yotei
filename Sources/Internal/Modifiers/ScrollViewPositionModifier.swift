@@ -7,23 +7,27 @@ import SwiftUI
 import UIKit
 
 struct ScrollViewPositionModifier: ViewModifier {
+    private final class ScrollViewWeakStrorage {
+        weak var scrollView: UIScrollView?
+    }
+
     @Binding var contentOffset: CGPoint
     @State private var lastContentOffset: CGPoint?
-    @State private var scrollView: UIScrollView?
+    @State private var scrollViewStorage = ScrollViewWeakStrorage()
     @State private var observation: NSKeyValueObservation?
 
     func body(content: Content) -> some View {
         content
             .parentView { (scrollView: UIScrollView) in
-                guard self.scrollView !== scrollView else {
+                guard scrollViewStorage.scrollView !== scrollView else {
                     return
                 }
-                self.scrollView = scrollView
+                scrollViewStorage.scrollView = scrollView
                 // This callback maybe called several times for the view with detached State variables.
                 // So even if i set `self.scrollView` it will remain `nil`.
                 // To reproduce: in calendar in "Day" view tap on a different date in calendar strip.
                 // This callback is fired 6 times for the previous date view with detached state.
-                guard self.scrollView != nil else {
+                guard scrollViewStorage.scrollView != nil else {
                     return
                 }
                 // during initialization `.onChange` is called first with the proper value of `contentOffset`,
@@ -49,7 +53,7 @@ struct ScrollViewPositionModifier: ViewModifier {
                     return
                 }
                 lastContentOffset = contentOffset
-                scrollView?.contentOffset = contentOffset
+                scrollViewStorage.scrollView?.contentOffset = contentOffset
             }
     }
 }

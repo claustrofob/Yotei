@@ -8,11 +8,11 @@ import SwiftUI
 
 public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     @Environment(\.calendar) private var calendar
+    @Environment(\.yoteiDelegate) private var delegate
 
     private let startDate: Date
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval<Data>
-    private weak var delegate: (any YoteiDelegate<Data>)?
     private let viewFactory: ViewFactory
 
     @State private var otherEventsCount: [Date: Int] = [:]
@@ -26,27 +26,23 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         startDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
-        delegate: (any YoteiDelegate<Data>)?,
         viewFactory: ViewFactory
     ) {
         _data = data
         self.startDate = startDate
         self.numberOfDays = numberOfDays
-        self.delegate = delegate
         self.viewFactory = viewFactory
     }
 
     public init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval<Data>>,
-        delegate: (any YoteiDelegate<Data>)?
+        data: Binding<YoteiEventsInterval<Data>>
     ) where ViewFactory == YoteiAllDayEventsTopViewFactory<Data> {
         self.init(
             startDate: startDate,
             numberOfDays: numberOfDays,
             data: data,
-            delegate: delegate,
             viewFactory: YoteiAllDayEventsTopViewFactory()
         )
     }

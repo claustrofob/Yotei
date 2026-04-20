@@ -130,3 +130,17 @@ extension FullCalendarViewModelModel {
         viewID = UUID()
     }
 }
+
+extension FullCalendarViewModelModel: YoteiDelegate<EventData> {
+    func calendarDidSelectEvent(with _: YoteiEvent<EventData>.ID) {
+        // event details
+    }
+
+    func calendarDidSelectAllDay(date _: Date) {
+        // display all day events
+    }
+
+    func calendarDidSelect(dateInterval _: DateInterval, completion _: () -> Void) {
+        // display event form
+    }
+}

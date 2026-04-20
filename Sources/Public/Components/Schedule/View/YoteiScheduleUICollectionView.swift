@@ -26,11 +26,11 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     var calendar: Calendar
     var focusedDateUpdate: (Date) -> Void
     var viewFactory: ViewFactory
-    weak var calendarDelegate: (any YoteiDelegate<Data>)?
+    weak var calendarDelegate: (any YoteiDelegate)?
 
     init(
         viewFactory: ViewFactory,
-        delegate: (any YoteiDelegate<Data>)?,
+        delegate: (any YoteiDelegate)?,
         calendar: Calendar,
         focusedDateUpdate: @escaping (Date) -> Void
     ) {

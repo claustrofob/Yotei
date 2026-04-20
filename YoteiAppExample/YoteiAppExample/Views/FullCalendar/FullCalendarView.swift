@@ -33,6 +33,7 @@ struct FullCalendarView: View {
             }
         }
         .fontDesign(.serif)
+        .yoteiDelegate(viewModel)
         .navigationTitle(
             viewModel.calendar.isDate(
                 viewModel.focusedDate,
@@ -116,8 +117,7 @@ struct FullCalendarView: View {
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiScheduleView(
                 focusedDate: $viewModel.focusedDate,
-                data: $viewModel.data,
-                delegate: nil
+                data: $viewModel.data
             )
         }
     }
@@ -134,8 +134,7 @@ struct FullCalendarView: View {
                     YoteiAllDayEventsTopView(
                         startDate: date,
                         numberOfDays: 1,
-                        data: $viewModel.data,
-                        delegate: nil
+                        data: $viewModel.data
                     )
                     .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
                     .background {
@@ -150,8 +149,7 @@ struct FullCalendarView: View {
                         dayDate: date,
                         numberOfDays: 1,
                         data: $viewModel.data,
-                        contentOffset: $contentOffset,
-                        delegate: nil
+                        contentOffset: $contentOffset
                     )
                 }
             }
@@ -174,16 +172,14 @@ struct FullCalendarView: View {
                     YoteiAllDayEventsTopView(
                         startDate: date,
                         numberOfDays: 7,
-                        data: $viewModel.data,
-                        delegate: nil
+                        data: $viewModel.data
                     )
                     .padding(Constants.weekTitlesViewInsets)
                     YoteiDayEventsView(
                         dayDate: date,
                         numberOfDays: 7,
                         data: $viewModel.data,
-                        contentOffset: $contentOffset,
-                        delegate: nil
+                        contentOffset: $contentOffset
                     )
                 }
             }

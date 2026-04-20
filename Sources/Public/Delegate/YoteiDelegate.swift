@@ -3,7 +3,7 @@
 //  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 
 public protocol YoteiDelegate<Data>: AnyObject {
     associatedtype Data: YoteiEventData
@@ -11,4 +11,24 @@ public protocol YoteiDelegate<Data>: AnyObject {
     func calendarDidSelectEvent(with id: YoteiEvent<Data>.ID)
     func calendarDidSelectAllDay(date: Date)
     func calendarDidSelect(dateInterval: DateInterval, completion: () -> Void)
+}
+
+public enum YoteiDelegateKey: EnvironmentKey {
+    public nonisolated(unsafe) static let defaultValue: (any YoteiDelegate)? = nil
+}
+
+public extension EnvironmentValues {
+    var yoteiDelegate: (any YoteiDelegate)? {
+        get {
+            self[YoteiDelegateKey.self]
+        } set {
+            self[YoteiDelegateKey.self] = newValue
+        }
+    }
+}
+
+public extension View {
+    func yoteiDelegate(_ delegate: (any YoteiDelegate)?) -> some View {
+        environment(\.yoteiDelegate, delegate)
+    }
 }

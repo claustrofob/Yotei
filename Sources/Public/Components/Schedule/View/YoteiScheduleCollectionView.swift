@@ -8,9 +8,9 @@ import UIKit
 
 struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: UIViewRepresentable {
     @Environment(\.calendar) private var calendar
+    @Environment(\.yoteiDelegate) private var delegate
 
     let data: YoteiScheduleViewData<Data>?
-    let delegate: (any YoteiDelegate<Data>)?
     let viewFactory: ViewFactory
     let focusedDateUpdate: (Date) -> Void
 

@@ -8,12 +8,12 @@ import SwiftUI
 
 public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     @Environment(\.calendar) private var calendar
+    @Environment(\.yoteiDelegate) private var delegate
 
     private let dayDate: Date
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
-    private weak var delegate: (any YoteiDelegate<Data>)?
     private let viewFactory: ViewFactory
 
     private var dateSequence: YoteiDaysSequence {
@@ -41,14 +41,12 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol<
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
-        delegate: (any YoteiDelegate<Data>)?,
         viewFactory: ViewFactory
     ) {
         self.dayDate = dayDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
-        self.delegate = delegate
         self.viewFactory = viewFactory
     }
 
@@ -56,15 +54,13 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol<
         dayDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
-        contentOffset: Binding<CGPoint?>,
-        delegate: (any YoteiDelegate<Data>)?
+        contentOffset: Binding<CGPoint?>
     ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
         self.init(
             dayDate: dayDate,
             numberOfDays: numberOfDays,
             data: data,
             contentOffset: contentOffset,
-            delegate: delegate,
             viewFactory: YoteiDayEventsViewFactory()
         )
     }
@@ -81,8 +77,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol<
                         events: events,
                         dateSequence: dateSequence,
                         numberOfDays: numberOfDays,
-                        viewFactory: viewFactory,
-                        delegate: delegate
+                        viewFactory: viewFactory
                     )
                     .overlay(alignment: .topLeading) {
                         if let event = placeholderEvent {
@@ -149,12 +144,12 @@ private extension YoteiDayEventsView {
 
     struct EventsLayoutView: View {
         @Environment(\.calendar) private var calendar
+        @Environment(\.yoteiDelegate) private var delegate
 
         let events: [Date: [YoteiEvent<Data>]]
         let dateSequence: YoteiDaysSequence
         let numberOfDays: Int
         let viewFactory: ViewFactory
-        weak var delegate: (any YoteiDelegate<Data>)?
 
         var body: some View {
             HStack(spacing: 0) {

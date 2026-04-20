@@ -10,7 +10,6 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol<Da
 
     @Binding private var focusedDate: Date
     @Binding private var data: YoteiEventsInterval<Data>
-    private weak var delegate: (any YoteiDelegate<Data>)?
     private let viewFactory: ViewFactory
 
     @State private var viewData: YoteiScheduleViewData<Data>?
@@ -18,24 +17,20 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol<Da
     public init(
         focusedDate: Binding<Date>,
         data: Binding<YoteiEventsInterval<Data>>,
-        delegate: (any YoteiDelegate<Data>)?,
         viewFactory: ViewFactory
     ) {
         _focusedDate = focusedDate
         _data = data
-        self.delegate = delegate
         self.viewFactory = viewFactory
     }
 
     public init(
         focusedDate: Binding<Date>,
-        data: Binding<YoteiEventsInterval<Data>>,
-        delegate: (any YoteiDelegate<Data>)?
+        data: Binding<YoteiEventsInterval<Data>>
     ) where ViewFactory == YoteiScheduleViewFactory<Data> {
         self.init(
             focusedDate: focusedDate,
             data: data,
-            delegate: delegate,
             viewFactory: YoteiScheduleViewFactory()
         )
     }
@@ -44,7 +39,6 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol<Da
         ZStack {
             YoteiScheduleCollectionView(
                 data: viewData,
-                delegate: delegate,
                 viewFactory: viewFactory
             ) {
                 viewData?.focusedDate = $0
