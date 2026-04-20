@@ -6,6 +6,7 @@
 import SwiftUI
 
 public struct YoteiScheduleAllDayEventCellDefaultView<Data: YoteiEventData>: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
     @Environment(\.calendar) private var calendar
 
     private let nowDate = Date.now
@@ -24,7 +25,7 @@ public struct YoteiScheduleAllDayEventCellDefaultView<Data: YoteiEventData>: Vie
             .lineLimit(1)
             .truncationMode(.tail)
             .foregroundStyle(.background)
-            .font(.system(.caption))
+            .font(fontStyle.caption)
             .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             .frame(height: 20)
             .frame(maxWidth: .infinity, alignment: .leading)

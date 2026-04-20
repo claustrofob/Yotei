@@ -6,6 +6,8 @@
 import SwiftUI
 
 public struct YoteiDayEventsEventDefaultView<Data: YoteiEventData>: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
+
     private let event: YoteiEvent<Data>
 
     public init(event: YoteiEvent<Data>) {
@@ -16,7 +18,7 @@ public struct YoteiDayEventsEventDefaultView<Data: YoteiEventData>: View {
         VStack(alignment: .leading) {
             Text(event.title)
                 .foregroundStyle(.background)
-                .font(.system(.caption))
+                .font(fontStyle.caption)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(height: 16)

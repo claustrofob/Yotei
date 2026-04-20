@@ -11,6 +11,7 @@ public struct YoteiDayCellDefaultView: View {
         foregroundColor: AnyShapeStyle
     )
 
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
     @Environment(\.calendar) private var calendar
 
     private let date: Date
@@ -34,7 +35,7 @@ public struct YoteiDayCellDefaultView: View {
         let style = dayStyle(date: date)
         let dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
         Text(date.formatted(dayFormatStyle))
-            .font(.system(.subheadline))
+            .font(fontStyle.subheadline)
             .foregroundStyle(style.foregroundColor)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .frame(height: 40)

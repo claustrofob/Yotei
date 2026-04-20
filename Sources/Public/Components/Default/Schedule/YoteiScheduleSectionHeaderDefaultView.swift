@@ -6,6 +6,7 @@
 import SwiftUI
 
 public struct YoteiScheduleSectionHeaderDefaultView: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
     @Environment(\.calendar) private var calendar
 
     private let date: Date
@@ -22,6 +23,7 @@ public struct YoteiScheduleSectionHeaderDefaultView: View {
             .day()
             .weekday(.wide)
         Text(date.formatted(dateFormatStyle))
+            .font(calendar.isDateInToday(date) ? fontStyle.headline : fontStyle.subheadline)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .padding(.leading, sectionInsets.left)
             .padding(.trailing, sectionInsets.right)

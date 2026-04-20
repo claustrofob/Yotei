@@ -6,6 +6,7 @@
 import SwiftUI
 
 public struct YoteiDayEventsTimeSlotDefaultView: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
     @Environment(\.calendar) private var calendar
 
     private let date: Date
@@ -22,7 +23,7 @@ public struct YoteiDayEventsTimeSlotDefaultView: View {
 
         HStack(spacing: 6) {
             Text(date.formatted(timeFormatStyle))
-                .font(.system(.caption))
+                .font(fontStyle.caption)
                 .fixedSize()
                 .frame(width: 32, alignment: .trailing)
                 .foregroundStyle(.secondary)

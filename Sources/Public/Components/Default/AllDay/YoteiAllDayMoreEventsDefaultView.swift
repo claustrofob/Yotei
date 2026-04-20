@@ -6,6 +6,8 @@
 import SwiftUI
 
 public struct YoteiAllDayMoreEventsDefaultView: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
+
     private let moreEventsCount: Int
 
     public init(moreEventsCount: Int) {
@@ -16,7 +18,7 @@ public struct YoteiAllDayMoreEventsDefaultView: View {
         Text("+\(moreEventsCount)")
             .lineLimit(1)
             .foregroundStyle(.secondary)
-            .font(.system(.caption))
+            .font(fontStyle.caption)
             .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             .frame(height: 18)
             .frame(maxWidth: .infinity, alignment: .center)

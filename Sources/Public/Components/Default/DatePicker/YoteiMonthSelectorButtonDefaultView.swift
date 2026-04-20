@@ -6,6 +6,7 @@
 import SwiftUI
 
 public struct YoteiMonthSelectorButtonDefaultView: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
     @Environment(\.calendar) private var calendar
 
     private let date: Date
@@ -26,7 +27,7 @@ public struct YoteiMonthSelectorButtonDefaultView: View {
 
         HStack(spacing: 16) {
             Text(date.formatted(monthYearFormatStyle).capitalizedFirstLetter)
-                .font(.system(.body))
+                .font(fontStyle.body)
             Image(systemName: "chevron.right")
                 .rotationEffect(.degrees(isExpanded ? 90 : 0))
         }

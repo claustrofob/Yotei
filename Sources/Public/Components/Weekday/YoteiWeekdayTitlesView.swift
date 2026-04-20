@@ -6,6 +6,7 @@
 import SwiftUI
 
 public struct YoteiWeekdayTitlesView: View {
+    @Environment(\.yoteiFontStyle) var fontStyle: YoteiFontStyle
     @Environment(\.calendar) private var calendar
 
     public init() {}
@@ -15,7 +16,7 @@ public struct YoteiWeekdayTitlesView: View {
             ForEach(calendar.weekdayIndices, id: \.self) { index in
                 Text("\(calendar.veryShortStandaloneWeekdaySymbols[index - 1])")
                     .frame(maxWidth: .infinity)
-                    .font(.system(.caption))
+                    .font(fontStyle.caption)
                     .foregroundStyle(.secondary)
             }
         }
