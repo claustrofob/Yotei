@@ -39,57 +39,60 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     public var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
-                // On iOS17 scroll view area of PageController extends beyond the container edges.
-                // This extra ScrollView fixes it.
-                ScrollView(.vertical) {
-                    ZStack(alignment: .top) {
-                        Group {
-                            if isExpanded {
-                                tabView(selection: $focusedDate, component: .month) { date in
-                                    YoteiStripMonthView(
-                                        focusedDate: $focusedDate,
-                                        date: date,
-                                        viewFactory: viewFactory
-                                    )
-                                    .frame(maxHeight: .infinity, alignment: .top)
-                                    .animation(.default, value: focusedDate)
-                                    .ignoresSafeArea(edges: .all)
-                                }
-                                .zIndex(1)
-                            } else {
-                                tabView(selection: $focusedDate, component: .weekOfMonth) { date in
-                                    YoteiStripWeekView(
-                                        focusedDate: $focusedDate,
-                                        date: date,
-                                        viewFactory: viewFactory
-                                    )
-                                    .frame(maxHeight: .infinity, alignment: .top)
-                                    .animation(.default, value: focusedDate)
-                                    .ignoresSafeArea(edges: .all)
+                VStack(spacing: 0) {
+                    // On iOS17 scroll view area of PageController extends beyond the container edges.
+                    // This extra ScrollView fixes it.
+                    ScrollView(.vertical) {
+                        ZStack(alignment: .top) {
+                            Group {
+                                if isExpanded {
+                                    tabView(selection: $focusedDate, component: .month) { date in
+                                        YoteiStripMonthView(
+                                            focusedDate: $focusedDate,
+                                            date: date,
+                                            viewFactory: viewFactory
+                                        )
+                                        .frame(maxHeight: .infinity, alignment: .top)
+                                        .animation(.default, value: focusedDate)
+                                        .ignoresSafeArea(edges: .all)
+                                    }
+                                    .zIndex(1)
+                                } else {
+                                    tabView(selection: $focusedDate, component: .weekOfMonth) { date in
+                                        YoteiStripWeekView(
+                                            focusedDate: $focusedDate,
+                                            date: date,
+                                            viewFactory: viewFactory
+                                        )
+                                        .frame(maxHeight: .infinity, alignment: .top)
+                                        .animation(.default, value: focusedDate)
+                                        .ignoresSafeArea(edges: .all)
+                                    }
                                 }
                             }
+                            .transition(.offset(CGSize(
+                                width: 0,
+                                height: isExpanded ? -weekOffset() : weekOffset()
+                            )).combined(with: .modifier(
+                                // This transition is required for the case, when selected date is in the first week.
+                                // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
+                                // We have to always change something to trigger animation.
+                                active: DummyModifier(isActive: true),
+                                identity: DummyModifier(isActive: false)
+                            )))
                         }
-                        .transition(.offset(CGSize(
-                            width: 0,
-                            height: isExpanded ? -weekOffset() : weekOffset()
-                        )).combined(with: .modifier(
-                            // This transition is required for the case, when selected date is in the first week.
-                            // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
-                            // We have to always change something to trigger animation.
-                            active: DummyModifier(isActive: true),
-                            identity: DummyModifier(isActive: false)
-                        )))
+                        // this frame is required for transition to work properly
+                        .frame(height: maxMonthStripHeight, alignment: .top)
+                        .frame(maxWidth: .infinity)
                     }
-                    // this frame is required for transition to work properly
-                    .frame(height: maxMonthStripHeight, alignment: .top)
-                    .frame(maxWidth: .infinity)
-                }
-                .scrollDisabled(true)
-                .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
-                .clipped()
-                .contentShape(Rectangle())
+                    .scrollDisabled(true)
+                    .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
+                    .clipped()
+                    .contentShape(Rectangle())
 
-                expandStripButton()
+                    expandStripButton()
+                }
+                .background(.background)
 
                 // cover the rest of the screen
                 if isExpanded {
