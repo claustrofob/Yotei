@@ -129,7 +129,7 @@ private extension YoteiAllDayEventsTopView {
             return
         }
         var processedEventIDs = Set<YoteiEvent<Data>.ID>()
-        viewData = (0 ..< 2).map { _ in
+        viewData = (0 ..< viewFactory.numberOfVisibleRows()).map { _ in
             var day = 0
             var data = [YoteiAllDayEventsTopViewModel<Data>]()
             while day < numberOfDays {

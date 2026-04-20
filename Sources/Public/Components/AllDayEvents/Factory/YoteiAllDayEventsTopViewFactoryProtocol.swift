@@ -15,6 +15,8 @@ public protocol YoteiAllDayEventsTopViewFactoryProtocol<Data> {
     associatedtype MoreEventsView: View
     func moreEventsView(count: Int) -> MoreEventsView
 
+    func numberOfVisibleRows() -> Int
+
     func insets() -> EdgeInsets
     func interitemVerticalSpacing() -> CGFloat
     func interitemHorizontalSpacing() -> CGFloat
@@ -27,6 +29,10 @@ public extension YoteiAllDayEventsTopViewFactoryProtocol {
 
     func moreEventsView(count: Int) -> some View {
         YoteiAllDayMoreEventsDefaultView(moreEventsCount: count)
+    }
+
+    func numberOfVisibleRows() -> Int {
+        2
     }
 
     func insets() -> EdgeInsets {
