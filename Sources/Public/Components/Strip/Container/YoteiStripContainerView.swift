@@ -46,28 +46,16 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         ZStack(alignment: .top) {
                             Group {
                                 if isExpanded {
-                                    tabView(selection: $focusedDate, component: .month) { date in
-                                        YoteiStripMonthView(
-                                            focusedDate: $focusedDate,
-                                            date: date,
-                                            viewFactory: viewFactory
-                                        )
-                                        .frame(maxHeight: .infinity, alignment: .top)
-                                        .animation(.default, value: focusedDate)
-                                        .ignoresSafeArea(edges: .all)
-                                    }
+                                    YoteiStripMonthView(
+                                        focusedDate: $focusedDate,
+                                        viewFactory: viewFactory
+                                    )
                                     .zIndex(1)
                                 } else {
-                                    tabView(selection: $focusedDate, component: .weekOfMonth) { date in
-                                        YoteiStripWeekView(
-                                            focusedDate: $focusedDate,
-                                            date: date,
-                                            viewFactory: viewFactory
-                                        )
-                                        .frame(maxHeight: .infinity, alignment: .top)
-                                        .animation(.default, value: focusedDate)
-                                        .ignoresSafeArea(edges: .all)
-                                    }
+                                    YoteiStripWeekView(
+                                        focusedDate: $focusedDate,
+                                        viewFactory: viewFactory
+                                    )
                                 }
                             }
                             .transition(.offset(CGSize(
@@ -138,24 +126,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 }
 
 private extension YoteiStripContainerView {
-    func tabView(
-        selection: Binding<Date>,
-        component: Calendar.Component,
-        @ViewBuilder content: @escaping (Date) -> some View
-    ) -> some View {
-        DateTabView(
-            selection: selection,
-            component: component,
-            content: { date in
-                content(date)
-                    // Keep the navigation bar explicitly visible
-                    // This view is hosted inside a UIPageViewController, and during some
-                    // page transitions the navigation bar may be hidden unexpectedly
-                    .toolbar(.visible, for: .navigationBar)
-            }
-        )
-    }
-
     func calculateMonthStripHeight() {
         let numberOfWeeks = CGFloat(calendar.range(
             of: .weekOfMonth,
