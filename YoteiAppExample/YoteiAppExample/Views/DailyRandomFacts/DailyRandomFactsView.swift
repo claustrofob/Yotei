@@ -1,26 +1,25 @@
 //
-//  DailyRandomFactsView.swift
-//  YoteiAppExample
-//
-//  Created by Mikalai Zmachynski on 20/04/2026.
+//  Created by Mikalai Zmachynski.
+//  Copyright © 2026 Mikalai Zmachynski. All rights reserved.
 //
 
-import Yotei
 import SwiftUI
+import Yotei
 
 struct DailyRandomFactsView: View {
     @StateObject var viewModel = DailyRandomFactsViewModel()
-    
+
     var body: some View {
-        YoteiWeekdayTitlesView()
-        YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
-        Text(viewModel.focusedDate.formatted(date: .abbreviated, time: .omitted))
         VStack(spacing: 0) {
             YoteiPagesDayView(
                 focusedDate: $viewModel.focusedDate
-            ) { date in
-                Text("\(Int.random(in: 0...1000))")
+            ) { _ in
+                Text("\(Int.random(in: 0 ... 1000))")
             }
+            Text(viewModel.focusedDate.formatted(Date.FormatStyle().month(.wide)))
+            YoteiStripWeekView(focusedDate: $viewModel.focusedDate)
+                .frame(height: YoteiStripViewFactory().dayCellViewHeight())
+            YoteiWeekdayTitlesView()
         }
     }
 }
