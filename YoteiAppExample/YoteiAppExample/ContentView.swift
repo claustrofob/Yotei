@@ -11,6 +11,7 @@ struct ContentView: View {
         case defaultDatePicker
         case customizedDatePicker
         case dayView
+        case dailyRandomFacts
     }
 
     var body: some View {
@@ -20,6 +21,7 @@ struct ContentView: View {
                 NavigationLink("Customized Day View", value: Destination.dayView)
                 NavigationLink("Date Picker", value: Destination.defaultDatePicker)
                 NavigationLink("Customized Date Picker", value: Destination.customizedDatePicker)
+                NavigationLink("Daily Random Facts", value: Destination.dailyRandomFacts)
             }
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
@@ -31,6 +33,8 @@ struct ContentView: View {
                     CustomizedDatePickerView()
                 case .dayView:
                     DayView()
+                case .dailyRandomFacts:
+                    DailyRandomFactsView()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
