@@ -109,8 +109,7 @@ struct CalendarScreen: View {
             YoteiStripContainerView(focusedDate: $focusedDate)
             YoteiScheduleView(
                 focusedDate: $focusedDate,
-                data: $data,
-                delegate: nil
+                data: $data
             )
         }
         .onChange(of: focusedDate) { _ in
@@ -148,15 +147,13 @@ YoteiPagesDayView(focusedDate: $focusedDate) { date in
         YoteiAllDayEventsTopView(
             startDate: date,
             numberOfDays: 1,
-            data: $data,
-            delegate: nil
+            data: $data
         )
         YoteiDayEventsView(
             dayDate: date,
             numberOfDays: 1,
             data: $data,
-            contentOffset: $contentOffset,
-            delegate: nil
+            contentOffset: $contentOffset
         )
     }
 }
@@ -299,7 +296,7 @@ You have a few options to set custiom colors in calendar:
 VStack(spacing: 0) {
     YoteiWeekdayTitlesView()
     YoteiStripContainerView(focusedDate: $focusedDate)
-    YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+    YoteiScheduleView(focusedDate: $focusedDate, data: $data)
 }
 .tint(.purple)
 ```
@@ -310,7 +307,7 @@ Because `.tint` is a normal SwiftUI environment value, you can scope it to one c
 YoteiStripContainerView(focusedDate: $focusedDate)
     .tint(.indigo)
 
-YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+YoteiScheduleView(focusedDate: $focusedDate, data: $data)
     .tint(.orange)
 ```
 
@@ -348,7 +345,7 @@ Apply a branded font style to the whole calendar:
 VStack(spacing: 0) {
     YoteiWeekdayTitlesView()
     YoteiStripContainerView(focusedDate: $focusedDate)
-    YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+    YoteiScheduleView(focusedDate: $focusedDate, data: $data)
 }
 .environment(\.yoteiFontStyle, YoteiFontStyle(
     caption: .system(.caption, design: .rounded),
@@ -369,7 +366,7 @@ YoteiStripContainerView(focusedDate: $focusedDate)
 Override individual styles:
 
 ```swift
-YoteiScheduleView(focusedDate: $focusedDate, data: $data, delegate: nil)
+YoteiScheduleView(focusedDate: $focusedDate, data: $data)
     .environment(\.yoteiFontStyle.subheadline, .custom("Avenir-Heavy", size: 16))
     .environment(\.yoteiFontStyle.caption2, .custom("Avenir-Book", size: 12))
 ```
@@ -408,7 +405,6 @@ YoteiDayEventsView(
     numberOfDays: 1,
     data: $data,
     contentOffset: $contentOffset,
-    delegate: nil,
     viewFactory: BrandedDayEventsFactory()
 )
 ```
@@ -434,7 +430,7 @@ Because factories are plain structs with protocol-provided defaults, you can sta
 
 ## Handling User Interaction
 
-Implement `YoteiDelegate` and pass it to any events view:
+Implement `YoteiDelegate` and pass it to calendar using `.yoteiDelegate(_:)` modifier:
 
 ```swift
 final class CalendarCoordinator: YoteiDelegate {
