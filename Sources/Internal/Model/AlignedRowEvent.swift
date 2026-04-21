@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum YoteiAllDayEventsTopViewModel<Data: YoteiEventData>: Equatable, Identifiable {
+enum AlignedRowEvent<Data: YoteiEventData>: Equatable, Identifiable {
     var id: String {
         switch self {
         case .event(event: let event, cols: _):

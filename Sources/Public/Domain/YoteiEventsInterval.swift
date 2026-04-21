@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct YoteiEventsInterval<Data: YoteiEventData>: Equatable {
+public struct YoteiEventsInterval<Data: YoteiEventData>: Equatable, Sendable {
     // active month interval
     public var monthInterval: DateInterval?
     // full interval: [a few prev days + monthInterval + a few next days]

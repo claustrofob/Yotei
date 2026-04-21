@@ -35,7 +35,7 @@ public struct YoteiPagesMonthDayCellDefaultView: View {
         let style = dayStyle(date: date)
         let dayFormatStyle = Date.FormatStyle(calendar: calendar, timeZone: calendar.timeZone).day()
         Text(date.formatted(dayFormatStyle))
-            .font(.system(.caption2))
+            .font(fontStyle.caption2)
             .foregroundStyle(style.foregroundColor)
             .frame(height: 20)
             .padding(4)
