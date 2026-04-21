@@ -6,7 +6,7 @@
 import SwiftUI
 import UIKit
 
-struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: UIViewRepresentable {
+struct YoteiScheduleCollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol, Data: YoteiEventData>: UIViewRepresentable where ViewFactory.Data == Data {
     @Environment(\.calendar) private var calendar
     @Environment(\.yoteiDelegate) private var delegate
 
