@@ -132,6 +132,10 @@ extension FullCalendarViewModelModel {
 }
 
 extension FullCalendarViewModelModel: YoteiDelegate<EventData> {
+    func calendarDidSelectMonthDay(date _: Date) {
+        // open day events
+    }
+
     func calendarDidSelectEvent(with _: YoteiEvent<EventData>.ID) {
         // event details
     }

@@ -5,13 +5,14 @@
 
 import SwiftUI
 
-public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryProtocol, Data: YoteiEventData>: View {
+public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
         static var numberOfRows: Int { 6 }
     }
 
     @Environment(\.calendar) private var calendar
+    @Environment(\.yoteiDelegate) private var delegate
 
     @Binding private var selectedDate: Date
     @Binding private var data: YoteiEventsInterval<Data>
@@ -87,7 +88,7 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                                 let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
                                 let isEnabled = monthInterval.contains(date) && monthInterval.end != date
                                 Button(action: {
-                                    selectedDate = date
+                                    delegate?.calendarDidSelectMonthDay(date: date)
                                 }, label: {
                                     Color.clear
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -162,8 +163,8 @@ private extension YoteiPagesMonthPageView {
             calendar: calendar
         )
         Grid(
-            horizontalSpacing: 2,
-            verticalSpacing: 2
+            horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
+            verticalSpacing: viewFactory.interitemVerticalSpacing()
         ) {
             ForEach(0 ..< viewData.events.count, id: \.self) { rowIndex in
                 let rowData = viewData.events[rowIndex]
