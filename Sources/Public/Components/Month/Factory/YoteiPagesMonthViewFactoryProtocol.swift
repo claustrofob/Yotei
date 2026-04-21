@@ -17,6 +17,12 @@ public protocol YoteiPagesMonthViewFactoryProtocol<Data> {
         isEnabled: Bool
     ) -> DayCellView
 
+    associatedtype EventView: View
+    func eventView(event: YoteiEvent<Data>) -> EventView
+
+    associatedtype MoreEventsView: View
+    func moreEventsView(count: Int) -> MoreEventsView
+
     associatedtype VerticalDelimiterView: View
     func verticalDelimiterView() -> VerticalDelimiterView
 
@@ -37,6 +43,14 @@ public extension YoteiPagesMonthViewFactoryProtocol {
             focusedDate: focusedDate,
             isEnabled: isEnabled
         )
+    }
+
+    func eventView(event: YoteiEvent<Data>) -> some View {
+        YoteiPagesMonthEventDefaultView(event: event)
+    }
+
+    func moreEventsView(count: Int) -> some View {
+        YoteiPagesMonthMoreEventsDefaultView(moreEventsCount: count)
     }
 
     func verticalDelimiterView() -> some View {

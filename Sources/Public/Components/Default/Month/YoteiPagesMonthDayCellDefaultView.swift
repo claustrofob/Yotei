@@ -37,13 +37,11 @@ public struct YoteiPagesMonthDayCellDefaultView: View {
         Text(date.formatted(dayFormatStyle))
             .font(fontStyle.caption2)
             .foregroundStyle(style.foregroundColor)
-            .frame(height: 20)
             .padding(4)
             .background {
                 Circle().fill(style.backgroundColor)
             }
-            .padding(.horizontal, 2)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding(4)
     }
 
     private func dayStyle(date: Date) -> CellStyle {

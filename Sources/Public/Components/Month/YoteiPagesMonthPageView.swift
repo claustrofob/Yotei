@@ -58,25 +58,43 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
 
         let todayDate = Date.now
         ZStack {
-            Grid(horizontalSpacing: 0, verticalSpacing: 0) {
+            VStack(spacing: 0) {
                 ForEach(0 ..< Constants.numberOfRows, id: \.self) { row in
-                    GridRow {
-                        ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                            let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
-                            let isEnabled = monthInterval.contains(date) && monthInterval.end != date
-                            Button(action: {
-                                selectedDate = date
-                            }, label: {
-                                viewFactory.dayCellView(
-                                    date: date,
-                                    todayDate: todayDate,
-                                    focusedDate: selectedDate,
-                                    isEnabled: isEnabled
-                                )
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .contentShape(Rectangle())
-                            })
-                            .disabled(!isEnabled)
+                    ZStack(alignment: .top) {
+                        VStack(spacing: 0) {
+                            HStack(spacing: 0) {
+                                ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                                    let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
+                                    let isEnabled = monthInterval.contains(date) && monthInterval.end != date
+                                    viewFactory.dayCellView(
+                                        date: date,
+                                        todayDate: todayDate,
+                                        focusedDate: selectedDate,
+                                        isEnabled: isEnabled
+                                    )
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+
+                            let weekStartDate = daysSequence[row * Constants.numberOfDaysPerWeek]
+                            if let viewData = viewData[weekStartDate] {
+                                eventsGridView(viewData: viewData)
+                            }
+                        }
+
+                        HStack(spacing: 0) {
+                            ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                                let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
+                                let isEnabled = monthInterval.contains(date) && monthInterval.end != date
+                                Button(action: {
+                                    selectedDate = date
+                                }, label: {
+                                    Color.clear
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .contentShape(Rectangle())
+                                })
+                                .disabled(!isEnabled)
+                            }
                         }
                     }
                 }
@@ -134,5 +152,49 @@ private extension YoteiPagesMonthPageView {
             }
             return result
         }
+    }
+
+    @ViewBuilder
+    func eventsGridView(viewData: AlignedRowEventsData<Data>) -> some View {
+        let daysSequence = YoteiDaysSequence(
+            startDate: viewData.startDate,
+            days: Constants.numberOfDaysPerWeek,
+            calendar: calendar
+        )
+        Grid(
+            horizontalSpacing: 2,
+            verticalSpacing: 2
+        ) {
+            ForEach(0 ..< viewData.events.count, id: \.self) { rowIndex in
+                let rowData = viewData.events[rowIndex]
+                GridRow {
+                    ForEach(rowData, id: \.id) { item in
+                        switch item {
+                        case let .event(event: event, cols: cols):
+                            viewFactory.eventView(event: event)
+                                .gridCellColumns(cols)
+                        case .empty:
+                            emptyView()
+                        }
+                    }
+                }
+            }
+
+            GridRow {
+                ForEach(daysSequence, id: \.self) { date in
+                    if let count = viewData.extraCount[date], count > 0 {
+                        viewFactory.moreEventsView(count: count)
+                    } else {
+                        emptyView()
+                    }
+                }
+            }
+        }
+    }
+
+    func emptyView() -> some View {
+        Color.clear
+            .frame(height: 0)
+            .frame(maxWidth: .infinity)
     }
 }
