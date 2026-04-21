@@ -18,6 +18,9 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
     private let dateInMonth: Date
     private let viewFactory: ViewFactory
 
+    @State private var viewData = [Date: AlignedRowEventsData<Data>]()
+    @State private var task: Task<Void, Never>?
+
     public init(
         selectedDate: Binding<Date>,
         dateInMonth: Date,
@@ -98,5 +101,38 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
             }
         }
         .frame(maxHeight: .infinity, alignment: .center)
+        .onChange(of: data, initial: true, isAsync: true) {
+            task?.cancel()
+            task = Task {
+                viewData = await processData(startDate: startDate)
+            }
+        }
+    }
+}
+
+private extension YoteiPagesMonthPageView {
+    func processData(startDate: Date) async -> [Date: AlignedRowEventsData<Data>] {
+        let numberOfDaysPerWeek = Constants.numberOfDaysPerWeek
+        let calendar = calendar
+        let data = data
+        return await withTaskGroup { group in
+            for index in 0 ..< Constants.numberOfRows {
+                group.addTask {
+                    let processor = EventsRowAligner<Data>(
+                        startDate: calendar.date(byAdding: .weekOfMonth, value: index, to: startDate)!,
+                        numberOfDays: numberOfDaysPerWeek,
+                        calendar: calendar,
+                        numberOfVisibleRows: 3
+                    )
+                    return await processor.calculate(data: data, filter: { _ in true })
+                }
+            }
+
+            var result: [Date: AlignedRowEventsData<Data>] = [:]
+            for await value in group {
+                result[value.startDate] = value
+            }
+            return result
+        }
     }
 }

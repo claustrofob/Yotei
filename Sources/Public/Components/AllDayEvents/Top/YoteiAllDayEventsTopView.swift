@@ -15,7 +15,7 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     @Binding private var data: YoteiEventsInterval<Data>
     private let viewFactory: ViewFactory
 
-    @State private var viewData = AlignedRowEventsData<Data>()
+    @State private var viewData: AlignedRowEventsData<Data>?
     @State private var task: Task<Void, Never>?
 
     private var daysSequence: YoteiDaysSequence {
@@ -49,8 +49,8 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
 
     public var body: some View {
         ZStack {
-            if !viewData.events.isEmpty {
-                eventsGridView()
+            if let viewData, !viewData.events.isEmpty {
+                eventsGridView(viewData: viewData)
                     .overlay {
                         dayButtonsView()
                     }
@@ -61,20 +61,24 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
         .onChange(of: data, initial: true, isAsync: true) {
             task?.cancel()
             task = Task {
-                let processor = EventsRowAligner<Data>(
-                    startDate: startDate,
-                    numberOfDays: numberOfDays,
-                    calendar: calendar,
-                    numberOfVisibleRows: viewFactory.numberOfVisibleRows()
-                )
-                viewData = await processor.calculate(data: data, filter: \.isAllDay)
+                viewData = await processData()
             }
         }
     }
 }
 
 private extension YoteiAllDayEventsTopView {
-    func eventsGridView() -> some View {
+    private func processData() async -> AlignedRowEventsData<Data>? {
+        let processor = EventsRowAligner<Data>(
+            startDate: startDate,
+            numberOfDays: numberOfDays,
+            calendar: calendar,
+            numberOfVisibleRows: viewFactory.numberOfVisibleRows()
+        )
+        return await processor.calculate(data: data, filter: \.isAllDay)
+    }
+
+    func eventsGridView(viewData: AlignedRowEventsData<Data>) -> some View {
         Grid(
             horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
             verticalSpacing: viewFactory.interitemVerticalSpacing()

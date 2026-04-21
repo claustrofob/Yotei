@@ -6,10 +6,12 @@
 import Foundation
 
 struct AlignedRowEventsData<Data: YoteiEventData> {
+    let startDate: Date
     let events: [[AlignedRowEvent<Data>]]
     let extraCount: [Date: Int]
 
-    init(events: [[AlignedRowEvent<Data>]] = [], extraCount: [Date: Int] = [:]) {
+    init(startDate: Date, events: [[AlignedRowEvent<Data>]] = [], extraCount: [Date: Int] = [:]) {
+        self.startDate = startDate
         self.events = events
         self.extraCount = extraCount
     }

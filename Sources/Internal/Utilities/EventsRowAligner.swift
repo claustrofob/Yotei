@@ -33,7 +33,7 @@ actor EventsRowAligner<Data: YoteiEventData> {
         }
 
         guard !events.isEmpty else {
-            return AlignedRowEventsData()
+            return AlignedRowEventsData(startDate: startDate)
         }
 
         var processedEventIDs = Set<YoteiEvent<Data>.ID>()
@@ -69,6 +69,10 @@ actor EventsRowAligner<Data: YoteiEventData> {
             result[pair.key] = pair.value.count
         }
 
-        return AlignedRowEventsData(events: viewData, extraCount: extraCount)
+        return AlignedRowEventsData(
+            startDate: startDate,
+            events: viewData,
+            extraCount: extraCount
+        )
     }
 }
