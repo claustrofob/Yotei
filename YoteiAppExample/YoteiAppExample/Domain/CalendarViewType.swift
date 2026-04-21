@@ -9,12 +9,14 @@ public enum CalendarViewType: String, CaseIterable {
     case schedule
     case day
     case week
+    case month
 
     var icon: Image {
         switch self {
         case .schedule: Image(.scheduleIcon)
         case .day: Image(.dayIcon)
         case .week: Image(.weekIcon)
+        case .month: Image(.monthIcon)
         }
     }
 
@@ -23,6 +25,7 @@ public enum CalendarViewType: String, CaseIterable {
         case .schedule: "Schedule"
         case .day: "Day"
         case .week: "Week"
+        case .month: "Month"
         }
     }
 }

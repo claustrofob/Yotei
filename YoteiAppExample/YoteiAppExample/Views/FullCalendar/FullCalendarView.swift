@@ -30,6 +30,8 @@ struct FullCalendarView: View {
                 dayView()
             case .week:
                 weekView()
+            case .month:
+                monthView()
             }
         }
         .fontDesign(.serif)
@@ -182,6 +184,22 @@ struct FullCalendarView: View {
                         contentOffset: $contentOffset
                     )
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func monthView() -> some View {
+        VStack(spacing: 0) {
+            YoteiWeekdayTitlesView()
+            YoteiPagesMonthView(
+                focusedDate: $viewModel.focusedDate
+            ) { date in
+                YoteiPagesMonthPageView(
+                    selectedDate: $viewModel.focusedDate,
+                    data: $viewModel.data,
+                    dateInMonth: date
+                )
             }
         }
     }
