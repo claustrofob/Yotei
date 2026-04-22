@@ -14,7 +14,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
     private var items: [YoteiScheduleViewModel<Data>] = []
     private var sections: [Date] = []
     private var sectionPosition: (section: Date, verticalOffset: CGFloat)?
-    private var autoUpdateTask: Task<Void, Never>?
+    private var autoUpdateTask: Task<Void, Error>?
 
     private var diffableDataSource: YoteiScheduleDataSource<Data>!
 
@@ -176,14 +176,14 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         autoUpdateTask?.cancel()
         autoUpdateTask = Task { @MainActor [weak self] in
             while !Task.isCancelled {
+                try await Task.sleep(for: .seconds(60))
                 if let self {
-                    await diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot())
+                    diffableDataSource.applySnapshotUsingReloadData(diffableDataSource.snapshot(), completion: {})
                 }
-                try? await Task.sleep(for: .seconds(60))
             }
         }
     }
-
+    
     private func apply(data: [(section: Date, items: [YoteiScheduleViewModel<Data>])]) {
         let sections = data.map(\.section)
         let items = data.map(\.items).flatMap(\.self)
