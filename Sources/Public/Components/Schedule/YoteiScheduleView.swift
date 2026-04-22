@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
+public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Environment(\.calendar) private var calendar
 
     @Binding private var focusedDate: Date

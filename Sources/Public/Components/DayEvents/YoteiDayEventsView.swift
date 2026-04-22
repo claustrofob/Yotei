@@ -6,7 +6,7 @@
 import Eventually
 import SwiftUI
 
-public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
+public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Environment(\.calendar) private var calendar
     @Environment(\.yoteiDelegate) private var delegate
 

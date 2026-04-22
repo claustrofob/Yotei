@@ -6,7 +6,7 @@
 import Foundation
 import SwiftUI
 
-public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
+public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFactoryProtocol, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Environment(\.calendar) private var calendar
     @Environment(\.yoteiDelegate) private var delegate
 

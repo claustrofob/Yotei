@@ -6,7 +6,7 @@
 import SwiftUI
 import UIKit
 
-final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol<Data>, Data: YoteiEventData>: UICollectionView, UICollectionViewDelegateFlowLayout {
+final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryProtocol, Data: YoteiEventData>: UICollectionView, UICollectionViewDelegateFlowLayout where ViewFactory.Data == Data {
     private let layout: YoteiScheduleCollectionViewLayout
 
     private var focusedDate: Date?
