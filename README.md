@@ -159,7 +159,22 @@ YoteiPagesDayView(focusedDate: $focusedDate) { date in
 }
 ```
 
-All three examples use only default configuration — no factories, no subclasses.
+A full month grid with paging between months and multi-day event bars:
+
+```swift
+VStack(spacing: 0) {
+    YoteiWeekdayTitlesView()
+    YoteiPagesMonthView(focusedDate: $focusedDate) { date in
+        YoteiPagesMonthPageView(
+            selectedDate: $focusedDate,
+            data: $data,
+            dateInMonth: date
+        )
+    }
+}
+```
+
+All examples use only default configuration — no factories, no subclasses.
 
 ## Available Components
 
@@ -188,7 +203,8 @@ Every view below is a public SwiftUI `View` that lives under `import Yotei`.
 | Component | Purpose |
 |---|---|
 | `YoteiPagesDayView` | Infinite horizontal pager, one page per day. Bound to a focused `Date`. |
-| `YoteiPagesWeekView` | Same as above but one page per week, always aligned to the calendar's first weekday. |
+| `YoteiPagesWeekView` | Infinite horizontal pager, one page per week, always aligned to the calendar's first weekday. |
+| `YoteiPagesMonthView` | Infinite horizontal pager, one page per month. Bound to a focused `Date`. |
 
 ### Events
 
@@ -197,6 +213,7 @@ Every view below is a public SwiftUI `View` that lives under `import Yotei`.
 | `YoteiScheduleView` | Scrolling agenda list grouped by day. UIKit-backed for smooth scroll over large ranges. |
 | `YoteiDayEventsView` | Hour-by-hour day timeline with overlap layout, current-time marker, and tap-to-create gesture. Supports multi-day layouts (`numberOfDays: 7` for a week view). |
 | `YoteiAllDayEventsTopView` | Multi-column grid for all-day and multi-day events, with a "+N more" indicator. |
+| `YoteiPagesMonthPageView` | A single month grid with a 6-row week layout, multi-day event bars, and a "+N" overflow indicator. Designed to be embedded inside `YoteiPagesMonthView`. |
 
 ### Domain & delegates
 
@@ -446,6 +463,10 @@ final class CalendarCoordinator: YoteiDelegate {
         // The user tapped an empty time slot — show a "new event" sheet.
         // Call completion() to clear the placeholder when the sheet is dismissed.
     }
+
+    func calendarDidSelectMonthDay(date: Date) {
+        // The user tapped a day cell in the month view — open the day's agenda or switch scope.
+    }
 }
 ```
 
@@ -468,8 +489,8 @@ The example project depends on the local `Yotei` package at the repo root, so an
 - [x] Custom views for events
 - [x] Stability improvements
 - [x] Font customization
+- [x] Month view
 - [ ] Drag/drop to update event time/duration
-- [ ] Month view
 - [ ] Accessibility
 
 ## License
