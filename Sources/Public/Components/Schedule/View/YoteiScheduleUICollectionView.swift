@@ -183,7 +183,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
             }
         }
     }
-    
+
     private func apply(data: [(section: Date, items: [YoteiScheduleViewModel<Data>])]) {
         let sections = data.map(\.section)
         let items = data.map(\.items).flatMap(\.self)

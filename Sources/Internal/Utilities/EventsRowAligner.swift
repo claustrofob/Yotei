@@ -71,9 +71,6 @@ actor EventsRowAligner<Data: YoteiEventData> {
             }
             return data
         }
-        let extraCount = events.reduce(into: [:]) { result, pair in
-            result[pair.key] = pair.value.count
-        }
 
         return AlignedRowEventsData(
             startDate: startDate,
