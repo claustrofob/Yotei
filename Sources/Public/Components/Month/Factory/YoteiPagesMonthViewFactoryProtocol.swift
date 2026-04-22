@@ -29,6 +29,7 @@ public protocol YoteiPagesMonthViewFactoryProtocol<Data> {
     associatedtype HorizontalDelimiterView: View
     func horizontalDelimiterView() -> HorizontalDelimiterView
 
+    func eventViewHeight() -> CGFloat
     func interitemVerticalSpacing() -> CGFloat
     func interitemHorizontalSpacing() -> CGFloat
 }
@@ -58,6 +59,10 @@ public extension YoteiPagesMonthViewFactoryProtocol {
 
     func verticalDelimiterView() -> some View {
         YoteiPagesMonthVerticalDelimiterDefaultView()
+    }
+
+    func eventViewHeight() -> CGFloat {
+        14
     }
 
     func horizontalDelimiterView() -> some View {

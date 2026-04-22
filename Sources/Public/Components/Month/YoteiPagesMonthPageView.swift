@@ -9,6 +9,7 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
     enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
         static var numberOfRows: Int { 6 }
+        static var minNumberOfVisibleEventRows: Int { 3 }
     }
 
     @Environment(\.calendar) private var calendar
@@ -62,6 +63,10 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
             ScrollView(.vertical) {
                 ZStack {
                     VStack(spacing: 0) {
+                        let minCellHeight = CGFloat(Constants.minNumberOfVisibleEventRows) * viewFactory.eventViewHeight()
+                            + CGFloat(Constants.minNumberOfVisibleEventRows - 1) * viewFactory.interitemVerticalSpacing()
+
+                        viewFactory.horizontalDelimiterView()
                         ForEach(0 ..< Constants.numberOfRows, id: \.self) { row in
                             ZStack(alignment: .top) {
                                 VStack(spacing: 0) {
@@ -89,7 +94,10 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                                         }
                                         .frame(maxHeight: .infinity, alignment: .top)
                                     }
+                                    .frame(minHeight: minCellHeight)
                                     .clipped()
+
+                                    viewFactory.horizontalDelimiterView()
                                 }
 
                                 HStack(spacing: 0) {
@@ -110,14 +118,6 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                         }
                     }
                     .buttonStyle(.plain)
-
-                    VStack(spacing: 0) {
-                        viewFactory.horizontalDelimiterView()
-                        ForEach(0 ..< Constants.numberOfRows, id: \.self) { _ in
-                            Spacer()
-                            viewFactory.horizontalDelimiterView()
-                        }
-                    }
 
                     HStack(spacing: 0) {
                         ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
