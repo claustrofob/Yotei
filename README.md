@@ -13,12 +13,11 @@ A highly modular, highly customizable calendar package for iOS. Built with Swift
 
 Every component can be used on its own or composed into a full calendar app. Pick only what you need — a date picker, a schedule list, a day timeline, an all-day grid — or wire them all together.
 
-<img width="160" src="https://github.com/user-attachments/assets/48167445-6f75-4d98-9e4d-b38a3f97b579" />
-<img width="160" src="https://github.com/user-attachments/assets/223a3769-d552-4af7-b322-ac48ec13c13a" />
-<img width="160" src="https://github.com/user-attachments/assets/47688997-a821-47c6-9a9d-aa140bf69ef6" />
-<img width="160" src="https://github.com/user-attachments/assets/761c6ac9-75be-4ee5-8b97-265e8bc38dce" />
-<img width="160" src="https://github.com/user-attachments/assets/54ca8ad5-ed46-40dd-a76b-fcdda15b7a74" />
-<img width="160" src="https://github.com/user-attachments/assets/92e413a8-1923-49e0-9c62-e0907f37fc3c" />
+<img width="160" src="https://github.com/user-attachments/assets/4228ce0d-b32b-4842-9f5f-baa4a85a4219" />
+<img width="160" alt="day_view" src="https://github.com/user-attachments/assets/e4c0838c-436d-48c4-93f0-803fc163282f" />
+<img width="160" alt="week_view" src="https://github.com/user-attachments/assets/4397afb5-74e9-45f1-b694-494b84940def" />
+<img width="160" alt="month_view" src="https://github.com/user-attachments/assets/ba5b8a4d-1221-4ce9-8ade-24a1e42d8a09" />
+<img width="160" alt="schedule_view" src="https://github.com/user-attachments/assets/37eec48e-f59e-4620-ae99-fa4f5e4871d0" />
 
 ## Table of Contents
 
