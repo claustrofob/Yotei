@@ -41,7 +41,7 @@ public struct YoteiPagesMonthDayCellDefaultView: View {
             .background {
                 Circle().fill(style.backgroundColor)
             }
-            .padding(4)
+            .padding(2)
     }
 
     private func dayStyle(date: Date) -> CellStyle {
