@@ -58,68 +58,79 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
         )
 
         let todayDate = Date.now
-        ZStack {
-            VStack(spacing: 0) {
-                ForEach(0 ..< Constants.numberOfRows, id: \.self) { row in
-                    ZStack(alignment: .top) {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 0) {
-                                ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                                    let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
-                                    let isEnabled = monthInterval.contains(date) && monthInterval.end != date
-                                    viewFactory.dayCellView(
-                                        date: date,
-                                        todayDate: todayDate,
-                                        focusedDate: selectedDate,
-                                        isEnabled: isEnabled
-                                    )
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+        GeometryReader { proxy in
+            ScrollView(.vertical) {
+                ZStack {
+                    VStack(spacing: 0) {
+                        ForEach(0 ..< Constants.numberOfRows, id: \.self) { row in
+                            ZStack(alignment: .top) {
+                                VStack(spacing: 0) {
+                                    HStack(spacing: 0) {
+                                        ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                                            let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
+                                            let isEnabled = monthInterval.contains(date) && monthInterval.end != date
+                                            viewFactory.dayCellView(
+                                                date: date,
+                                                todayDate: todayDate,
+                                                focusedDate: selectedDate,
+                                                isEnabled: isEnabled
+                                            )
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                    }
+
+                                    GeometryReader { _ in
+                                        ZStack(alignment: .top) {
+                                            // TODO: calculate tiles count
+                                            let weekStartDate = daysSequence[row * Constants.numberOfDaysPerWeek]
+                                            if let viewData = viewData[weekStartDate] {
+                                                eventsGridView(viewData: viewData)
+                                            }
+                                        }
+                                        .frame(maxHeight: .infinity, alignment: .top)
+                                    }
+                                    .clipped()
+                                }
+
+                                HStack(spacing: 0) {
+                                    ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                                        let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
+                                        let isEnabled = monthInterval.contains(date) && monthInterval.end != date
+                                        Button(action: {
+                                            delegate?.calendarDidSelectMonthDay(date: date)
+                                        }, label: {
+                                            Color.clear
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                                .contentShape(Rectangle())
+                                        })
+                                        .disabled(!isEnabled)
+                                    }
                                 }
                             }
-
-                            let weekStartDate = daysSequence[row * Constants.numberOfDaysPerWeek]
-                            if let viewData = viewData[weekStartDate] {
-                                eventsGridView(viewData: viewData)
-                            }
                         }
+                    }
+                    .buttonStyle(.plain)
 
-                        HStack(spacing: 0) {
-                            ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                                let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
-                                let isEnabled = monthInterval.contains(date) && monthInterval.end != date
-                                Button(action: {
-                                    delegate?.calendarDidSelectMonthDay(date: date)
-                                }, label: {
-                                    Color.clear
-                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                        .contentShape(Rectangle())
-                                })
-                                .disabled(!isEnabled)
+                    VStack(spacing: 0) {
+                        viewFactory.horizontalDelimiterView()
+                        ForEach(0 ..< Constants.numberOfRows, id: \.self) { _ in
+                            Spacer()
+                            viewFactory.horizontalDelimiterView()
+                        }
+                    }
+
+                    HStack(spacing: 0) {
+                        ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                            Spacer()
+                            if col != Constants.numberOfDaysPerWeek - 1 {
+                                viewFactory.verticalDelimiterView()
                             }
                         }
                     }
                 }
-            }
-            .buttonStyle(.plain)
-
-            VStack(spacing: 0) {
-                viewFactory.horizontalDelimiterView()
-                ForEach(0 ..< Constants.numberOfRows, id: \.self) { _ in
-                    Spacer()
-                    viewFactory.horizontalDelimiterView()
-                }
-            }
-
-            HStack(spacing: 0) {
-                ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                    Spacer()
-                    if col != Constants.numberOfDaysPerWeek - 1 {
-                        viewFactory.verticalDelimiterView()
-                    }
-                }
+                .frame(minHeight: proxy.size.height, maxHeight: .infinity, alignment: .center)
             }
         }
-        .frame(maxHeight: .infinity, alignment: .center)
         .onChange(of: data, initial: true, isAsync: true) {
             task?.cancel()
             task = Task {
@@ -157,11 +168,6 @@ private extension YoteiPagesMonthPageView {
 
     @ViewBuilder
     func eventsGridView(viewData: AlignedRowEventsData<Data>) -> some View {
-        let daysSequence = YoteiDaysSequence(
-            startDate: viewData.startDate,
-            days: Constants.numberOfDaysPerWeek,
-            calendar: calendar
-        )
         Grid(
             horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
             verticalSpacing: viewFactory.interitemVerticalSpacing()
@@ -174,19 +180,11 @@ private extension YoteiPagesMonthPageView {
                         case let .event(event: event, cols: cols):
                             viewFactory.eventView(event: event)
                                 .gridCellColumns(cols)
+                        case let .extra(index: _, count: count):
+                            viewFactory.moreEventsView(count: count)
                         case .empty:
                             emptyView()
                         }
-                    }
-                }
-            }
-
-            GridRow {
-                ForEach(daysSequence, id: \.self) { date in
-                    if let count = viewData.extraCount[date], count > 0 {
-                        viewFactory.moreEventsView(count: count)
-                    } else {
-                        emptyView()
                     }
                 }
             }

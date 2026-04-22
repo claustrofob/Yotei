@@ -32,7 +32,7 @@ public extension YoteiAllDayEventsTopViewFactoryProtocol {
     }
 
     func numberOfVisibleRows() -> Int {
-        2
+        3
     }
 
     func insets() -> EdgeInsets {

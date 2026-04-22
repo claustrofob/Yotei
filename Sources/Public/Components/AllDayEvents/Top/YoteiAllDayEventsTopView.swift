@@ -91,19 +91,11 @@ private extension YoteiAllDayEventsTopView {
                         case let .event(event: event, cols: cols):
                             viewFactory.eventView(event: event)
                                 .gridCellColumns(cols)
+                        case let .extra(index: _, count: count):
+                            viewFactory.moreEventsView(count: count)
                         case .empty:
                             emptyView()
                         }
-                    }
-                }
-            }
-
-            GridRow {
-                ForEach(daysSequence, id: \.self) { date in
-                    if let count = viewData.extraCount[date], count > 0 {
-                        viewFactory.moreEventsView(count: count)
-                    } else {
-                        emptyView()
                     }
                 }
             }

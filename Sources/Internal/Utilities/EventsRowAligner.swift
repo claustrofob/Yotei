@@ -37,27 +37,33 @@ actor EventsRowAligner<Data: YoteiEventData> {
         }
 
         var processedEventIDs = Set<YoteiEvent<Data>.ID>()
-        let viewData = (0 ..< numberOfVisibleRows).map { _ in
+        let viewData = (0 ..< numberOfVisibleRows).map { row in
             var day = 0
             var data = [AlignedRowEvent<Data>]()
             while day < numberOfDays {
                 let date = daysSequence[day]
-                if
-                    !events[date, default: []].isEmpty,
-                    let event = events[date]?.removeFirst()
-                {
-                    let eventDateInterval = event.displayableDateInterval()
+                let dayEventsCount = events[date, default: []].count
+                if dayEventsCount > 0 {
                     if
-                        processedEventIDs.contains(event.id) ||
-                        (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date, in: calendar))
+                        row == (numberOfVisibleRows - 1),
+                        dayEventsCount > 1
                     {
-                        continue
+                        data.append(.extra(index: day, count: dayEventsCount))
+                        day += 1
+                    } else if let event = events[date]?.removeFirst() {
+                        let eventDateInterval = event.displayableDateInterval()
+                        if
+                            processedEventIDs.contains(event.id) ||
+                            (!data.isEmpty && !eventDateInterval.start.isInSameDay(as: date, in: calendar))
+                        {
+                            continue
+                        }
+                        let dateInterval = DateInterval(start: date, end: eventDateInterval.end)
+                        let durationInDays = min(dateInterval.durationInDays(in: calendar) + 1, numberOfDays - day)
+                        data.append(.event(event: event, cols: durationInDays))
+                        day += durationInDays
+                        processedEventIDs.insert(event.id)
                     }
-                    let dateInterval = DateInterval(start: date, end: eventDateInterval.end)
-                    let durationInDays = min(dateInterval.durationInDays(in: calendar) + 1, numberOfDays - day)
-                    data.append(.event(event: event, cols: durationInDays))
-                    day += durationInDays
-                    processedEventIDs.insert(event.id)
                 } else {
                     data.append(.empty(index: day))
                     day += 1
@@ -71,8 +77,7 @@ actor EventsRowAligner<Data: YoteiEventData> {
 
         return AlignedRowEventsData(
             startDate: startDate,
-            events: viewData,
-            extraCount: extraCount
+            events: viewData
         )
     }
 }
