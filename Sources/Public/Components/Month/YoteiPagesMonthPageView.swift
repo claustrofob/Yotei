@@ -22,6 +22,7 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
 
     @State private var viewData = [Date: AlignedRowEventsData<Data>]()
     @State private var task: Task<Void, Never>?
+    @State private var heightByRow: [Int: CGFloat] = [:]
 
     public init(
         selectedDate: Binding<Date>,
@@ -84,9 +85,13 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                                         }
                                     }
 
-                                    GeometryReader { _ in
+                                    GeometryReader { proxy in
                                         ZStack(alignment: .top) {
-                                            // TODO: calculate tiles count
+                                            Color.clear
+                                                .onChange(of: proxy.size.height, initial: true, isAsync: false) {
+                                                    heightByRow[row] = proxy.size.height
+                                                }
+
                                             let weekStartDate = daysSequence[row * Constants.numberOfDaysPerWeek]
                                             if let viewData = viewData[weekStartDate] {
                                                 eventsGridView(viewData: viewData)
@@ -119,40 +124,45 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                     }
                     .buttonStyle(.plain)
 
-                    HStack(spacing: 0) {
-                        ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
-                            Spacer()
-                            if col != Constants.numberOfDaysPerWeek - 1 {
-                                viewFactory.verticalDelimiterView()
-                            }
-                        }
-                    }
+                    verticalDelimitersView()
                 }
                 .frame(minHeight: proxy.size.height, maxHeight: .infinity, alignment: .center)
             }
         }
-        .onChange(of: data, initial: true, isAsync: true) {
-            task?.cancel()
-            task = Task {
-                viewData = await processData(startDate: startDate)
-            }
+        .onChange(of: data, initial: false, isAsync: true) {
+            processDataTask(startDate: startDate)
+        }
+        .onChange(of: heightByRow, initial: true, isAsync: true) {
+            processDataTask(startDate: startDate)
         }
     }
 }
 
 private extension YoteiPagesMonthPageView {
+    private func processDataTask(startDate: Date) {
+        task?.cancel()
+        task = Task {
+            viewData = await processData(startDate: startDate)
+        }
+    }
+
     func processData(startDate: Date) async -> [Date: AlignedRowEventsData<Data>] {
         let numberOfDaysPerWeek = Constants.numberOfDaysPerWeek
         let calendar = calendar
         let data = data
+        let heightByRow = heightByRow
+        let eventViewHeight = viewFactory.eventViewHeight()
+        let interItemSpacing = viewFactory.interitemVerticalSpacing()
         return await withTaskGroup { group in
-            for index in 0 ..< Constants.numberOfRows {
+            for row in 0 ..< Constants.numberOfRows {
+                let rowHeight = heightByRow[row] ?? 0
+                let numberOfVisibleRows = Int((rowHeight + interItemSpacing) / (eventViewHeight + interItemSpacing))
                 group.addTask {
                     let processor = EventsRowAligner<Data>(
-                        startDate: calendar.date(byAdding: .weekOfMonth, value: index, to: startDate)!,
+                        startDate: calendar.date(byAdding: .weekOfMonth, value: row, to: startDate)!,
                         numberOfDays: numberOfDaysPerWeek,
                         calendar: calendar,
-                        numberOfVisibleRows: 3
+                        numberOfVisibleRows: numberOfVisibleRows
                     )
                     return await processor.calculate(data: data, filter: { _ in true })
                 }
@@ -186,6 +196,18 @@ private extension YoteiPagesMonthPageView {
                             emptyView()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    func verticalDelimitersView() -> some View {
+        HStack(spacing: 0) {
+            ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
+                Spacer()
+                if col != Constants.numberOfDaysPerWeek - 1 {
+                    viewFactory.verticalDelimiterView()
                 }
             }
         }
