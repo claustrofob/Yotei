@@ -26,8 +26,7 @@ public struct YoteiScheduleAllDayEventCellDefaultView<Data: YoteiEventData>: Vie
             .truncationMode(.tail)
             .foregroundStyle(.background)
             .font(fontStyle.caption)
-            .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
-            .frame(height: 20)
+            .padding(EdgeInsets(top: 3, leading: 4, bottom: 3, trailing: 4))
             .frame(maxWidth: .infinity, alignment: .leading)
             .background {
                 RoundedRectangle(cornerSize: CGSize(width: 6, height: 6))
