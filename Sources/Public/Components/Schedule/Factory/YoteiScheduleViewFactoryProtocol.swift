@@ -24,7 +24,7 @@ public protocol YoteiScheduleViewFactoryProtocol<Data> {
     associatedtype DayHeaderView: View
     func dayHeaderView(date: Date) -> DayHeaderView
 
-    func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent<Data>) -> CGSize
+    func eventViewSizeThatFits(proposal: ProposedViewSize, date: Date, event: YoteiEvent<Data>) -> CGSize
     func emptyViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
     func loadingViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
     func headerViewSizeThatFits(proposal: ProposedViewSize, date: Date) -> CGSize
@@ -57,7 +57,7 @@ public extension YoteiScheduleViewFactoryProtocol {
         )
     }
 
-    func eventViewSizeThatFits(proposal: ProposedViewSize, event: YoteiEvent<Data>) -> CGSize {
+    func eventViewSizeThatFits(proposal: ProposedViewSize, date _: Date, event: YoteiEvent<Data>) -> CGSize {
         let size = proposal.replacingUnspecifiedDimensions()
         let sectionInsets = insetsForSection()
         let width = size.width - sectionInsets.left - sectionInsets.right

@@ -4,6 +4,5 @@
 //
 
 public struct YoteiAllDayEventsTopViewFactory<Data: YoteiEventData>: YoteiAllDayEventsTopViewFactoryProtocol {
-
     public init() {}
 }

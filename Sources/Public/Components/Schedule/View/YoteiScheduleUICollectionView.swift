@@ -342,7 +342,7 @@ final class YoteiScheduleUICollectionView<ViewFactory: YoteiScheduleViewFactoryP
         let proposal = ProposedViewSize(width: bounds.width, height: nil)
         return switch viewModel.kind {
         case let .event(event):
-            viewFactory.eventViewSizeThatFits(proposal: proposal, event: event)
+            viewFactory.eventViewSizeThatFits(proposal: proposal, date: viewModel.date, event: event)
         case .empty:
             viewFactory.emptyViewSizeThatFits(proposal: proposal, date: viewModel.date)
         case .loading:
