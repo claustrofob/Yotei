@@ -76,7 +76,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                     .scrollDisabled(true)
                     .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
                     .clipped()
-                    .ignoresSafeArea()
                     .contentShape(Rectangle())
 
                     expandStripButton()

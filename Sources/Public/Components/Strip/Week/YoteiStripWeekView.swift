@@ -29,12 +29,12 @@ public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: Vi
                 )
                 .frame(maxHeight: .infinity, alignment: .top)
                 .animation(.default, value: focusedDate)
+                .ignoresSafeArea(edges: .all)
                 // Keep the navigation bar explicitly visible
                 // This view is hosted inside a UIPageViewController, and during some
                 // page transitions the navigation bar may be hidden unexpectedly
                 .toolbar(.visible, for: .navigationBar)
             }
         )
-        .ignoresSafeArea()
     }
 }
