@@ -20,6 +20,7 @@ struct FullCalendarView: View {
     )
 
     @State private var contentOffset: CGPoint?
+    @State private var editingEvent: YoteiEvent<EventData>?
 
     var body: some View {
         VStack {
@@ -151,7 +152,8 @@ struct FullCalendarView: View {
                         dayDate: date,
                         numberOfDays: 1,
                         data: $viewModel.data,
-                        contentOffset: $contentOffset
+                        contentOffset: $contentOffset,
+                        editingEvent: $editingEvent
                     )
                 }
             }
@@ -181,7 +183,8 @@ struct FullCalendarView: View {
                         dayDate: date,
                         numberOfDays: 7,
                         data: $viewModel.data,
-                        contentOffset: $contentOffset
+                        contentOffset: $contentOffset,
+                        editingEvent: $editingEvent
                     )
                 }
             }

@@ -8,8 +8,8 @@ import Foundation
 public struct YoteiEvent<Data: YoteiEventData>: Equatable, Identifiable, Sendable {
     public let id: String
     public let title: String
-    public let start: Date
-    public let end: Date
+    public var start: Date
+    public var end: Date
     public let isAllDay: Bool
     public let data: Data
 

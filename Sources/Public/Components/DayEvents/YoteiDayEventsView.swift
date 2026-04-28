@@ -14,6 +14,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
+    @Binding private var editingEvent: YoteiEvent<Data>?
     private let viewFactory: ViewFactory
 
     private var dateSequence: YoteiDaysSequence {
@@ -41,12 +42,14 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
+        editingEvent: Binding<YoteiEvent<Data>?>,
         viewFactory: ViewFactory
     ) {
         self.dayDate = dayDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
+        _editingEvent = editingEvent
         self.viewFactory = viewFactory
     }
 
@@ -54,13 +57,15 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
         dayDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
-        contentOffset: Binding<CGPoint?>
+        contentOffset: Binding<CGPoint?>,
+        editingEvent: Binding<YoteiEvent<Data>?>
     ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
         self.init(
             dayDate: dayDate,
             numberOfDays: numberOfDays,
             data: data,
             contentOffset: contentOffset,
+            editingEvent: editingEvent,
             viewFactory: YoteiDayEventsViewFactory()
         )
     }
@@ -77,7 +82,8 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                         events: events,
                         dateSequence: dateSequence,
                         numberOfDays: numberOfDays,
-                        viewFactory: viewFactory
+                        viewFactory: viewFactory,
+                        editingEvent: $editingEvent
                     )
                     .overlay(alignment: .topLeading) {
                         if let event = placeholderEvent {
@@ -150,6 +156,7 @@ private extension YoteiDayEventsView {
         let dateSequence: YoteiDaysSequence
         let numberOfDays: Int
         let viewFactory: ViewFactory
+        @Binding var editingEvent: YoteiEvent<Data>?
 
         var body: some View {
             HStack(spacing: 0) {
@@ -161,13 +168,15 @@ private extension YoteiDayEventsView {
                     ) {
                         if let events = events[date] {
                             ForEach(events, id: \.id) { event in
-                                Button(action: {
-                                    delegate?.calendarDidSelectEvent(with: event.id)
-                                }) {
-                                    viewFactory.eventView(event: event)
-                                }
-                                .eventuallyDateIntervalLayout(event.dateInterval)
-                                .zIndex(event.start.timeIntervalSince1970)
+                                viewFactory.eventView(event: event)
+                                    .eventuallyDateIntervalLayout(event.dateInterval)
+                                    .zIndex(event.start.timeIntervalSince1970)
+                                    .onTapGesture {
+                                        delegate?.calendarDidSelectEvent(with: event.id)
+                                    }
+                                    .onLongPressGesture {
+                                        editingEvent = event
+                                    }
                             }
                         }
                     }
@@ -188,7 +197,7 @@ private extension YoteiDayEventsView {
                     }
                 }
             }
-            .buttonStyle(.plain)
+            .overlay {}
         }
 
         @ViewBuilder
