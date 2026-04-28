@@ -20,7 +20,6 @@ struct FullCalendarView: View {
     )
 
     @State private var contentOffset: CGPoint?
-    @State private var editingEvent: YoteiEvent<EventData>?
 
     var body: some View {
         VStack {
@@ -130,31 +129,33 @@ struct FullCalendarView: View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
-            YoteiPagesDayView(
-                focusedDate: $viewModel.focusedDate
-            ) { date in
-                VStack(spacing: 0) {
-                    YoteiAllDayEventsTopView(
-                        startDate: date,
-                        numberOfDays: 1,
-                        data: $viewModel.data
-                    )
-                    .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
-                    .background {
-                        Text("All day")
-                            .font(.system(.caption))
-                            .padding(.horizontal, 4)
-                            .frame(width: 50)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+            DragEventView { (editingEvent: Binding<YoteiEvent<EventData>?>) in
+                YoteiPagesDayView(
+                    focusedDate: $viewModel.focusedDate
+                ) { date in
+                    VStack(spacing: 0) {
+                        YoteiAllDayEventsTopView(
+                            startDate: date,
+                            numberOfDays: 1,
+                            data: $viewModel.data
+                        )
+                        .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
+                        .background {
+                            Text("All day")
+                                .font(.system(.caption))
+                                .padding(.horizontal, 4)
+                                .frame(width: 50)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .clipped()
+                        YoteiDayEventsView(
+                            dayDate: date,
+                            numberOfDays: 1,
+                            data: $viewModel.data,
+                            contentOffset: $contentOffset,
+                            editingEvent: editingEvent,
+                        )
                     }
-                    .clipped()
-                    YoteiDayEventsView(
-                        dayDate: date,
-                        numberOfDays: 1,
-                        data: $viewModel.data,
-                        contentOffset: $contentOffset,
-                        editingEvent: $editingEvent
-                    )
                 }
             }
         }
@@ -183,8 +184,7 @@ struct FullCalendarView: View {
                         dayDate: date,
                         numberOfDays: 7,
                         data: $viewModel.data,
-                        contentOffset: $contentOffset,
-                        editingEvent: $editingEvent
+                        contentOffset: $contentOffset
                     )
                 }
             }
@@ -205,5 +205,51 @@ struct FullCalendarView: View {
                 )
             }
         }
+    }
+}
+
+struct DragEventView<Content: View, Data: YoteiEventData>: View {
+    @ViewBuilder private let content: (Binding<YoteiEvent<Data>?>) -> Content
+    @State private var editingEvent: YoteiEvent<Data>?
+    
+    enum DragState {
+        case inactive
+        case pressing
+        case dragging
+    }
+    
+    @GestureState private var dragState = DragState.inactive
+    
+    public init(
+        @ViewBuilder content: @escaping (Binding<YoteiEvent<Data>?>) -> Content
+    ) {
+        self.content = content
+    }
+    
+    var body: some View {
+        let combined = LongPressGesture(minimumDuration: 0.5)
+            .sequenced(before: DragGesture())
+            .updating($dragState) { value, state, transaction in
+                switch value {
+                    // Long press begins.
+                case .first(true):
+                    state = .pressing
+                case .second(true, let drag):
+                    print("---- drag")
+                    state = .dragging
+                default:
+                    state = .inactive
+                }
+            }
+            .onEnded { _ in
+
+            }
+        
+        content($editingEvent)
+            .overlayPreferenceValue(DayTimelineFrameKey.self, alignment: .topLeading) { timelineFrames in
+                let _ = print(timelineFrames)
+                Color.clear
+            }
+            .simultaneousGesture(combined)
     }
 }

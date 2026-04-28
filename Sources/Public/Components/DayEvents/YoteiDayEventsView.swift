@@ -42,7 +42,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
-        editingEvent: Binding<YoteiEvent<Data>?>,
+        editingEvent: Binding<YoteiEvent<Data>?> = Binding(get: { nil }, set: { _ in }),
         viewFactory: ViewFactory
     ) {
         self.dayDate = dayDate
@@ -58,7 +58,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
-        editingEvent: Binding<YoteiEvent<Data>?>
+        editingEvent: Binding<YoteiEvent<Data>?> = Binding(get: { nil }, set: { _ in })
     ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
         self.init(
             dayDate: dayDate,
@@ -159,45 +159,46 @@ private extension YoteiDayEventsView {
         @Binding var editingEvent: YoteiEvent<Data>?
 
         var body: some View {
-            HStack(spacing: 0) {
-                let data = Array(dateSequence.enumerated())
-                ForEach(data, id: \.element) { index, date in
-                    EventuallyLayout(
-                        startOfDay: date,
-                        hourSlotHeight: viewFactory.hourSlotHeight()
-                    ) {
-                        if let events = events[date] {
-                            ForEach(events, id: \.id) { event in
-                                viewFactory.eventView(event: event)
-                                    .eventuallyDateIntervalLayout(event.dateInterval)
-                                    .zIndex(event.start.timeIntervalSince1970)
-                                    .onTapGesture {
-                                        delegate?.calendarDidSelectEvent(with: event.id)
-                                    }
-                                    .onLongPressGesture {
-                                        editingEvent = event
-                                    }
+            GeometryReader { proxy in
+                HStack(spacing: 0) {
+                    let data = Array(dateSequence.enumerated())
+                    ForEach(data, id: \.element) { index, date in
+                        EventuallyLayout(
+                            startOfDay: date,
+                            hourSlotHeight: viewFactory.hourSlotHeight()
+                        ) {
+                            if let events = events[date] {
+                                ForEach(events, id: \.id) { event in
+                                    viewFactory.eventView(event: event)
+                                        .eventuallyDateIntervalLayout(event.dateInterval)
+                                        .zIndex(event.start.timeIntervalSince1970)
+                                        .onTapGesture {
+                                            delegate?.calendarDidSelectEvent(with: event.id)
+                                        }
+                                }
                             }
                         }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .overlay(alignment: .top) {
-                        // TimelineView resolves its values into concrete Date values. E.g. 10:01, 10:02 etc.
-                        // If user sets system clock 1h back, the next scheduled date is still at 10:01 and will be fired in 1h.
-                        // For this case it is better just to recreate calendar views.
-                        TimelineView(.everyMinute) { context in
-                            if date.isInSameDay(as: context.date, in: calendar) {
-                                timelineMarker(startOfDay: date, date: context.date)
+                        .frame(maxWidth: .infinity)
+                        .anchorPreference(key: DayTimelineFrameKey.self, value: .bounds, transform: {
+                            return [date: proxy[$0].rounded()]
+                        })
+                        .overlay(alignment: .top) {
+                            // TimelineView resolves its values into concrete Date values. E.g. 10:01, 10:02 etc.
+                            // If user sets system clock 1h back, the next scheduled date is still at 10:01 and will be fired in 1h.
+                            // For this case it is better just to recreate calendar views.
+                            TimelineView(.everyMinute) { context in
+                                if date.isInSameDay(as: context.date, in: calendar) {
+                                    timelineMarker(startOfDay: date, date: context.date)
+                                }
                             }
                         }
-                    }
-
-                    if (numberOfDays - 1) != index {
-                        viewFactory.daysDelimiterView()
+                        
+                        if (numberOfDays - 1) != index {
+                            viewFactory.daysDelimiterView()
+                        }
                     }
                 }
             }
-            .overlay {}
         }
 
         @ViewBuilder
@@ -280,5 +281,23 @@ private extension YoteiDayEventsView {
         delegate?.calendarDidSelect(dateInterval: dateInterval) {
             placeholderEvent = nil
         }
+    }
+}
+
+public struct DayTimelineFrameKey: PreferenceKey {
+    public static let defaultValue: [Date: CGRect] = [:]
+    public static func reduce(value: inout [Date: CGRect], nextValue: () -> [Date: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { $1 })
+    }
+}
+
+extension CGRect {
+    func rounded() -> CGRect {
+        .init(
+            x: origin.x.rounded(),
+            y: origin.y.rounded(),
+            width: size.width.rounded(),
+            height: size.height.rounded()
+        )
     }
 }
