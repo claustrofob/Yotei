@@ -19,7 +19,7 @@ public protocol YoteiDayEventsViewFactoryProtocol<Data> {
     func daysDelimiterView() -> DaysDelimiterView
 
     associatedtype CurrentTimeMarkerView: View
-    func currentTimeMarkerView() -> CurrentTimeMarkerView
+    func currentTimeMarkerView(date: Date) -> CurrentTimeMarkerView
 
     associatedtype PlaceholderView: View
     func placeholderView() -> PlaceholderView
@@ -42,8 +42,8 @@ public extension YoteiDayEventsViewFactoryProtocol {
         YoteiDayEventsDaysDelimiterDefaultView()
     }
 
-    func currentTimeMarkerView() -> some View {
-        YoteiDayEventsCurrentTimeMarkerDefaultView()
+    func currentTimeMarkerView(date: Date) -> some View {
+        YoteiDayEventsCurrentTimeMarkerDefaultView(date: date)
     }
 
     func placeholderView() -> some View {

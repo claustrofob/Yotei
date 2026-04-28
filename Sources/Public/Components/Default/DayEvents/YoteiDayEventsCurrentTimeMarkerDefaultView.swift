@@ -6,7 +6,11 @@
 import SwiftUI
 
 public struct YoteiDayEventsCurrentTimeMarkerDefaultView: View {
-    public init() {}
+    private let date: Date
+
+    public init(date: Date) {
+        self.date = date
+    }
 
     public var body: some View {
         ZStack(alignment: .leading) {

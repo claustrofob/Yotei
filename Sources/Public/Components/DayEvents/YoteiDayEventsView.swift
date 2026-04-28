@@ -196,7 +196,7 @@ private extension YoteiDayEventsView {
             let pointsPerMinute = viewFactory.hourSlotHeight() / 60
             let minutesFromMidnight = date.timeIntervalSince(startOfDay) / 60
             let offsetY = minutesFromMidnight * pointsPerMinute
-            viewFactory.currentTimeMarkerView()
+            viewFactory.currentTimeMarkerView(date: date)
                 .frame(height: 0)
                 .offset(y: offsetY)
         }
