@@ -129,7 +129,7 @@ struct FullCalendarView: View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
-            DragEventView(EventData.self) {
+            YoteiDragEventView(data: $viewModel.data) {
                 YoteiPagesDayView(
                     focusedDate: $viewModel.focusedDate
                 ) { date in
@@ -166,7 +166,7 @@ struct FullCalendarView: View {
             YoteiWeekdayTitlesView()
                 .padding(Constants.weekTitlesViewInsets)
 
-            DragEventView(EventData.self) {
+            YoteiDragEventView(data: $viewModel.data) {
                 YoteiPagesWeekView(
                     focusedDate: $viewModel.focusedDate
                 ) { date in
@@ -206,58 +206,5 @@ struct FullCalendarView: View {
                 )
             }
         }
-    }
-}
-
-struct DragEventView<Content: View, Data: YoteiEventData>: View {
-    @ViewBuilder private let content: () -> Content
-
-    enum DragState {
-        case inactive
-        case pressing
-        case dragging
-    }
-
-    @GestureState private var dragState = DragState.inactive
-
-    init(
-        _: Data.Type,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.content = content
-    }
-
-    var body: some View {
-        let combined = LongPressGesture(minimumDuration: 0.5)
-            .sequenced(before: DragGesture())
-            .updating($dragState) { value, state, _ in
-                switch value {
-                // Long press begins.
-                case .first(true):
-                    state = .pressing
-                case .second(true, let drag):
-                    print("---- drag")
-                    state = .dragging
-                default:
-                    state = .inactive
-                }
-            }
-            .onEnded { _ in
-            }
-        GeometryReader { proxy in
-            content()
-                .backgroundPreferenceValue(DayTimelineAnchorKey.self, alignment: .topLeading) { timelineAnchors in
-                    Color.clear.onChange(of: timelineAnchors) { anchors in
-                        let frames = anchors.mapValues { proxy[$0] }
-                        // print("--- \(frames) \n\n")
-                    }
-                }
-                .backgroundPreferenceValue(EventTimelineFramesKey.self, alignment: .topLeading) { eventFrames in
-                    Color.clear.onChange(of: eventFrames) { _ in
-                    }
-                }
-        }
-        .simultaneousGesture(combined)
-        .highPriorityGesture(TapGesture())
     }
 }

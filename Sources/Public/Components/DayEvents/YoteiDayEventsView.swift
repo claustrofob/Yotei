@@ -9,6 +9,7 @@ import SwiftUI
 public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Environment(\.calendar) private var calendar
     @Environment(\.yoteiDelegate) private var delegate
+    @Environment(\.calendarScrollDisabled) private var scrollDisabled
 
     private let dayDate: Date
     private let numberOfDays: Int
@@ -107,6 +108,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                     contentOffset = $0
                 }))
             }
+            .scrollDisabled(scrollDisabled)
         }
         .onChange(of: data, initial: true, isAsync: true) {
             events = dateSequence.reduce(into: [:]) { result, date in
@@ -166,7 +168,11 @@ private extension YoteiDayEventsView {
                                         .eventuallyDateIntervalLayout(event.dateInterval)
                                         .zIndex(event.start.timeIntervalSince1970)
                                         .anchorPreference(key: EventTimelineFramesKey.self, value: .bounds, transform: {
-                                            [date: [proxy[$0].rounded()]]
+                                            [date: [EventFrame(
+                                                id: event.id,
+                                                date: event.start,
+                                                frame: proxy[$0].rounded()
+                                            )]]
                                         })
                                         .onTapGesture {
                                             delegate?.calendarDidSelectEvent(with: event.id)
@@ -279,21 +285,3 @@ private extension YoteiDayEventsView {
         }
     }
 }
-
-public struct DayTimelineAnchorKey: PreferenceKey {
-    public static let defaultValue: [Date: Anchor<CGRect>] = [:]
-    public static func reduce(value: inout [Date: Anchor<CGRect>], nextValue: () -> [Date: Anchor<CGRect>]) {
-        value.merge(nextValue(), uniquingKeysWith: { $1 })
-    }
-}
-
-public struct EventTimelineFramesKey: PreferenceKey {
-    public static let defaultValue: [Date: [CGRect]] = [:]
-    public static func reduce(value: inout [Date: [CGRect]], nextValue: () -> [Date: [CGRect]]) {
-        value.merge(nextValue(), uniquingKeysWith: {
-            $0 + $1
-        })
-    }
-}
-
-// ----------------
