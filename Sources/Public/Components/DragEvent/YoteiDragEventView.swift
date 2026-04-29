@@ -13,6 +13,17 @@ public struct YoteiDragEventView<Content: View, Data: YoteiEventData>: View {
     @State private var timelineDayEventFrames = [Date: [EventFrame]]()
 
     @State private var activeEvent: YoteiEvent<Data>?
+    @State private var isDragging = false
+    @State private var isDraggingEvent = false
+
+    private var calendarScrollDisabled: Bool {
+        isDraggingEvent
+    }
+
+    // disable long press if there is an active event
+    private var longPressMinDuration: Double {
+        activeEvent == nil ? 0.5 : 0
+    }
 
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
@@ -23,21 +34,33 @@ public struct YoteiDragEventView<Content: View, Data: YoteiEventData>: View {
     }
 
     public var body: some View {
-        let combined = LongPressGesture(minimumDuration: 0.5)
+        let combined = LongPressGesture(minimumDuration: longPressMinDuration)
             .sequenced(before: DragGesture(minimumDistance: 0))
             .onChanged { value in
                 switch value {
                 case .second(true, let drag):
                     guard let drag else { return }
-                    if activeEvent == nil {
-                        activeEvent = findActiveEvent(under: drag.startLocation)
+
+                    if !isDragging {
+                        isDragging = true
+                        let foundEvent = findActiveEvent(under: drag.startLocation)
+                        if activeEvent == nil {
+                            activeEvent = foundEvent
+                        }
+
+                        if foundEvent != nil {
+                            isDraggingEvent = foundEvent == activeEvent
+                        }
                     }
 
                 default:
-                    break
+                    isDraggingEvent = false
+                    isDragging = false
                 }
             }
             .onEnded { _ in
+                isDraggingEvent = false
+                isDragging = false
             }
         GeometryReader { proxy in
             content()
@@ -47,7 +70,7 @@ public struct YoteiDragEventView<Content: View, Data: YoteiEventData>: View {
                 .onPreferenceChange(EventTimelineFramesKey.self) { eventFrames in
                     timelineDayEventFrames = eventFrames
                 }
-                .environment(\.calendarScrollDisabled, activeEvent != nil)
+                .environment(\.calendarScrollDisabled, calendarScrollDisabled)
         }
         .overlay {}
         .simultaneousGesture(combined)
