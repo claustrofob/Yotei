@@ -14,7 +14,6 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
-    @Binding private var editingEvent: YoteiEvent<Data>?
     private let viewFactory: ViewFactory
 
     private var dateSequence: YoteiDaysSequence {
@@ -42,14 +41,12 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
-        editingEvent: Binding<YoteiEvent<Data>?> = Binding(get: { nil }, set: { _ in }),
         viewFactory: ViewFactory
     ) {
         self.dayDate = dayDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
-        _editingEvent = editingEvent
         self.viewFactory = viewFactory
     }
 
@@ -57,15 +54,13 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
         dayDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
-        contentOffset: Binding<CGPoint?>,
-        editingEvent: Binding<YoteiEvent<Data>?> = Binding(get: { nil }, set: { _ in })
+        contentOffset: Binding<CGPoint?>
     ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
         self.init(
             dayDate: dayDate,
             numberOfDays: numberOfDays,
             data: data,
             contentOffset: contentOffset,
-            editingEvent: editingEvent,
             viewFactory: YoteiDayEventsViewFactory()
         )
     }
@@ -82,8 +77,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                         events: events,
                         dateSequence: dateSequence,
                         numberOfDays: numberOfDays,
-                        viewFactory: viewFactory,
-                        editingEvent: $editingEvent
+                        viewFactory: viewFactory
                     )
                     .overlay(alignment: .topLeading) {
                         if let event = placeholderEvent {
@@ -156,13 +150,12 @@ private extension YoteiDayEventsView {
         let dateSequence: YoteiDaysSequence
         let numberOfDays: Int
         let viewFactory: ViewFactory
-        @Binding var editingEvent: YoteiEvent<Data>?
 
         var body: some View {
-            GeometryReader { proxy in
-                HStack(spacing: 0) {
-                    let data = Array(dateSequence.enumerated())
-                    ForEach(data, id: \.element) { index, date in
+            HStack(spacing: 0) {
+                let data = Array(dateSequence.enumerated())
+                ForEach(data, id: \.element) { index, date in
+                    GeometryReader { proxy in
                         EventuallyLayout(
                             startOfDay: date,
                             hourSlotHeight: viewFactory.hourSlotHeight()
@@ -172,6 +165,9 @@ private extension YoteiDayEventsView {
                                     viewFactory.eventView(event: event)
                                         .eventuallyDateIntervalLayout(event.dateInterval)
                                         .zIndex(event.start.timeIntervalSince1970)
+                                        .anchorPreference(key: EventTimelineFramesKey.self, value: .bounds, transform: {
+                                            [date: [proxy[$0].rounded()]]
+                                        })
                                         .onTapGesture {
                                             delegate?.calendarDidSelectEvent(with: event.id)
                                         }
@@ -179,8 +175,8 @@ private extension YoteiDayEventsView {
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .anchorPreference(key: DayTimelineFrameKey.self, value: .bounds, transform: {
-                            return [date: proxy[$0].rounded()]
+                        .anchorPreference(key: DayTimelineAnchorKey.self, value: .bounds, transform: {
+                            [date: $0]
                         })
                         .overlay(alignment: .top) {
                             // TimelineView resolves its values into concrete Date values. E.g. 10:01, 10:02 etc.
@@ -192,10 +188,10 @@ private extension YoteiDayEventsView {
                                 }
                             }
                         }
-                        
-                        if (numberOfDays - 1) != index {
-                            viewFactory.daysDelimiterView()
-                        }
+                    }
+
+                    if (numberOfDays - 1) != index {
+                        viewFactory.daysDelimiterView()
                     }
                 }
             }
@@ -284,20 +280,20 @@ private extension YoteiDayEventsView {
     }
 }
 
-public struct DayTimelineFrameKey: PreferenceKey {
-    public static let defaultValue: [Date: CGRect] = [:]
-    public static func reduce(value: inout [Date: CGRect], nextValue: () -> [Date: CGRect]) {
+public struct DayTimelineAnchorKey: PreferenceKey {
+    public static let defaultValue: [Date: Anchor<CGRect>] = [:]
+    public static func reduce(value: inout [Date: Anchor<CGRect>], nextValue: () -> [Date: Anchor<CGRect>]) {
         value.merge(nextValue(), uniquingKeysWith: { $1 })
     }
 }
 
-extension CGRect {
-    func rounded() -> CGRect {
-        .init(
-            x: origin.x.rounded(),
-            y: origin.y.rounded(),
-            width: size.width.rounded(),
-            height: size.height.rounded()
-        )
+public struct EventTimelineFramesKey: PreferenceKey {
+    public static let defaultValue: [Date: [CGRect]] = [:]
+    public static func reduce(value: inout [Date: [CGRect]], nextValue: () -> [Date: [CGRect]]) {
+        value.merge(nextValue(), uniquingKeysWith: {
+            $0 + $1
+        })
     }
 }
+
+// ----------------
