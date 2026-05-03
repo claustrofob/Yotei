@@ -7,7 +7,6 @@ import SwiftUI
 
 struct DateTabView<Content: View>: UIViewControllerRepresentable {
     @Environment(\.calendar) private var calendar
-    @Environment(\.calendarScrollDisabled) private var scrollDisabled
 
     @Binding private var selection: Date
     @ViewBuilder private let content: (Date) -> Content
@@ -41,8 +40,6 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
         context.coordinator.calendar = calendar
         context.coordinator.content = content
         context.coordinator.component = component
-
-        uiViewController.setScrollEnabled(!scrollDisabled)
 
         let normalizedCurrentPageDate = calendar.dateInterval(
             of: component,
@@ -194,17 +191,6 @@ extension DateTabView {
         override func viewDidLoad() {
             super.viewDidLoad()
             view.backgroundColor = .clear
-        }
-    }
-}
-
-private extension UIPageViewController {
-    func setScrollEnabled(_ enabled: Bool) {
-        for view in view.subviews {
-            if let scrollView = view as? UIScrollView {
-                scrollView.isScrollEnabled = enabled
-                break
-            }
         }
     }
 }

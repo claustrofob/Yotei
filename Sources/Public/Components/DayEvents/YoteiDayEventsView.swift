@@ -9,7 +9,6 @@ import SwiftUI
 public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Environment(\.calendar) private var calendar
     @Environment(\.yoteiDelegate) private var delegate
-    @Environment(\.calendarScrollDisabled) private var scrollDisabled
 
     private let dayDate: Date
     private let numberOfDays: Int
@@ -108,7 +107,6 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                     contentOffset = $0
                 }))
             }
-            .scrollDisabled(scrollDisabled)
         }
         .onChange(of: data, initial: true, isAsync: true) {
             events = dateSequence.reduce(into: [:]) { result, date in
