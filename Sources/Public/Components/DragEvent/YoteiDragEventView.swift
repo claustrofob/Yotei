@@ -5,23 +5,10 @@
 
 import SwiftUI
 
-public struct YoteiDragEventView<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: UIViewControllerRepresentable {
-    public typealias InternalViewType = DragEventViewInternal<ViewFactory, Content, Data>
-
+public struct YoteiDragEventView<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Binding private var data: YoteiEventsInterval<Data>
     @ViewBuilder private let content: () -> Content
     private let viewFactory: ViewFactory
-
-    @State var dragEvent: DragEvent = .ended
-
-    private var internalView: InternalViewType {
-        DragEventViewInternal(
-            data: $data,
-            dragEvent: $dragEvent,
-            viewFactory: viewFactory,
-            content: content
-        )
-    }
 
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
@@ -44,23 +31,61 @@ public struct YoteiDragEventView<ViewFactory: YoteiDragEventViewFactoryProtocol,
         )
     }
 
-    public func makeCoordinator() -> Coordinator {
+    public var body: some View {
+        DragEventViewContainer(
+            data: $data,
+            viewFactory: viewFactory,
+            content: content
+        )
+        .ignoresSafeArea()
+    }
+}
+
+struct DragEventViewContainer<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: UIViewControllerRepresentable where ViewFactory.Data == Data {
+    typealias InternalViewType = DragEventViewInternal<ViewFactory, Content, Data>
+
+    @Binding private var data: YoteiEventsInterval<Data>
+    @ViewBuilder private let content: () -> Content
+    private let viewFactory: ViewFactory
+
+    @State var dragEvent: DragEvent = .ended
+
+    private var internalView: InternalViewType {
+        DragEventViewInternal(
+            data: $data,
+            dragEvent: $dragEvent,
+            viewFactory: viewFactory,
+            content: content
+        )
+    }
+
+    init(
+        data: Binding<YoteiEventsInterval<Data>>,
+        viewFactory: ViewFactory,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        _data = data
+        self.viewFactory = viewFactory
+        self.content = content
+    }
+
+    func makeCoordinator() -> Coordinator {
         Coordinator(dragEvent: $dragEvent)
     }
 
-    public func makeUIViewController(context: Context) -> UIHostingController<InternalViewType> {
+    func makeUIViewController(context: Context) -> UIHostingController<InternalViewType> {
         let vc = UIHostingController(rootView: internalView)
         vc.view.addGestureRecognizer(context.coordinator.pressGesture)
         vc.view.addGestureRecognizer(context.coordinator.panGesture)
         return vc
     }
 
-    public func updateUIViewController(_ uiViewController: UIHostingController<InternalViewType>, context _: Context) {
+    func updateUIViewController(_ uiViewController: UIHostingController<InternalViewType>, context _: Context) {
         uiViewController.rootView = internalView
     }
 }
 
-public extension YoteiDragEventView {
+extension DragEventViewContainer {
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
         lazy var pressGesture: UILongPressGestureRecognizer = {
             let gesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
@@ -91,6 +116,7 @@ public extension YoteiDragEventView {
                 dragEvent = .began(location: location)
             case .ended, .cancelled, .failed:
                 isLongPressActive = false
+                dragEvent = .ended
             default:
                 break
             }
@@ -102,7 +128,7 @@ public extension YoteiDragEventView {
                 let translation = gesture.translation(in: gesture.view)
                 dragEvent = .changed(translation: translation)
             case .ended, .cancelled:
-                dragEvent = .ended
+                break
             default:
                 break
             }
@@ -110,12 +136,12 @@ public extension YoteiDragEventView {
 
         // MARK: - UIGestureRecognizerDelegate
 
-        public func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
+        func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
             if gesture === panGesture { return isLongPressActive }
             return true
         }
 
-        public func gestureRecognizer(
+        func gestureRecognizer(
             _ gesture: UIGestureRecognizer,
             shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer
         ) -> Bool {
@@ -124,7 +150,7 @@ public extension YoteiDragEventView {
     }
 }
 
-public struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View {
+struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var dragEvent: DragEvent
     private let viewFactory: ViewFactory
@@ -135,8 +161,10 @@ public struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtoc
 
     @State private var activeDate: Date?
     @State private var activeEvent: YoteiEvent<Data>?
+    @State private var translation: CGPoint = .zero
+    @State private var hapticFeedbackGenerator = UISelectionFeedbackGenerator()
 
-    public init(
+    init(
         data: Binding<YoteiEventsInterval<Data>>,
         dragEvent: Binding<DragEvent>,
         viewFactory: ViewFactory,
@@ -148,7 +176,7 @@ public struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtoc
         self.content = content
     }
 
-    public var body: some View {
+    var body: some View {
         GeometryReader { proxy in
             content()
                 .onPreferenceChange(DayTimelineAnchorKey.self) { timelineAnchors in
@@ -166,13 +194,29 @@ public struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtoc
                 }
                 activeDate = date
                 activeEvent = findActiveEvent(date: date, under: location) // TODO: or create a placeholder event
+                hapticFeedbackGenerator.selectionChanged()
             case let .changed(translation):
-                print("changed \(translation)")
+                self.translation = translation
             case .ended:
-                print("ended")
+                translation = .zero
+                activeDate = nil
+                activeEvent = nil
             }
         }
-        .overlay {}
+        .overlay(alignment: .topLeading) {
+            if
+                let activeEvent,
+                let activeDate,
+                let frame = eventFrame(event: activeEvent, startOfDay: activeDate)
+            {
+                viewFactory.eventView(event: activeEvent)
+                    .frame(width: frame.width, height: frame.height)
+                    .offset(x: frame.origin.x + translation.x, y: frame.origin.y + translation.y)
+                    .allowsHitTesting(false)
+            }
+        }
+        .clipped()
+        .ignoresSafeArea()
     }
 
     private func findActiveDate(under location: CGPoint) -> Date? {
@@ -195,6 +239,27 @@ public struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtoc
         }
 
         return data.events[date]?.first(where: { $0.id == eventFrame.id })
+    }
+
+    private func eventFrame(event: YoteiEvent<Data>, startOfDay: Date) -> CGRect? {
+        guard let dateFrame = timelineDayFrames[startOfDay] else {
+            return nil
+        }
+
+        let pointsPerSecond = viewFactory.hourSlotHeight() / 3600
+        let fullHeight = 24 * 3600 * pointsPerSecond
+
+        let localStartDate = max(event.start, startOfDay)
+        let localInterval = DateInterval(start: localStartDate, end: max(event.end, startOfDay))
+        let originY = CGFloat(localStartDate.timeIntervalSince(startOfDay)) * pointsPerSecond
+        let maxHeight = fullHeight - originY
+        let height = min(localInterval.duration * pointsPerSecond, maxHeight)
+        return CGRect(
+            x: dateFrame.minX,
+            y: dateFrame.minY + originY,
+            width: dateFrame.width,
+            height: height
+        )
     }
 }
 
@@ -224,7 +289,7 @@ struct EventFrame: Equatable, Sendable {
 
 // -----------------
 
-public enum DragEvent: Equatable {
+enum DragEvent: Equatable {
     case began(location: CGPoint)
     case changed(translation: CGPoint)
     case ended
