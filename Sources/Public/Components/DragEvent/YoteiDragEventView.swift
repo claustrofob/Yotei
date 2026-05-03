@@ -5,40 +5,57 @@
 
 import SwiftUI
 
-public struct YoteiDragEventView<Content: View, Data: YoteiEventData>: UIViewControllerRepresentable {
+public struct YoteiDragEventView<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: UIViewControllerRepresentable {
+    public typealias InternalViewType = DragEventViewInternal<ViewFactory, Content, Data>
+
     @Binding private var data: YoteiEventsInterval<Data>
     @ViewBuilder private let content: () -> Content
+    private let viewFactory: ViewFactory
 
     @State var dragEvent: DragEvent = .ended
 
-    private var internalView: DragEventViewInternal<Content, Data> {
+    private var internalView: InternalViewType {
         DragEventViewInternal(
             data: $data,
             dragEvent: $dragEvent,
+            viewFactory: viewFactory,
             content: content
         )
     }
 
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
+        viewFactory: ViewFactory,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _data = data
+        self.viewFactory = viewFactory
         self.content = content
+    }
+
+    public init(
+        data: Binding<YoteiEventsInterval<Data>>,
+        @ViewBuilder content: @escaping () -> Content
+    ) where ViewFactory == YoteiDragEventViewFactory<Data> {
+        self.init(
+            data: data,
+            viewFactory: YoteiDragEventViewFactory(),
+            content: content
+        )
     }
 
     public func makeCoordinator() -> Coordinator {
         Coordinator(dragEvent: $dragEvent)
     }
 
-    public func makeUIViewController(context: Context) -> UIHostingController<DragEventViewInternal<Content, Data>> {
+    public func makeUIViewController(context: Context) -> UIHostingController<InternalViewType> {
         let vc = UIHostingController(rootView: internalView)
         vc.view.addGestureRecognizer(context.coordinator.pressGesture)
         vc.view.addGestureRecognizer(context.coordinator.panGesture)
         return vc
     }
 
-    public func updateUIViewController(_ uiViewController: UIHostingController<DragEventViewInternal<Content, Data>>, context _: Context) {
+    public func updateUIViewController(_ uiViewController: UIHostingController<InternalViewType>, context _: Context) {
         uiViewController.rootView = internalView
     }
 }
@@ -107,9 +124,10 @@ public extension YoteiDragEventView {
     }
 }
 
-public struct DragEventViewInternal<Content: View, Data: YoteiEventData>: View {
+public struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View {
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var dragEvent: DragEvent
+    private let viewFactory: ViewFactory
     @ViewBuilder private let content: () -> Content
 
     @State private var timelineDayFrames = [Date: CGRect]()
@@ -121,10 +139,12 @@ public struct DragEventViewInternal<Content: View, Data: YoteiEventData>: View {
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
         dragEvent: Binding<DragEvent>,
+        viewFactory: ViewFactory,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _data = data
         _dragEvent = dragEvent
+        self.viewFactory = viewFactory
         self.content = content
     }
 
