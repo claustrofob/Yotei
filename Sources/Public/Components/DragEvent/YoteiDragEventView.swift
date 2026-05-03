@@ -11,6 +11,14 @@ public struct YoteiDragEventView<Content: View, Data: YoteiEventData>: UIViewCon
 
     @State var dragEvent: DragEvent = .ended
 
+    private var internalView: DragEventViewInternal<Content, Data> {
+        DragEventViewInternal(
+            data: $data,
+            dragEvent: $dragEvent,
+            content: content
+        )
+    }
+
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
         @ViewBuilder content: @escaping () -> Content
@@ -23,15 +31,15 @@ public struct YoteiDragEventView<Content: View, Data: YoteiEventData>: UIViewCon
         Coordinator(dragEvent: $dragEvent)
     }
 
-    public func makeUIViewController(context: Context) -> UIHostingController<Content> {
-        let vc = UIHostingController(rootView: content())
+    public func makeUIViewController(context: Context) -> UIHostingController<DragEventViewInternal<Content, Data>> {
+        let vc = UIHostingController(rootView: internalView)
         vc.view.addGestureRecognizer(context.coordinator.pressGesture)
         vc.view.addGestureRecognizer(context.coordinator.panGesture)
         return vc
     }
 
-    public func updateUIViewController(_ uiViewController: UIHostingController<Content>, context _: Context) {
-        uiViewController.rootView = content()
+    public func updateUIViewController(_ uiViewController: UIHostingController<DragEventViewInternal<Content, Data>>, context _: Context) {
+        uiViewController.rootView = internalView
     }
 }
 
@@ -99,54 +107,28 @@ public extension YoteiDragEventView {
     }
 }
 
-public struct YoteiDragEventView1<Content: View, Data: YoteiEventData>: View {
+public struct DragEventViewInternal<Content: View, Data: YoteiEventData>: View {
     @Binding private var data: YoteiEventsInterval<Data>
+    @Binding private var dragEvent: DragEvent
     @ViewBuilder private let content: () -> Content
 
     @State private var timelineDayFrames = [Date: CGRect]()
     @State private var timelineDayEventFrames = [Date: [EventFrame]]()
 
+    @State private var activeDate: Date?
     @State private var activeEvent: YoteiEvent<Data>?
-    @State private var isDragging = false
-    @State private var isDraggingEvent = false
 
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
+        dragEvent: Binding<DragEvent>,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _data = data
+        _dragEvent = dragEvent
         self.content = content
     }
 
     public var body: some View {
-//        let combined = LongPressGesture(minimumDuration: longPressMinDuration)
-//            .sequenced(before: DragGesture(minimumDistance: 0))
-//            .onChanged { value in
-//                switch value {
-//                case .second(true, let drag):
-//                    guard let drag else { return }
-//
-//                    if !isDragging {
-//                        isDragging = true
-//                        let foundEvent = findActiveEvent(under: drag.startLocation)
-//                        if activeEvent == nil {
-//                            activeEvent = foundEvent
-//                        }
-//
-//                        if foundEvent != nil {
-//                            isDraggingEvent = foundEvent == activeEvent
-//                        }
-//                    }
-//
-//                default:
-//                    isDraggingEvent = false
-//                    isDragging = false
-//                }
-//            }
-//            .onEnded { _ in
-//                isDraggingEvent = false
-//                isDragging = false
-//            }
         GeometryReader { proxy in
             content()
                 .onPreferenceChange(DayTimelineAnchorKey.self) { timelineAnchors in
@@ -156,19 +138,35 @@ public struct YoteiDragEventView1<Content: View, Data: YoteiEventData>: View {
                     timelineDayEventFrames = eventFrames
                 }
         }
+        .onChange(of: dragEvent) { _ in
+            switch dragEvent {
+            case let .began(location):
+                guard let date = findActiveDate(under: location) else {
+                    return
+                }
+                activeDate = date
+                activeEvent = findActiveEvent(date: date, under: location) // TODO: or create a placeholder event
+            case let .changed(translation):
+                print("changed \(translation)")
+            case .ended:
+                print("ended")
+            }
+        }
         .overlay {}
     }
 
-    private func findActiveEvent(under location: CGPoint) -> YoteiEvent<Data>? {
-        let dateFrame = timelineDayFrames.first { _, value in
-            value.contains(location)
-        }
+    private func findActiveDate(under location: CGPoint) -> Date? {
+        timelineDayFrames.first(where: {
+            $0.value.contains(location)
+        })?.key
+    }
 
-        guard let dateFrame, let eventFrames = timelineDayEventFrames[dateFrame.key] else {
+    private func findActiveEvent(date: Date, under location: CGPoint) -> YoteiEvent<Data>? {
+        guard let dateFrame = timelineDayFrames[date], let eventFrames = timelineDayEventFrames[date] else {
             return nil
         }
 
-        let localLocation = CGPoint(x: location.x - dateFrame.value.minX, y: location.y - dateFrame.value.minY)
+        let localLocation = CGPoint(x: location.x - dateFrame.minX, y: location.y - dateFrame.minY)
         let eventFrame = eventFrames.sorted(using: KeyPathComparator(\.date)).last { frame in
             frame.frame.contains(localLocation)
         }
@@ -176,7 +174,7 @@ public struct YoteiDragEventView1<Content: View, Data: YoteiEventData>: View {
             return nil
         }
 
-        return data.events[dateFrame.key]?.first(where: { $0.id == eventFrame.id })
+        return data.events[date]?.first(where: { $0.id == eventFrame.id })
     }
 }
 
@@ -206,7 +204,7 @@ struct EventFrame: Equatable, Sendable {
 
 // -----------------
 
-enum DragEvent {
+public enum DragEvent: Equatable {
     case began(location: CGPoint)
     case changed(translation: CGPoint)
     case ended
