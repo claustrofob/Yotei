@@ -7,25 +7,30 @@ import SwiftUI
 
 public struct YoteiDragEventView<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Binding private var data: YoteiEventsInterval<Data>
+    @Binding private var contentOffset: CGPoint?
     @ViewBuilder private let content: () -> Content
     private let viewFactory: ViewFactory
 
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
+        contentOffset: Binding<CGPoint?>,
         viewFactory: ViewFactory,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _data = data
+        _contentOffset = contentOffset
         self.viewFactory = viewFactory
         self.content = content
     }
 
     public init(
         data: Binding<YoteiEventsInterval<Data>>,
+        contentOffset: Binding<CGPoint?>,
         @ViewBuilder content: @escaping () -> Content
     ) where ViewFactory == YoteiDragEventViewFactory<Data> {
         self.init(
             data: data,
+            contentOffset: contentOffset,
             viewFactory: YoteiDragEventViewFactory(),
             content: content
         )
@@ -34,6 +39,7 @@ public struct YoteiDragEventView<ViewFactory: YoteiDragEventViewFactoryProtocol,
     public var body: some View {
         DragEventViewContainer(
             data: $data,
+            contentOffset: $contentOffset,
             viewFactory: viewFactory,
             content: content
         )
@@ -45,6 +51,7 @@ struct DragEventViewContainer<ViewFactory: YoteiDragEventViewFactoryProtocol, Co
     typealias InternalViewType = DragEventViewInternal<ViewFactory, Content, Data>
 
     @Binding private var data: YoteiEventsInterval<Data>
+    @Binding private var contentOffset: CGPoint?
     @ViewBuilder private let content: () -> Content
     private let viewFactory: ViewFactory
 
@@ -53,6 +60,7 @@ struct DragEventViewContainer<ViewFactory: YoteiDragEventViewFactoryProtocol, Co
     private var internalView: InternalViewType {
         DragEventViewInternal(
             data: $data,
+            contentOffset: $contentOffset,
             dragEvent: $dragEvent,
             viewFactory: viewFactory,
             content: content
@@ -61,10 +69,12 @@ struct DragEventViewContainer<ViewFactory: YoteiDragEventViewFactoryProtocol, Co
 
     init(
         data: Binding<YoteiEventsInterval<Data>>,
+        contentOffset: Binding<CGPoint?>,
         viewFactory: ViewFactory,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _data = data
+        _contentOffset = contentOffset
         self.viewFactory = viewFactory
         self.content = content
     }
@@ -152,6 +162,7 @@ extension DragEventViewContainer {
 
 struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View where ViewFactory.Data == Data {
     @Binding private var data: YoteiEventsInterval<Data>
+    @Binding private var contentOffset: CGPoint?
     @Binding private var dragEvent: DragEvent
     private let viewFactory: ViewFactory
     @ViewBuilder private let content: () -> Content
@@ -166,11 +177,13 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
 
     init(
         data: Binding<YoteiEventsInterval<Data>>,
+        contentOffset: Binding<CGPoint?>,
         dragEvent: Binding<DragEvent>,
         viewFactory: ViewFactory,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _data = data
+        _contentOffset = contentOffset
         _dragEvent = dragEvent
         self.viewFactory = viewFactory
         self.content = content

@@ -129,7 +129,10 @@ struct FullCalendarView: View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
-            YoteiDragEventView(data: $viewModel.data) {
+            YoteiDragEventView(
+                data: $viewModel.data,
+                contentOffset: $contentOffset
+            ) {
                 YoteiPagesDayView(
                     focusedDate: $viewModel.focusedDate
                 ) { date in
@@ -166,7 +169,10 @@ struct FullCalendarView: View {
             YoteiWeekdayTitlesView()
                 .padding(Constants.weekTitlesViewInsets)
 
-            YoteiDragEventView(data: $viewModel.data) {
+            YoteiDragEventView(
+                data: $viewModel.data,
+                contentOffset: $contentOffset
+            ) {
                 YoteiPagesWeekView(
                     focusedDate: $viewModel.focusedDate
                 ) { date in
