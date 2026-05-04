@@ -132,8 +132,18 @@ extension FullCalendarViewModelModel {
 }
 
 extension FullCalendarViewModelModel: YoteiDelegate<EventData> {
-    func calendarDidUpdateEvent(with _: YoteiEvent<EventData>.ID, dateInterval _: DateInterval) {
-        // update event
+    func calendarDidUpdateEvent(
+        with id: YoteiEvent<EventData>.ID,
+        oldDateInterval: DateInterval,
+        newDateInterval: DateInterval
+    ) {
+        Task {
+            await eventsLocalRepository.updateEvent(
+                with: id,
+                oldDateInterval: oldDateInterval,
+                newDateInterval: newDateInterval
+            )
+        }
     }
 
     func calendarDidSelectMonthDay(date _: Date) {

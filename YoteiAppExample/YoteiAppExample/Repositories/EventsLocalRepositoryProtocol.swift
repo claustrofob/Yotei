@@ -8,5 +8,10 @@ import Yotei
 
 protocol EventsLocalRepositoryProtocol {
     func events(in dateInterval: DateInterval, calendar: Calendar) async -> [Date: [YoteiEvent<EventData>]]
+    func updateEvent(
+        with id: YoteiEvent<EventData>.ID,
+        oldDateInterval: DateInterval,
+        newDateInterval: DateInterval
+    ) async
     func resetCache() async
 }

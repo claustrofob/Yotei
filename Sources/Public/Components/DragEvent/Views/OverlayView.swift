@@ -269,7 +269,8 @@ extension YoteiDragEventView {
 
             delegate?.calendarDidUpdateEvent(
                 with: activeEvent.id,
-                dateInterval: DateInterval(start: start, end: end)
+                oldDateInterval: activeEvent.dateInterval,
+                newDateInterval: DateInterval(start: start, end: end)
             )
         }
     }

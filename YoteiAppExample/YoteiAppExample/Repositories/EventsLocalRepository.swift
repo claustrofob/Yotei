@@ -98,6 +98,14 @@ extension EventsLocalRepository: EventsLocalRepositoryProtocol {
         return result
     }
 
+    func updateEvent(
+        with _: YoteiEvent<EventData>.ID,
+        oldDateInterval _: DateInterval,
+        newDateInterval _: DateInterval
+    ) {
+        // TODO: update event
+    }
+
     func resetCache() {
         events = [:]
     }
