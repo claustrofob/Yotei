@@ -32,5 +32,6 @@ public struct YoteiPagesDayView<Content: View>: View {
             }
         )
         .ignoresSafeArea()
+        .preference(key: PagesCalendarComponentKey.self, value: .day)
     }
 }

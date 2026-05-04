@@ -192,6 +192,7 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
     @State private var autoScrollOffset: CGFloat = 0
     @State private var autoScrollVelocity: CGFloat = 0
     @State private var displayLink: DisplayLink?
+    @State private var pagesCalendarComponent: Calendar.Component?
 
     private let autoScrollEdgeThreshold: CGFloat = 80
     private let maxAutoScrollVelocity: CGFloat = 8
@@ -227,6 +228,9 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
                 }
                 .onPreferenceChange(EventScrollViewSizeKey.self) { size in
                     scrollSize = size
+                }
+                .onPreferenceChange(PagesCalendarComponentKey.self) { component in
+                    pagesCalendarComponent = component
                 }
         }
         .onChange(of: dragEvent) { _ in
@@ -398,4 +402,13 @@ enum DragEvent: Equatable {
     case began(location: CGPoint)
     case changed(translation: CGPoint, location: CGPoint)
     case ended
+}
+
+// ------------------
+
+struct PagesCalendarComponentKey: PreferenceKey {
+    static let defaultValue: Calendar.Component = .day
+    static func reduce(value: inout Calendar.Component, nextValue: () -> Calendar.Component) {
+        value = nextValue()
+    }
 }
