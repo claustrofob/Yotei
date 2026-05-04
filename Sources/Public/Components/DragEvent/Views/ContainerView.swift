@@ -120,5 +120,9 @@ extension YoteiDragEventView.ContainerView {
         ) -> Bool {
             (gesture === pressGesture && other === panGesture) || (gesture === panGesture && other === pressGesture)
         }
+
+        func gestureRecognizer(_ gesture: UIGestureRecognizer, shouldReceive _: UITouch) -> Bool {
+            gesture.numberOfTouches == 0
+        }
     }
 }
