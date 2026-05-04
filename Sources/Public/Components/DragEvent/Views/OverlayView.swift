@@ -35,7 +35,6 @@ extension YoteiDragEventView {
         @State private var viewSize: CGSize = .zero
         @State private var scrollSize: CGSize = .zero
         @State private var eventFrame: CGRect?
-        @State private var autoScrollOffset: CGFloat = 0
         @State private var autoScrollVelocity: CGFloat = 0
         @State private var displayLink: DisplayLink?
         @State private var pagesCalendarComponent: Calendar.Component?
@@ -89,7 +88,6 @@ extension YoteiDragEventView {
                         eventFrame = initialEventFrame(event: activeEvent, startOfDay: date)
                     }
                     hapticFeedbackGenerator.selectionChanged()
-                    autoScrollOffset = 0
                 case let .changed(translation, location):
                     guard activeEvent != nil else {
                         return
@@ -105,7 +103,6 @@ extension YoteiDragEventView {
                     translation = .zero
                     activeDate = nil
                     activeEvent = nil
-                    autoScrollOffset = 0
                     stopAutoScroll()
                     eventFrame = nil
                     lastPageFlipDate = nil
@@ -189,7 +186,6 @@ extension YoteiDragEventView {
 
                 guard actualDelta != 0 else { return }
                 contentOffset = CGPoint(x: 0, y: proposedY)
-                autoScrollOffset += actualDelta
             }
         }
 

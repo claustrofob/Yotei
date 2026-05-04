@@ -11,16 +11,11 @@ final class DisplayLink {
 
     init(onStep: @escaping () -> Void) {
         self.onStep = onStep
-
-        guard displayLink == nil else {
-            return
-        }
         displayLink = CADisplayLink(target: self, selector: #selector(step))
-        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.common)
     }
 
     func invalidate() {
-        onStep?()
         onStep = nil
         displayLink?.invalidate()
         displayLink = nil
