@@ -107,6 +107,15 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                     contentOffset = $0
                 }))
             }
+            .anchorPreference(key: EventScrollViewSizeKey.self, value: .bounds, transform: {
+                let size = proxy[$0].size
+                let scrollInsets = viewFactory.insetsForScrollView()
+                let layoutInsets = viewFactory.insetsForViewsLayout()
+                return CGSize(
+                    width: size.width,
+                    height: size.height - scrollInsets.top - scrollInsets.bottom - layoutInsets.top - layoutInsets.bottom
+                )
+            })
         }
         .onChange(of: data, initial: true, isAsync: true) {
             events = dateSequence.reduce(into: [:]) { result, date in

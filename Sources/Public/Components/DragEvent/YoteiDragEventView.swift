@@ -177,6 +177,7 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
     @State private var hapticFeedbackGenerator = UISelectionFeedbackGenerator()
 
     @State private var viewHeight: CGFloat = 0
+    @State private var scrollSize: CGSize = .zero
     @State private var autoScrollOffset: CGFloat = 0
     @State private var autoScrollVelocity: CGFloat = 0
     @State private var displayLink: DisplayLink?
@@ -210,6 +211,9 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
                 }
                 .onPreferenceChange(EventTimelineFramesKey.self) { eventFrames in
                     timelineDayEventFrames = eventFrames
+                }
+                .onPreferenceChange(EventScrollViewSizeKey.self) { size in
+                    scrollSize = size
                 }
         }
         .onChange(of: dragEvent) { _ in
@@ -311,7 +315,7 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
         guard displayLink == nil else { return }
         displayLink = DisplayLink {
             let currentY = contentOffset?.y ?? 0
-            let maxY = max(0, totalContentHeight - viewHeight) + 80
+            let maxY = max(0, totalContentHeight - scrollSize.height)
             let proposedY = max(0, min(maxY, currentY + autoScrollVelocity))
             let actualDelta = proposedY - currentY
 
@@ -361,6 +365,13 @@ struct EventTimelineFramesKey: PreferenceKey {
         value.merge(nextValue(), uniquingKeysWith: {
             $0 + $1
         })
+    }
+}
+
+struct EventScrollViewSizeKey: PreferenceKey {
+    static let defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
     }
 }
 
