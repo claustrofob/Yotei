@@ -131,7 +131,8 @@ struct FullCalendarView: View {
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiDragEventView(
                 data: $viewModel.data,
-                contentOffset: $contentOffset
+                contentOffset: $contentOffset,
+                focusedDate: $viewModel.focusedDate
             ) {
                 YoteiPagesDayView(
                     focusedDate: $viewModel.focusedDate
@@ -171,7 +172,8 @@ struct FullCalendarView: View {
 
             YoteiDragEventView(
                 data: $viewModel.data,
-                contentOffset: $contentOffset
+                contentOffset: $contentOffset,
+                focusedDate: $viewModel.focusedDate
             ) {
                 YoteiPagesWeekView(
                     focusedDate: $viewModel.focusedDate
