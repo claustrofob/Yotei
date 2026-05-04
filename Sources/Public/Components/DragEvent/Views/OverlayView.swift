@@ -7,6 +7,13 @@ import SwiftUI
 
 extension YoteiDragEventView {
     struct OverlayView: View {
+        private enum Constants {
+            static var autoScrollEdgeThreshold: CGFloat { 80 }
+            static var maxAutoScrollVelocity: CGFloat { 8 }
+            static var pageFlipEdgeThreshold: CGFloat { 40 }
+            static var pageFlipCooldown: TimeInterval { 0.6 }
+        }
+
         @Environment(\.calendar) private var calendar
 
         @Binding private var data: YoteiEventsInterval<Data>
@@ -32,11 +39,6 @@ extension YoteiDragEventView {
         @State private var displayLink: DisplayLink?
         @State private var pagesCalendarComponent: Calendar.Component?
         @State private var lastPageFlipDate: Date?
-
-        private let autoScrollEdgeThreshold: CGFloat = 80
-        private let maxAutoScrollVelocity: CGFloat = 8
-        private let pageFlipEdgeThreshold: CGFloat = 40
-        private let pageFlipCooldown: TimeInterval = 0.6
 
         private var totalContentHeight: CGFloat {
             24 * viewFactory.hourSlotHeight()
@@ -154,15 +156,15 @@ extension YoteiDragEventView {
 
         private func updateAutoScroll(fingerY: CGFloat) {
             guard viewSize.height > 0 else { return }
-            let topThreshold = autoScrollEdgeThreshold
-            let bottomThreshold = viewSize.height - autoScrollEdgeThreshold
+            let topThreshold = Constants.autoScrollEdgeThreshold
+            let bottomThreshold = viewSize.height - Constants.autoScrollEdgeThreshold
             let velocity: CGFloat
             if fingerY < topThreshold {
-                let proximity = min(1, max(0, (topThreshold - fingerY) / autoScrollEdgeThreshold))
-                velocity = -maxAutoScrollVelocity * proximity
+                let proximity = min(1, max(0, (topThreshold - fingerY) / Constants.autoScrollEdgeThreshold))
+                velocity = -Constants.maxAutoScrollVelocity * proximity
             } else if fingerY > bottomThreshold {
-                let proximity = min(1, max(0, (fingerY - bottomThreshold) / autoScrollEdgeThreshold))
-                velocity = maxAutoScrollVelocity * proximity
+                let proximity = min(1, max(0, (fingerY - bottomThreshold) / Constants.autoScrollEdgeThreshold))
+                velocity = Constants.maxAutoScrollVelocity * proximity
             } else {
                 velocity = 0
             }
@@ -199,9 +201,9 @@ extension YoteiDragEventView {
             guard let pagesCalendarComponent, viewSize.width > 0 else { return }
 
             let direction: Int
-            if fingerX < pageFlipEdgeThreshold {
+            if fingerX < Constants.pageFlipEdgeThreshold {
                 direction = -1
-            } else if fingerX > viewSize.width - pageFlipEdgeThreshold {
+            } else if fingerX > viewSize.width - Constants.pageFlipEdgeThreshold {
                 direction = 1
             } else {
                 lastPageFlipDate = nil
@@ -210,7 +212,7 @@ extension YoteiDragEventView {
 
             let now = Date()
             lastPageFlipDate = lastPageFlipDate ?? now
-            if let lastPageFlipDate, now.timeIntervalSince(lastPageFlipDate) < pageFlipCooldown {
+            if let lastPageFlipDate, now.timeIntervalSince(lastPageFlipDate) < Constants.pageFlipCooldown {
                 return
             }
 
