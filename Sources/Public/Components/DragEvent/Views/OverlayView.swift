@@ -15,6 +15,7 @@ extension YoteiDragEventView {
         }
 
         @Environment(\.calendar) private var calendar
+        @Environment(\.yoteiDelegate) private var delegate
 
         @Binding private var data: YoteiEventsInterval<Data>
         @Binding private var contentOffset: CGPoint?
@@ -100,6 +101,7 @@ extension YoteiDragEventView {
                     updateAutoScroll(fingerY: location.y)
                     updatePageFlip(fingerX: location.x)
                 case .ended:
+                    updateEventInterval()
                     translation = .zero
                     activeDate = nil
                     activeEvent = nil
@@ -239,6 +241,35 @@ extension YoteiDragEventView {
                 y: dateFrame.minY + originY,
                 width: dateFrame.width,
                 height: height
+            )
+        }
+
+        private func updateEventInterval() {
+            guard
+                let activeDate,
+                let activeEvent,
+                let eventFrame,
+                let dayFrame = timelineDayFrames[activeDate]
+            else {
+                return
+            }
+
+            let newOriginPoint = CGPoint(
+                x: eventFrame.origin.x + translation.x,
+                y: eventFrame.origin.y + translation.y
+            )
+
+            let eventYOffset = newOriginPoint.y - dayFrame.minY
+            let secondsPerPoint = 3600 / viewFactory.hourSlotHeight()
+            let secondsFromDayMidnight = secondsPerPoint * eventYOffset
+
+            let eventDuration = activeEvent.dateInterval.duration
+            let start = activeDate.addingTimeInterval(secondsFromDayMidnight)
+            let end = start.addingTimeInterval(eventDuration)
+
+            delegate?.calendarDidUpdateEvent(
+                with: activeEvent.id,
+                dateInterval: DateInterval(start: start, end: end)
             )
         }
     }

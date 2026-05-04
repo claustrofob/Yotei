@@ -12,7 +12,7 @@ public protocol YoteiDelegate<Data>: AnyObject {
     func calendarDidSelectAllDay(date: Date)
     func calendarDidSelect(dateInterval: DateInterval, completion: () -> Void)
     func calendarDidSelectMonthDay(date: Date)
-    func calendarDidUpdate(event: YoteiEvent<Data>)
+    func calendarDidUpdateEvent(with id: YoteiEvent<Data>.ID, dateInterval: DateInterval)
 }
 
 public enum YoteiDelegateKey: EnvironmentKey {
