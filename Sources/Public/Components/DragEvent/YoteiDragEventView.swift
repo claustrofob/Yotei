@@ -337,12 +337,8 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
         }
 
         let pointsPerSecond = viewFactory.hourSlotHeight() / 3600
-
-        let localStartDate = max(event.start, startOfDay)
-        let localInterval = DateInterval(start: localStartDate, end: max(event.end, startOfDay))
-        let originY = CGFloat(localStartDate.timeIntervalSince(startOfDay)) * pointsPerSecond
-        let maxHeight = totalContentHeight - originY
-        let height = min(localInterval.duration * pointsPerSecond, maxHeight)
+        let originY = CGFloat(event.start.timeIntervalSince(startOfDay)) * pointsPerSecond
+        let height = event.dateInterval.duration * pointsPerSecond
         return CGRect(
             x: dateFrame.minX,
             y: dateFrame.minY + originY,
