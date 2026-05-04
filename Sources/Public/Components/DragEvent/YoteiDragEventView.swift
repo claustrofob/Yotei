@@ -172,6 +172,8 @@ extension DragEventViewContainer {
 }
 
 struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Content: View, Data: YoteiEventData>: View where ViewFactory.Data == Data {
+    @Environment(\.calendar) private var calendar
+
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
     @Binding private var focusedDate: Date
@@ -187,15 +189,19 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
     @State private var translation: CGPoint = .zero
     @State private var hapticFeedbackGenerator = UISelectionFeedbackGenerator()
 
-    @State private var viewHeight: CGFloat = 0
+    @State private var viewSize: CGSize = .zero
     @State private var scrollSize: CGSize = .zero
+    @State private var eventFrame: CGRect?
     @State private var autoScrollOffset: CGFloat = 0
     @State private var autoScrollVelocity: CGFloat = 0
     @State private var displayLink: DisplayLink?
     @State private var pagesCalendarComponent: Calendar.Component?
+    @State private var lastPageFlipDate: Date?
 
     private let autoScrollEdgeThreshold: CGFloat = 80
     private let maxAutoScrollVelocity: CGFloat = 8
+    private let pageFlipEdgeThreshold: CGFloat = 40
+    private let pageFlipCooldown: TimeInterval = 1
 
     private var totalContentHeight: CGFloat {
         24 * viewFactory.hourSlotHeight()
@@ -241,37 +247,43 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
                 }
                 activeDate = date
                 activeEvent = findActiveEvent(date: date, under: location) // TODO: or create a placeholder event
+                if let activeEvent {
+                    eventFrame = initialEventFrame(event: activeEvent, startOfDay: date)
+                }
                 hapticFeedbackGenerator.selectionChanged()
                 autoScrollOffset = 0
             case let .changed(translation, location):
-                self.translation = translation
-                if activeEvent != nil {
-                    updateAutoScroll(fingerY: location.y)
+                guard activeEvent != nil else {
+                    return
                 }
+                if let date = findActiveDate(under: location) {
+                    activeDate = date
+                }
+                self.translation = translation
+                updateAutoScroll(fingerY: location.y)
+                updatePageFlip(fingerX: location.x)
             case .ended:
                 translation = .zero
                 activeDate = nil
                 activeEvent = nil
                 autoScrollOffset = 0
                 stopAutoScroll()
+                eventFrame = nil
+                lastPageFlipDate = nil
             }
         }
-        .onGeometryChange(for: CGFloat.self) {
-            $0.size.height
+        .onGeometryChange(for: CGSize.self) {
+            $0.size
         } action: { newValue in
-            viewHeight = newValue
+            viewSize = newValue
         }
         .overlay(alignment: .topLeading) {
-            if
-                let activeEvent,
-                let activeDate,
-                let frame = eventFrame(event: activeEvent, startOfDay: activeDate)
-            {
+            if let activeEvent, let eventFrame {
                 viewFactory.eventView(event: activeEvent)
-                    .frame(width: frame.width, height: frame.height)
+                    .frame(width: eventFrame.width, height: eventFrame.height)
                     .offset(
-                        x: frame.origin.x + translation.x,
-                        y: frame.origin.y + translation.y + autoScrollOffset
+                        x: eventFrame.origin.x + translation.x,
+                        y: eventFrame.origin.y + translation.y
                     )
                     .allowsHitTesting(false)
             }
@@ -306,9 +318,9 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
     }
 
     private func updateAutoScroll(fingerY: CGFloat) {
-        guard viewHeight > 0 else { return }
+        guard viewSize.height > 0 else { return }
         let topThreshold = autoScrollEdgeThreshold
-        let bottomThreshold = viewHeight - autoScrollEdgeThreshold
+        let bottomThreshold = viewSize.height - autoScrollEdgeThreshold
         let velocity: CGFloat
         if fingerY < topThreshold {
             let proximity = min(1, max(0, (topThreshold - fingerY) / autoScrollEdgeThreshold))
@@ -348,7 +360,36 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
         displayLink = nil
     }
 
-    private func eventFrame(event: YoteiEvent<Data>, startOfDay: Date) -> CGRect? {
+    private func updatePageFlip(fingerX: CGFloat) {
+        guard let pagesCalendarComponent, viewSize.width > 0 else { return }
+
+        let direction: Int
+        if fingerX < pageFlipEdgeThreshold {
+            direction = -1
+        } else if fingerX > viewSize.width - pageFlipEdgeThreshold {
+            direction = 1
+        } else {
+            lastPageFlipDate = nil
+            return
+        }
+
+        let now = Date()
+        lastPageFlipDate = lastPageFlipDate ?? now
+        if let lastPageFlipDate, now.timeIntervalSince(lastPageFlipDate) < pageFlipCooldown {
+            return
+        }
+
+        guard let newDate = calendar.date(
+            byAdding: pagesCalendarComponent,
+            value: direction,
+            to: focusedDate
+        ) else { return }
+
+        focusedDate = newDate
+        lastPageFlipDate = nil
+    }
+
+    private func initialEventFrame(event: YoteiEvent<Data>, startOfDay: Date) -> CGRect? {
         guard let dateFrame = timelineDayFrames[startOfDay] else {
             return nil
         }
