@@ -136,7 +136,8 @@ extension DragEventViewContainer {
             switch gesture.state {
             case .changed:
                 let translation = gesture.translation(in: gesture.view)
-                dragEvent = .changed(translation: translation)
+                let location = gesture.location(in: gesture.view)
+                dragEvent = .changed(translation: translation, location: location)
             case .ended, .cancelled:
                 break
             default:
@@ -175,6 +176,18 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
     @State private var translation: CGPoint = .zero
     @State private var hapticFeedbackGenerator = UISelectionFeedbackGenerator()
 
+    @State private var viewHeight: CGFloat = 0
+    @State private var autoScrollOffset: CGFloat = 0
+    @State private var autoScrollVelocity: CGFloat = 0
+    @State private var displayLink: DisplayLink?
+
+    private let autoScrollEdgeThreshold: CGFloat = 80
+    private let maxAutoScrollVelocity: CGFloat = 8
+
+    private var totalContentHeight: CGFloat {
+        24 * viewFactory.hourSlotHeight()
+    }
+
     init(
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
@@ -208,13 +221,24 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
                 activeDate = date
                 activeEvent = findActiveEvent(date: date, under: location) // TODO: or create a placeholder event
                 hapticFeedbackGenerator.selectionChanged()
-            case let .changed(translation):
+                autoScrollOffset = 0
+            case let .changed(translation, location):
                 self.translation = translation
+                if activeEvent != nil {
+                    updateAutoScroll(fingerY: location.y)
+                }
             case .ended:
                 translation = .zero
                 activeDate = nil
                 activeEvent = nil
+                autoScrollOffset = 0
+                stopAutoScroll()
             }
+        }
+        .onGeometryChange(for: CGFloat.self) {
+            $0.size.height
+        } action: { newValue in
+            viewHeight = newValue
         }
         .overlay(alignment: .topLeading) {
             if
@@ -224,9 +248,15 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
             {
                 viewFactory.eventView(event: activeEvent)
                     .frame(width: frame.width, height: frame.height)
-                    .offset(x: frame.origin.x + translation.x, y: frame.origin.y + translation.y)
+                    .offset(
+                        x: frame.origin.x + translation.x,
+                        y: frame.origin.y + translation.y + autoScrollOffset
+                    )
                     .allowsHitTesting(false)
             }
+        }
+        .onDisappear {
+            stopAutoScroll()
         }
         .clipped()
         .ignoresSafeArea()
@@ -254,18 +284,60 @@ struct DragEventViewInternal<ViewFactory: YoteiDragEventViewFactoryProtocol, Con
         return data.events[date]?.first(where: { $0.id == eventFrame.id })
     }
 
+    private func updateAutoScroll(fingerY: CGFloat) {
+        guard viewHeight > 0 else { return }
+        let topThreshold = autoScrollEdgeThreshold
+        let bottomThreshold = viewHeight - autoScrollEdgeThreshold
+        let velocity: CGFloat
+        if fingerY < topThreshold {
+            let proximity = min(1, max(0, (topThreshold - fingerY) / autoScrollEdgeThreshold))
+            velocity = -maxAutoScrollVelocity * proximity
+        } else if fingerY > bottomThreshold {
+            let proximity = min(1, max(0, (fingerY - bottomThreshold) / autoScrollEdgeThreshold))
+            velocity = maxAutoScrollVelocity * proximity
+        } else {
+            velocity = 0
+        }
+
+        autoScrollVelocity = velocity
+        if velocity != 0 {
+            startAutoScroll()
+        } else {
+            stopAutoScroll()
+        }
+    }
+
+    private func startAutoScroll() {
+        guard displayLink == nil else { return }
+        displayLink = DisplayLink {
+            let currentY = contentOffset?.y ?? 0
+            let maxY = max(0, totalContentHeight - viewHeight) + 80
+            let proposedY = max(0, min(maxY, currentY + autoScrollVelocity))
+            let actualDelta = proposedY - currentY
+
+            guard actualDelta != 0 else { return }
+            contentOffset = CGPoint(x: 0, y: proposedY)
+            autoScrollOffset += actualDelta
+        }
+    }
+
+    private func stopAutoScroll() {
+        autoScrollVelocity = 0
+        displayLink?.invalidate()
+        displayLink = nil
+    }
+
     private func eventFrame(event: YoteiEvent<Data>, startOfDay: Date) -> CGRect? {
         guard let dateFrame = timelineDayFrames[startOfDay] else {
             return nil
         }
 
         let pointsPerSecond = viewFactory.hourSlotHeight() / 3600
-        let fullHeight = 24 * 3600 * pointsPerSecond
 
         let localStartDate = max(event.start, startOfDay)
         let localInterval = DateInterval(start: localStartDate, end: max(event.end, startOfDay))
         let originY = CGFloat(localStartDate.timeIntervalSince(startOfDay)) * pointsPerSecond
-        let maxHeight = fullHeight - originY
+        let maxHeight = totalContentHeight - originY
         let height = min(localInterval.duration * pointsPerSecond, maxHeight)
         return CGRect(
             x: dateFrame.minX,
@@ -304,6 +376,6 @@ struct EventFrame: Equatable, Sendable {
 
 enum DragEvent: Equatable {
     case began(location: CGPoint)
-    case changed(translation: CGPoint)
+    case changed(translation: CGPoint, location: CGPoint)
     case ended
 }
