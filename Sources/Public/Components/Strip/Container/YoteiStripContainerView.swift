@@ -40,40 +40,33 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         VStack(spacing: 0) {
             VStack(spacing: 0) {
                 VStack(spacing: 0) {
-                    // On iOS17 scroll view area of PageController extends beyond the container edges.
-                    // This extra ScrollView fixes it.
-                    ScrollView(.vertical) {
-                        ZStack(alignment: .top) {
-                            Group {
-                                if isExpanded {
-                                    YoteiStripMonthView(
-                                        focusedDate: $focusedDate,
-                                        viewFactory: viewFactory
-                                    )
-                                    .zIndex(1)
-                                } else {
-                                    YoteiStripWeekView(
-                                        focusedDate: $focusedDate,
-                                        viewFactory: viewFactory
-                                    )
-                                }
+                    ZStack(alignment: .top) {
+                        Group {
+                            if isExpanded {
+                                YoteiStripMonthView(
+                                    focusedDate: $focusedDate,
+                                    viewFactory: viewFactory
+                                )
+                                .zIndex(1)
+                            } else {
+                                YoteiStripWeekView(
+                                    focusedDate: $focusedDate,
+                                    viewFactory: viewFactory
+                                )
                             }
-                            .transition(.offset(CGSize(
-                                width: 0,
-                                height: isExpanded ? -weekOffset() : weekOffset()
-                            )).combined(with: .modifier(
-                                // This transition is required for the case, when selected date is in the first week.
-                                // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
-                                // We have to always change something to trigger animation.
-                                active: DummyModifier(isActive: true),
-                                identity: DummyModifier(isActive: false)
-                            )))
                         }
-                        // this frame is required for transition to work properly
-                        .frame(height: maxMonthStripHeight, alignment: .top)
-                        .frame(maxWidth: .infinity)
+                        .transition(.offset(CGSize(
+                            width: 0,
+                            height: isExpanded ? -weekOffset() : weekOffset()
+                        )).combined(with: .modifier(
+                            // This transition is required for the case, when selected date is in the first week.
+                            // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
+                            // We have to always change something to trigger animation.
+                            active: DummyModifier(isActive: true),
+                            identity: DummyModifier(isActive: false)
+                        )))
                     }
-                    .scrollDisabled(true)
+                    .frame(maxWidth: .infinity, alignment: .top)
                     .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
                     .clipped()
                     .contentShape(Rectangle())
@@ -97,7 +90,11 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
             .frame(height: viewFactory.dayCellViewHeight() + expandButtonHeight, alignment: .top)
         }
         .onAppear {
-            calculateMonthStripHeight()
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                calculateMonthStripHeight()
+            }
         }
         .onChange(of: focusedDate) { _ in
             calculateMonthStripHeight()
