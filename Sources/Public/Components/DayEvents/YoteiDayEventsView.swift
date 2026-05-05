@@ -122,6 +122,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                 result[date] = data.events[date]?.filter { !$0.isAllDay } ?? []
             }
         }
+        .preference(key: HourSlotHeightKey.self, value: viewFactory.hourSlotHeight())
     }
 }
 

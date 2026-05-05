@@ -39,9 +39,10 @@ extension YoteiDragEventView {
         @State private var displayLink: DisplayLink?
         @State private var pagesCalendarComponent: Calendar.Component?
         @State private var lastPageFlipDate: Date?
+        @State private var hourSlotHeight: CGFloat = 0
 
         private var totalContentHeight: CGFloat {
-            24 * viewFactory.hourSlotHeight()
+            24 * hourSlotHeight
         }
 
         init(
@@ -74,6 +75,9 @@ extension YoteiDragEventView {
                     }
                     .onPreferenceChange(PagesCalendarComponentKey.self) { component in
                         pagesCalendarComponent = component
+                    }
+                    .onPreferenceChange(HourSlotHeightKey.self) { height in
+                        hourSlotHeight = height
                     }
             }
             .onChange(of: dragEvent) { _ in
@@ -229,7 +233,7 @@ extension YoteiDragEventView {
                 return nil
             }
 
-            let pointsPerSecond = viewFactory.hourSlotHeight() / 3600
+            let pointsPerSecond = hourSlotHeight / 3600
             let originY = CGFloat(event.start.timeIntervalSince(startOfDay)) * pointsPerSecond
             let height = event.dateInterval.duration * pointsPerSecond
             return CGRect(
@@ -256,7 +260,7 @@ extension YoteiDragEventView {
             )
 
             let eventYOffset = newOriginPoint.y - dayFrame.minY
-            let secondsPerPoint = 3600 / viewFactory.hourSlotHeight()
+            let secondsPerPoint = 3600 / hourSlotHeight
 
             let snapToSeconds = viewFactory.snapToMinutes() * 60
             let secondsFromDayMidnight = CGFloat(Int(secondsPerPoint * eventYOffset) / snapToSeconds * snapToSeconds)
