@@ -32,6 +32,7 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - [Fonts Customization](#fonts-customization)
 - [Customization with View Factories](#customization-with-view-factories)
 - [Handling User Interaction](#handling-user-interaction)
+- [Drag to Reschedule](#drag-to-reschedule)
 - [Example App](#example-app)
 - [Roadmap](#roadmap)
 - [License](#license)
@@ -213,6 +214,7 @@ Every view below is a public SwiftUI `View` that lives under `import Yotei`.
 | `YoteiDayEventsView` | Hour-by-hour day timeline with overlap layout, current-time marker, and tap-to-create gesture. Supports multi-day layouts (`numberOfDays: 7` for a week view). |
 | `YoteiAllDayEventsTopView` | Multi-column grid for all-day and multi-day events, with a "+N more" indicator. |
 | `YoteiPagesMonthPageView` | A single month grid with a 6-row week layout, multi-day event bars, and a "+N" overflow indicator. Designed to be embedded inside `YoteiPagesMonthView`. |
+| `YoteiDragEventView` | Transparent overlay that adds drag-to-reschedule (long-press + pan) on top of any day or week timeline. Handles auto-scroll near vertical edges, page flips near horizontal edges, time snapping, and reports the new interval through `YoteiDelegate`. |
 
 ### Domain & delegates
 
@@ -466,8 +468,120 @@ final class CalendarCoordinator: YoteiDelegate {
     func calendarDidSelectMonthDay(date: Date) {
         // The user tapped a day cell in the month view — open the day's agenda or switch scope.
     }
+
+    func calendarDidUpdateEvent(
+        with id: YoteiEvent.ID,
+        oldDateInterval: DateInterval,
+        newDateInterval: DateInterval
+    ) {
+        // The user dragged an event to a new time — persist the new interval.
+    }
 }
 ```
+
+## Drag to Reschedule
+
+`YoteiDragEventView` adds **drag-to-reschedule** to a day or week timeline without forcing you to rebuild the timeline itself. Wrap it around an existing `YoteiPagesDayView` / `YoteiPagesWeekView` (with `YoteiDayEventsView` inside) and the new gesture layer is live — long-press an event to "pick it up", drag it to a new time slot, release to commit.
+
+### What it does for you
+
+- **Long-press + pan gesture.** A long press on an event activates drag mode (with a haptic tick), and the subsequent pan moves a floating proxy view. Taps and scrolls keep working as before.
+- **Auto-scroll near vertical edges.** When the finger gets close to the top or bottom of the visible area, the inner timeline scrolls automatically — proportional to how close you are to the edge — so you can drop an event onto a time that wasn't on screen.
+- **Page flip near horizontal edges.** When the finger lingers near the left or right edge, the focused date jumps one page (one day in `YoteiPagesDayView`, one week in `YoteiPagesWeekView`) with a short cooldown to prevent runaway flipping.
+- **Time snapping.** The new start time snaps to a configurable minute interval (default `15`).
+- **Cross-day moves.** Dropping an event onto a different day column moves it to that day; the duration is preserved.
+- **Delegate-based commit.** On release, Yotei calls `calendarDidUpdateEvent(with:oldDateInterval:newDateInterval:)` on your `YoteiDelegate`. Persist the change in your store and the calendar re-renders from the updated `data`.
+
+### Wiring it up
+
+`YoteiDragEventView` needs the same three bindings the underlying timeline uses (`data`, `contentOffset`, `focusedDate`) so it can read event frames, drive auto-scroll, and trigger page flips. Keep the contained `YoteiPagesDayView` / `YoteiPagesWeekView` and `YoteiDayEventsView` exactly as you had them — just wrap them.
+
+Day view with drag-to-reschedule:
+
+```swift
+@State private var focusedDate = Date()
+@State private var data = YoteiEventsInterval<EventData>()
+@State private var contentOffset: CGPoint?
+
+var body: some View {
+    VStack(spacing: 0) {
+        YoteiWeekdayTitlesView()
+        YoteiStripContainerView(focusedDate: $focusedDate)
+        YoteiDragEventView(
+            data: $data,
+            contentOffset: $contentOffset,
+            focusedDate: $focusedDate
+        ) {
+            YoteiPagesDayView(focusedDate: $focusedDate) { date in
+                VStack(spacing: 0) {
+                    YoteiAllDayEventsTopView(
+                        startDate: date,
+                        numberOfDays: 1,
+                        data: $data
+                    )
+                    YoteiDayEventsView(
+                        dayDate: date,
+                        numberOfDays: 1,
+                        data: $data,
+                        contentOffset: $contentOffset
+                    )
+                }
+            }
+        }
+    }
+    .yoteiDelegate(coordinator)
+}
+```
+
+The week view variant is identical — swap `YoteiPagesDayView` for `YoteiPagesWeekView` and pass `numberOfDays: 7` to the day events view.
+
+### Persisting the new time
+
+Implement `calendarDidUpdateEvent` on your `YoteiDelegate` and update the event in your store. Once `data.events` reflects the move, the calendar re-renders automatically:
+
+```swift
+final class CalendarCoordinator: YoteiDelegate {
+    func calendarDidUpdateEvent(
+        with id: YoteiEvent<EventData>.ID,
+        oldDateInterval: DateInterval,
+        newDateInterval: DateInterval
+    ) {
+        store.updateEvent(id: id, newStart: newDateInterval.start, newEnd: newDateInterval.end)
+    }
+
+    // … other YoteiDelegate methods …
+}
+```
+
+### Customization
+
+Like every event-aware component, `YoteiDragEventView` accepts a view factory. Implement `YoteiDragEventViewFactoryProtocol` to override the floating proxy view drawn under the finger, the snap interval, or both — every method has a default, so override only what you need:
+
+```swift
+struct BrandedDragFactory: YoteiDragEventViewFactoryProtocol {
+    func eventView(event: YoteiEvent<EventData>) -> some View {
+        YoteiDragEventViewFactory()
+            .eventView(event: event)
+            .tint(event.data.tint)
+            .opacity(0.85)
+    }
+
+    func snapToMinutes() -> Int {
+        5 // 5-minute snapping instead of the default 15
+    }
+}
+
+YoteiDragEventView(
+    data: $data,
+    contentOffset: $contentOffset,
+    focusedDate: $focusedDate,
+    viewFactory: BrandedDragFactory()
+) {
+    // … timeline content …
+}
+```
+
+The default proxy view (`YoteiDayDragEventDefaultView`) renders a tinted pill that mirrors the day-timeline event style, so by default the dragged proxy looks like the event you picked up.
 
 ## Example App
 
@@ -489,7 +603,7 @@ The example project depends on the local `Yotei` package at the repo root, so an
 - [x] Stability improvements
 - [x] Font customization
 - [x] Month view
-- [ ] Drag/drop to update event time/duration
+- [x] Drag/drop to update event time/duration
 - [ ] Accessibility
 
 ## License
