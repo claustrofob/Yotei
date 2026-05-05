@@ -6,8 +6,8 @@
 import SwiftUI
 
 struct PagesCalendarComponentKey: PreferenceKey {
-    static let defaultValue: Calendar.Component = .day
-    static func reduce(value: inout Calendar.Component, nextValue: () -> Calendar.Component) {
+    static let defaultValue: Calendar.Component? = nil
+    static func reduce(value: inout Calendar.Component?, nextValue: () -> Calendar.Component?) {
         value = nextValue()
     }
 }
