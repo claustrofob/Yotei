@@ -257,7 +257,9 @@ extension YoteiDragEventView {
 
             let eventYOffset = newOriginPoint.y - dayFrame.minY
             let secondsPerPoint = 3600 / viewFactory.hourSlotHeight()
-            let secondsFromDayMidnight = secondsPerPoint * eventYOffset
+
+            let snapToSeconds = viewFactory.snapToMinutes() * 60
+            let secondsFromDayMidnight = CGFloat(Int(secondsPerPoint * eventYOffset) / snapToSeconds * snapToSeconds)
 
             let eventDuration = activeEvent.dateInterval.duration
             let start = activeDate.addingTimeInterval(secondsFromDayMidnight)

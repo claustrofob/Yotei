@@ -99,11 +99,24 @@ extension EventsLocalRepository: EventsLocalRepositoryProtocol {
     }
 
     func updateEvent(
-        with _: YoteiEvent<EventData>.ID,
-        oldDateInterval _: DateInterval,
-        newDateInterval _: DateInterval
+        with id: YoteiEvent<EventData>.ID,
+        oldDateInterval: DateInterval,
+        newDateInterval: DateInterval,
+        calendar: Calendar
     ) {
-        // TODO: update event
+        let startDate = calendar.startOfDay(for: oldDateInterval.start)
+        guard var event = events[startDate]?.first(where: { $0.id == id }) else {
+            return
+        }
+
+        for date in YoteiDaysSequence(interval: oldDateInterval, calendar: calendar) {
+            events[date]?.removeAll(where: { $0.id == id })
+        }
+
+        event.dateInterval = newDateInterval
+        for date in YoteiDaysSequence(interval: newDateInterval, calendar: calendar) {
+            events[date, default: []].append(event)
+        }
     }
 
     func resetCache() {

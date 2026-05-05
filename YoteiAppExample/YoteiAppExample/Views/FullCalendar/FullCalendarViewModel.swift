@@ -141,8 +141,12 @@ extension FullCalendarViewModelModel: YoteiDelegate<EventData> {
             await eventsLocalRepository.updateEvent(
                 with: id,
                 oldDateInterval: oldDateInterval,
-                newDateInterval: newDateInterval
+                newDateInterval: newDateInterval,
+                calendar: calendar
             )
+
+            monthInterval = nil
+            viewDidChangeFocusedDate()
         }
     }
 

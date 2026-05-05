@@ -80,7 +80,13 @@ extension YoteiEvent {
     }
 
     public var dateInterval: DateInterval {
-        DateInterval(start: start, end: end)
+        get {
+            DateInterval(start: start, end: end)
+        }
+        set {
+            start = newValue.start
+            end = newValue.end
+        }
     }
 }
 

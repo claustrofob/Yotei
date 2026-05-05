@@ -12,6 +12,7 @@ public protocol YoteiDragEventViewFactoryProtocol<Data> {
     associatedtype EventView: View
     func eventView(event: YoteiEvent<Data>) -> EventView
     func hourSlotHeight() -> CGFloat
+    func snapToMinutes() -> Int
 }
 
 public extension YoteiDragEventViewFactoryProtocol {
@@ -22,5 +23,9 @@ public extension YoteiDragEventViewFactoryProtocol {
 
     func hourSlotHeight() -> CGFloat {
         YoteiDayEventsViewFactory<Data>().hourSlotHeight()
+    }
+
+    func snapToMinutes() -> Int {
+        15
     }
 }

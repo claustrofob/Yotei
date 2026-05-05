@@ -11,7 +11,8 @@ protocol EventsLocalRepositoryProtocol {
     func updateEvent(
         with id: YoteiEvent<EventData>.ID,
         oldDateInterval: DateInterval,
-        newDateInterval: DateInterval
+        newDateInterval: DateInterval,
+        calendar: Calendar
     ) async
     func resetCache() async
 }
