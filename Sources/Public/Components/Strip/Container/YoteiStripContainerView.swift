@@ -39,56 +39,54 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     public var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
-                VStack(spacing: 0) {
-                    ZStack(alignment: .top) {
-                        Group {
-                            if isExpanded {
-                                YoteiStripMonthView(
-                                    focusedDate: $focusedDate,
-                                    viewFactory: viewFactory
-                                )
-                                .zIndex(1)
-                            } else {
-                                YoteiStripWeekView(
-                                    focusedDate: $focusedDate,
-                                    viewFactory: viewFactory
-                                )
-                            }
-                        }
-                        .transition(.offset(CGSize(
-                            width: 0,
-                            height: isExpanded ? -weekOffset() : weekOffset()
-                        )).combined(with: .modifier(
-                            // This transition is required for the case, when selected date is in the first week.
-                            // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
-                            // We have to always change something to trigger animation.
-                            active: DummyModifier(isActive: true),
-                            identity: DummyModifier(isActive: false)
-                        )))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .top)
-                    .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
-                    .clipped()
-                    .contentShape(Rectangle())
-
-                    expandStripButton()
-                }
-                .background(.background)
-
-                // cover the rest of the screen
-                if isExpanded {
-                    PassthroughTouchDetectorView {
-                        withAnimation {
-                            viewDidSelectCollapse()
+                ZStack(alignment: .top) {
+                    Group {
+                        if isExpanded {
+                            YoteiStripMonthView(
+                                focusedDate: $focusedDate,
+                                viewFactory: viewFactory
+                            )
+                            .zIndex(1)
+                        } else {
+                            YoteiStripWeekView(
+                                focusedDate: $focusedDate,
+                                viewFactory: viewFactory
+                            )
                         }
                     }
-                    .frame(maxWidth: .infinity)
-                    // it must cover the rest of the screen
-                    .frame(height: 3000)
+                    .transition(.offset(CGSize(
+                        width: 0,
+                        height: isExpanded ? -weekOffset() : weekOffset()
+                    )).combined(with: .modifier(
+                        // This transition is required for the case, when selected date is in the first week.
+                        // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
+                        // We have to always change something to trigger animation.
+                        active: DummyModifier(isActive: true),
+                        identity: DummyModifier(isActive: false)
+                    )))
                 }
+                .frame(maxWidth: .infinity, alignment: .top)
+                .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
+                .clipped()
+                .contentShape(Rectangle())
+
+                expandStripButton()
             }
-            .frame(height: viewFactory.dayCellViewHeight() + expandButtonHeight, alignment: .top)
+            .background(.background)
+
+            // cover the rest of the screen
+            if isExpanded {
+                PassthroughTouchDetectorView {
+                    withAnimation {
+                        viewDidSelectCollapse()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                // it must cover the rest of the screen
+                .frame(height: 3000)
+            }
         }
+        .frame(height: viewFactory.dayCellViewHeight() + expandButtonHeight, alignment: .top)
         .onAppear {
             var transaction = Transaction()
             transaction.disablesAnimations = true
