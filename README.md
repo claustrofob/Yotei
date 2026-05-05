@@ -485,9 +485,9 @@ final class CalendarCoordinator: YoteiDelegate {
 
 ### What it does for you
 
-- **Long-press + pan gesture.** A long press on an event activates drag mode (with a haptic tick), and the subsequent pan moves a floating proxy view. Taps and scrolls keep working as before.
+- **Long-press + pan gesture.** A long press on an event activates drag mode, and the subsequent pan moves a floating proxy view.
 - **Auto-scroll near vertical edges.** When the finger gets close to the top or bottom of the visible area, the inner timeline scrolls automatically — proportional to how close you are to the edge — so you can drop an event onto a time that wasn't on screen.
-- **Page flip near horizontal edges.** When the finger lingers near the left or right edge, the focused date jumps one page (one day in `YoteiPagesDayView`, one week in `YoteiPagesWeekView`) with a short cooldown to prevent runaway flipping.
+- **Page flip near horizontal edges.** When the finger lingers near the left or right edge, the focused date jumps one page (one day in `YoteiPagesDayView`, one week in `YoteiPagesWeekView`).
 - **Time snapping.** The new start time snaps to a configurable minute interval (default `15`).
 - **Cross-day moves.** Dropping an event onto a different day column moves it to that day; the duration is preserved.
 - **Delegate-based commit.** On release, Yotei calls `calendarDidUpdateEvent(with:oldDateInterval:newDateInterval:)` on your `YoteiDelegate`. Persist the change in your store and the calendar re-renders from the updated `data`.
@@ -533,8 +533,6 @@ var body: some View {
 }
 ```
 
-The week view variant is identical — swap `YoteiPagesDayView` for `YoteiPagesWeekView` and pass `numberOfDays: 7` to the day events view.
-
 ### Persisting the new time
 
 Implement `calendarDidUpdateEvent` on your `YoteiDelegate` and update the event in your store. Once `data.events` reflects the move, the calendar re-renders automatically:
@@ -552,36 +550,6 @@ final class CalendarCoordinator: YoteiDelegate {
     // … other YoteiDelegate methods …
 }
 ```
-
-### Customization
-
-Like every event-aware component, `YoteiDragEventView` accepts a view factory. Implement `YoteiDragEventViewFactoryProtocol` to override the floating proxy view drawn under the finger, the snap interval, or both — every method has a default, so override only what you need:
-
-```swift
-struct BrandedDragFactory: YoteiDragEventViewFactoryProtocol {
-    func eventView(event: YoteiEvent<EventData>) -> some View {
-        YoteiDragEventViewFactory()
-            .eventView(event: event)
-            .tint(event.data.tint)
-            .opacity(0.85)
-    }
-
-    func snapToMinutes() -> Int {
-        5 // 5-minute snapping instead of the default 15
-    }
-}
-
-YoteiDragEventView(
-    data: $data,
-    contentOffset: $contentOffset,
-    focusedDate: $focusedDate,
-    viewFactory: BrandedDragFactory()
-) {
-    // … timeline content …
-}
-```
-
-The default proxy view (`YoteiDayDragEventDefaultView`) renders a tinted pill that mirrors the day-timeline event style, so by default the dragged proxy looks like the event you picked up.
 
 ## Example App
 
