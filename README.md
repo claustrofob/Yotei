@@ -26,7 +26,6 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Available Components](#available-components)
 - [Typed Event Data](#typed-event-data)
 - [Colors Customization](#colors-customization)
 - [Fonts Customization](#fonts-customization)
@@ -173,57 +172,6 @@ VStack(spacing: 0) {
     }
 }
 ```
-
-All examples use only default configuration — no factories, no subclasses.
-
-## Available Components
-
-Every view below is a public SwiftUI `View` that lives under `import Yotei`.
-
-### Pickers
-
-| Component | Purpose |
-|---|---|
-| `YoteiDatePicker` | Full month calendar date picker with month/year selector, paging between months, and optional `minDate` / `maxDate`. |
-| `YoteiDatePickerMonth` | A single month grid — useful when you want to embed one month into a custom layout. |
-| `YoteiMonthYearPicker` | Wheel-style month/year selector used by `YoteiDatePicker` when expanded. |
-| `YoteiTimePicker` | Wheel-style time picker (24-hour) with configurable minute interval. |
-
-### Strip / date bars
-
-| Component | Purpose |
-|---|---|
-| `YoteiStripContainerView` | Collapsible week ↔ month strip with drag-to-expand, paging, and a tap-to-collapse expand button. |
-| `YoteiStripWeekView` / `YoteiStripMonthView` | Individual week and month strips exposed for custom containers. |
-| `YoteiWeekdayTitlesView` | Localized short weekday titles ("M T W T F S S"), aware of first weekday and locale. |
-| `YoteiWeekdaysView` | Row of date cells for a given week start — handy when assembling custom headers. |
-
-### Pagers
-
-| Component | Purpose |
-|---|---|
-| `YoteiPagesDayView` | Infinite horizontal pager, one page per day. Bound to a focused `Date`. |
-| `YoteiPagesWeekView` | Infinite horizontal pager, one page per week, always aligned to the calendar's first weekday. |
-| `YoteiPagesMonthView` | Infinite horizontal pager, one page per month. Bound to a focused `Date`. |
-
-### Events
-
-| Component | Purpose |
-|---|---|
-| `YoteiScheduleView` | Scrolling agenda list grouped by day. UIKit-backed for smooth scroll over large ranges. |
-| `YoteiDayEventsView` | Hour-by-hour day timeline with overlap layout, current-time marker, and tap-to-create gesture. Supports multi-day layouts (`numberOfDays: 7` for a week view). |
-| `YoteiAllDayEventsTopView` | Multi-column grid for all-day and multi-day events, with a "+N more" indicator. |
-| `YoteiPagesMonthPageView` | A single month grid with a 6-row week layout, multi-day event bars, and a "+N" overflow indicator. Designed to be embedded inside `YoteiPagesMonthView`. |
-| `YoteiDragEventView` | Transparent overlay that adds drag-to-reschedule (long-press + pan) on top of any day or week timeline. Handles auto-scroll near vertical edges, page flips near horizontal edges, time snapping, and reports the new interval through `YoteiDelegate`. |
-
-### Domain & delegates
-
-| Type | Purpose |
-|---|---|
-| `YoteiEvent<Data>` | Immutable event model: `id`, `title`, `start`, `end`, `isAllDay`, and a generic `data` payload. Timezone-safe display helpers included. |
-| `YoteiEventsInterval` | The data envelope every events view reads from: visible interval, month interval, loading interval, and the `[Date: [YoteiEvent]]` bucket. |
-| `YoteiDelegate` | Single delegate protocol for event taps, all-day slot taps, and time-slot selection (tap-to-create). |
-| `YoteiDaysSequence` | A lazy, random-access `Collection` of `Date`s — useful when you iterate your own days. |
 
 ## Typed Event Data
 
