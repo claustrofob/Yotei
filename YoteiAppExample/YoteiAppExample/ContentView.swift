@@ -17,11 +17,21 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                NavigationLink("Full calendar", value: Destination.fullCalendar)
-                NavigationLink("Customized Day View", value: Destination.dayView)
-                NavigationLink("Date Picker", value: Destination.defaultDatePicker)
-                NavigationLink("Customized Date Picker", value: Destination.customizedDatePicker)
-                NavigationLink("Daily Random Facts", value: Destination.dailyRandomFacts)
+                NavigationLink(value: Destination.fullCalendar) {
+                    titleView(text: "Full calendar", subtitle: "All calendar features with the default customization")
+                }
+                NavigationLink(value: Destination.dayView) {
+                    titleView(text: "Customized Day View", subtitle: "An example of customization options")
+                }
+                NavigationLink(value: Destination.defaultDatePicker) {
+                    titleView(text: "Date Picker", subtitle: "Reimplemented Apple's DatePicker with default options")
+                }
+                NavigationLink(value: Destination.customizedDatePicker) {
+                    titleView(text: "Customized Date Picker", subtitle: "An example of a DatePicker customization")
+                }
+                NavigationLink(value: Destination.dailyRandomFacts) {
+                    titleView(text: "Daily Random Facts", subtitle: "Just a small fun app to demonstrate a custom usage of calendar components. Requires iOS26 and a real device with enabled Apple Intelligence.")
+                }
             }
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
@@ -39,6 +49,16 @@ struct ContentView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Example app")
+        }
+    }
+
+    @ViewBuilder
+    private func titleView(text: String, subtitle: String) -> some View {
+        VStack(alignment: .leading) {
+            Text(text)
+            Text(subtitle)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
 }

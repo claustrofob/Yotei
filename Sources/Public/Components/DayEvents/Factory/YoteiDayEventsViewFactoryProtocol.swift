@@ -27,6 +27,7 @@ public protocol YoteiDayEventsViewFactoryProtocol<Data> {
     func insetsForViewsLayout() -> EdgeInsets
     func insetsForScrollView() -> EdgeInsets
     func hourSlotHeight() -> CGFloat
+    func allowTapToCreate() -> Bool
 }
 
 public extension YoteiDayEventsViewFactoryProtocol {
@@ -60,5 +61,9 @@ public extension YoteiDayEventsViewFactoryProtocol {
 
     func hourSlotHeight() -> CGFloat {
         60
+    }
+
+    func allowTapToCreate() -> Bool {
+        true
     }
 }

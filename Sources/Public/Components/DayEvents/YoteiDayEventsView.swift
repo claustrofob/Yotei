@@ -96,7 +96,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                         timelineWidth = newValue.width
                     }
                     .contentShape(Rectangle())
-                    .gesture(tapGesture())
+                    .gesture(tapGesture(), including: viewFactory.allowTapToCreate() ? .all : .none)
                     .coordinateSpace(name: scrollCoordinateSpaceName)
                     .padding(viewFactory.insetsForViewsLayout())
                 }
