@@ -13,7 +13,7 @@ A highly modular, highly customizable calendar package for iOS. Built with Swift
 
 Every component can be used on its own or composed into a full calendar app. Pick only what you need — a date picker, a schedule list, a day timeline, an all-day grid — or wire them all together.
 
-<img width="160" src="https://github.com/user-attachments/assets/4228ce0d-b32b-4842-9f5f-baa4a85a4219" />
+<img width="160" height="329" src="https://github.com/user-attachments/assets/4228ce0d-b32b-4842-9f5f-baa4a85a4219" />
 <img width="160" alt="day_view" src="https://github.com/user-attachments/assets/e4c0838c-436d-48c4-93f0-803fc163282f" />
 <img width="160" alt="week_view" src="https://github.com/user-attachments/assets/4397afb5-74e9-45f1-b694-494b84940def" />
 <img width="160" alt="month_view" src="https://github.com/user-attachments/assets/ba5b8a4d-1221-4ce9-8ade-24a1e42d8a09" />
