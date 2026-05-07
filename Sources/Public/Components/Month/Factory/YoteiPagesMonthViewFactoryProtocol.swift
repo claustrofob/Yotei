@@ -32,6 +32,7 @@ public protocol YoteiPagesMonthViewFactoryProtocol<Data> {
     func eventViewHeight() -> CGFloat
     func interitemVerticalSpacing() -> CGFloat
     func interitemHorizontalSpacing() -> CGFloat
+    func minNumberOfVisibleRows() -> Int
 }
 
 public extension YoteiPagesMonthViewFactoryProtocol {
@@ -75,5 +76,9 @@ public extension YoteiPagesMonthViewFactoryProtocol {
 
     func interitemHorizontalSpacing() -> CGFloat {
         0
+    }
+
+    func minNumberOfVisibleRows() -> Int {
+        3
     }
 }

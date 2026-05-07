@@ -153,7 +153,7 @@ struct FullCalendarView: View {
                         }
                         .clipped()
                         YoteiDayEventsView(
-                            dayDate: date,
+                            startDate: date,
                             numberOfDays: 1,
                             data: $viewModel.data,
                             contentOffset: $contentOffset
@@ -189,7 +189,7 @@ struct FullCalendarView: View {
                         )
                         .padding(Constants.weekTitlesViewInsets)
                         YoteiDayEventsView(
-                            dayDate: date,
+                            startDate: date,
                             numberOfDays: 7,
                             data: $viewModel.data,
                             contentOffset: $contentOffset

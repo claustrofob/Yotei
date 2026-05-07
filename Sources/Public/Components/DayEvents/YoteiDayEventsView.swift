@@ -10,7 +10,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     @Environment(\.calendar) private var calendar
     @Environment(\.yoteiDelegate) private var delegate
 
-    private let dayDate: Date
+    private let startDate: Date
     private let numberOfDays: Int
     @Binding private var data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
@@ -33,17 +33,17 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     }
 
     private var startOfDay: Date {
-        calendar.startOfDay(for: dayDate)
+        calendar.startOfDay(for: startDate)
     }
 
     public init(
-        dayDate: Date,
+        startDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>,
         viewFactory: ViewFactory
     ) {
-        self.dayDate = dayDate
+        self.startDate = startDate
         self.numberOfDays = numberOfDays
         _data = data
         _contentOffset = contentOffset
@@ -51,13 +51,13 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     }
 
     public init(
-        dayDate: Date,
+        startDate: Date,
         numberOfDays: Int,
         data: Binding<YoteiEventsInterval<Data>>,
         contentOffset: Binding<CGPoint?>
     ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
         self.init(
-            dayDate: dayDate,
+            startDate: startDate,
             numberOfDays: numberOfDays,
             data: data,
             contentOffset: contentOffset,

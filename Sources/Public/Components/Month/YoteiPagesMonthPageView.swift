@@ -9,7 +9,6 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
     enum Constants {
         static var numberOfDaysPerWeek: Int { 7 }
         static var numberOfRows: Int { 6 }
-        static var minNumberOfVisibleEventRows: Int { 3 }
     }
 
     @Environment(\.calendar) private var calendar
@@ -64,8 +63,9 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
             ScrollView(.vertical) {
                 ZStack {
                     VStack(spacing: 0) {
-                        let minCellHeight = CGFloat(Constants.minNumberOfVisibleEventRows) * viewFactory.eventViewHeight()
-                            + CGFloat(Constants.minNumberOfVisibleEventRows - 1) * viewFactory.interitemVerticalSpacing()
+                        let minNumberOfVisibleRows = viewFactory.minNumberOfVisibleRows()
+                        let minCellHeight = CGFloat(minNumberOfVisibleRows) * viewFactory.eventViewHeight()
+                            + CGFloat(minNumberOfVisibleRows - 1) * viewFactory.interitemVerticalSpacing()
 
                         viewFactory.horizontalDelimiterView()
                         ForEach(0 ..< Constants.numberOfRows, id: \.self) { row in

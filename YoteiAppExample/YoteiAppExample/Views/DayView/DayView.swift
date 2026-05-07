@@ -38,7 +38,7 @@ struct DayView: View {
                     }
                     .clipped()
                     YoteiDayEventsView(
-                        dayDate: date,
+                        startDate: date,
                         numberOfDays: 1,
                         data: $data,
                         contentOffset: $contentOffset,
