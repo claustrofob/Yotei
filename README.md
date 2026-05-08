@@ -222,8 +222,6 @@ struct TintedDayEventsFactory: YoteiDayEventsViewFactoryProtocol {
 }
 ```
 
-No casting, no `userInfo: [String: Any]`, no lookups into a sidecar dictionary keyed by `event.id`.
-
 ### Don't need extra data?
 
 Use an empty marker struct:
