@@ -108,7 +108,7 @@ struct CalendarScreen: View {
             YoteiStripContainerView(focusedDate: $focusedDate)
             YoteiScheduleView(
                 focusedDate: $focusedDate,
-                data: $data
+                data: data
             )
         }
         .onChange(of: focusedDate) { _ in
@@ -146,12 +146,12 @@ YoteiPagesDayView(focusedDate: $focusedDate) { date in
         YoteiAllDayEventsTopView(
             startDate: date,
             numberOfDays: 1,
-            data: $data
+            data: data
         )
         YoteiDayEventsView(
-            dayDate: date,
+            startDate: date,
             numberOfDays: 1,
-            data: $data,
+            data: data,
             contentOffset: $contentOffset
         )
     }
@@ -166,7 +166,7 @@ VStack(spacing: 0) {
     YoteiPagesMonthView(focusedDate: $focusedDate) { date in
         YoteiPagesMonthPageView(
             selectedDate: $focusedDate,
-            data: $data,
+            data: data,
             dateInMonth: date
         )
     }
@@ -262,7 +262,7 @@ You have a few options to set custiom colors in calendar:
 VStack(spacing: 0) {
     YoteiWeekdayTitlesView()
     YoteiStripContainerView(focusedDate: $focusedDate)
-    YoteiScheduleView(focusedDate: $focusedDate, data: $data)
+    YoteiScheduleView(focusedDate: $focusedDate, data: data)
 }
 .tint(.purple)
 ```
@@ -273,7 +273,7 @@ Because `.tint` is a normal SwiftUI environment value, you can scope it to one c
 YoteiStripContainerView(focusedDate: $focusedDate)
     .tint(.indigo)
 
-YoteiScheduleView(focusedDate: $focusedDate, data: $data)
+YoteiScheduleView(focusedDate: $focusedDate, data: data)
     .tint(.orange)
 ```
 
@@ -311,7 +311,7 @@ Apply a branded font style to the whole calendar:
 VStack(spacing: 0) {
     YoteiWeekdayTitlesView()
     YoteiStripContainerView(focusedDate: $focusedDate)
-    YoteiScheduleView(focusedDate: $focusedDate, data: $data)
+    YoteiScheduleView(focusedDate: $focusedDate, data: data)
 }
 .environment(\.yoteiFontStyle, YoteiFontStyle(
     caption: .system(.caption, design: .rounded),
@@ -332,7 +332,7 @@ YoteiStripContainerView(focusedDate: $focusedDate)
 Override individual styles:
 
 ```swift
-YoteiScheduleView(focusedDate: $focusedDate, data: $data)
+YoteiScheduleView(focusedDate: $focusedDate, data: data)
     .environment(\.yoteiFontStyle.subheadline, .custom("Avenir-Heavy", size: 16))
     .environment(\.yoteiFontStyle.caption2, .custom("Avenir-Book", size: 12))
 ```
@@ -367,9 +367,9 @@ Use it:
 
 ```swift
 YoteiDayEventsView(
-    dayDate: focusedDate,
+    startDate: focusedDate,
     numberOfDays: 1,
-    data: $data,
+    data: data,
     contentOffset: $contentOffset,
     viewFactory: BrandedDayEventsFactory()
 )
@@ -465,12 +465,12 @@ var body: some View {
                     YoteiAllDayEventsTopView(
                         startDate: date,
                         numberOfDays: 1,
-                        data: $data
+                        data: data
                     )
                     YoteiDayEventsView(
-                        dayDate: date,
+                        startDate: date,
                         numberOfDays: 1,
-                        data: $data,
+                        data: data,
                         contentOffset: $contentOffset
                     )
                 }
