@@ -22,7 +22,6 @@ Every component can be used on its own or composed into a full calendar app. Pic
 ## Table of Contents
 
 - [Features](#features)
-- [Why Yotei](#why-yotei)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -45,15 +44,6 @@ Every component can be used on its own or composed into a full calendar app. Pic
 - **Drop-in defaults, escape hatches everywhere.** Start with `YoteiScheduleView(...)` and ship in two lines. Need a branded event pill? Implement one factory method. Need a fully custom day cell? Implement another. You are never locked in.
 - **Modern Swift.** Swift 6.2, strict concurrency, `@MainActor`-correct factories, `Sendable` domain types.
 - **Production ready.** Support for iOS 16+ makes Yotei available not only for modern startups but even for mature projects.
-
-## Why Yotei
-
-Most open-source iOS calendar libraries fall into one of two camps:
-
-- **"Monolithic" components** — one giant view that owns layout, data, theming, and gestures. Great for demos, painful once the design system pushes back.
-- **"Bring your own everything"** — low-level primitives that still require you to write the scrolling list, the page controller, and the event layout from scratch.
-
-If you want a date picker today and a full-screen planner tomorrow without switching libraries, Yotei is built for that path.
 
 ## Requirements
 
@@ -231,8 +221,6 @@ struct TintedDayEventsFactory: YoteiDayEventsViewFactoryProtocol {
     }
 }
 ```
-
-No casting, no `userInfo: [String: Any]`, no lookups into a sidecar dictionary keyed by `event.id`.
 
 ### Don't need extra data?
 
