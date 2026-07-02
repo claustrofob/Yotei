@@ -12,7 +12,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
 
     private let startDate: Date
     private let numberOfDays: Int
-    @Binding private var data: YoteiEventsInterval<Data>
+    private let data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
     private let viewFactory: ViewFactory
 
@@ -39,13 +39,13 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     public init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         contentOffset: Binding<CGPoint?>,
         viewFactory: ViewFactory
     ) {
         self.startDate = startDate
         self.numberOfDays = numberOfDays
-        _data = data
+        self.data = data
         _contentOffset = contentOffset
         self.viewFactory = viewFactory
     }
@@ -53,7 +53,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     public init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         contentOffset: Binding<CGPoint?>
     ) where ViewFactory == YoteiDayEventsViewFactory<Data> {
         self.init(
@@ -117,7 +117,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                 )
             })
         }
-        .onChange(of: data, initial: true, isAsync: true) {
+        .onChange(of: data, initial: true, isAsync: true) { data in
             events = dateSequence.reduce(into: [:]) { result, date in
                 result[date] = data.events[date]?.filter { !$0.isAllDay } ?? []
             }

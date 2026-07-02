@@ -12,7 +12,7 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
 
     private let startDate: Date
     private let numberOfDays: Int
-    @Binding private var data: YoteiEventsInterval<Data>
+    private let data: YoteiEventsInterval<Data>
     private let viewFactory: ViewFactory
 
     @State private var viewData: AlignedRowEventsData<Data>?
@@ -25,10 +25,10 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     public init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         viewFactory: ViewFactory
     ) {
-        _data = data
+        self.data = data
         self.startDate = startDate
         self.numberOfDays = numberOfDays
         self.viewFactory = viewFactory
@@ -37,7 +37,7 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
     public init(
         startDate: Date,
         numberOfDays: Int,
-        data: Binding<YoteiEventsInterval<Data>>
+        data: YoteiEventsInterval<Data>
     ) where ViewFactory == YoteiAllDayEventsTopViewFactory<Data> {
         self.init(
             startDate: startDate,
@@ -58,17 +58,17 @@ public struct YoteiAllDayEventsTopView<ViewFactory: YoteiAllDayEventsTopViewFact
             }
         }
         .frame(maxWidth: .infinity)
-        .onChange(of: data, initial: true, isAsync: true) {
+        .onChange(of: data, initial: true, isAsync: true) { data in
             task?.cancel()
             task = Task {
-                viewData = await processData()
+                viewData = await processData(data: data)
             }
         }
     }
 }
 
 private extension YoteiAllDayEventsTopView {
-    private func processData() async -> AlignedRowEventsData<Data>? {
+    private func processData(data: YoteiEventsInterval<Data>) async -> AlignedRowEventsData<Data>? {
         let processor = EventsRowAligner<Data>(
             startDate: startDate,
             numberOfDays: numberOfDays,

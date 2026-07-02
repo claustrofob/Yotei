@@ -48,7 +48,7 @@ struct ScrollViewPositionModifier: ViewModifier {
                     }
                 }
             }
-            .onChange(of: contentOffset, initial: false, isAsync: true) {
+            .onChange(of: contentOffset, initial: false, isAsync: true) { contentOffset in
                 guard lastContentOffset != contentOffset else {
                     return
                 }

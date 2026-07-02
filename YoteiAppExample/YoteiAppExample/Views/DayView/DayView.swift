@@ -25,7 +25,7 @@ struct DayView: View {
                     YoteiAllDayEventsTopView(
                         startDate: date,
                         numberOfDays: 1,
-                        data: $data,
+                        data: data,
                         viewFactory: YoteiAllDayEventsTopViewFactory()
                     )
                     .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
@@ -40,7 +40,7 @@ struct DayView: View {
                     YoteiDayEventsView(
                         startDate: date,
                         numberOfDays: 1,
-                        data: $data,
+                        data: data,
                         contentOffset: $contentOffset,
                         viewFactory: DayEventsViewFactory()
                     )

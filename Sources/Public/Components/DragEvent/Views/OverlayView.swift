@@ -17,10 +17,10 @@ extension YoteiDragEventView {
         @Environment(\.calendar) private var calendar
         @Environment(\.yoteiDelegate) private var delegate
 
-        @Binding private var data: YoteiEventsInterval<Data>
+        private let data: YoteiEventsInterval<Data>
         @Binding private var contentOffset: CGPoint?
         @Binding private var focusedDate: Date
-        @Binding private var dragEvent: DragEvent
+        private let dragEvent: DragEvent
         private let viewFactory: ViewFactory
         @ViewBuilder private let content: () -> Content
 
@@ -46,17 +46,17 @@ extension YoteiDragEventView {
         }
 
         init(
-            data: Binding<YoteiEventsInterval<Data>>,
+            data: YoteiEventsInterval<Data>,
             contentOffset: Binding<CGPoint?>,
             focusedDate: Binding<Date>,
-            dragEvent: Binding<DragEvent>,
+            dragEvent: DragEvent,
             viewFactory: ViewFactory,
             @ViewBuilder content: @escaping () -> Content
         ) {
-            _data = data
+            self.data = data
             _contentOffset = contentOffset
             _focusedDate = focusedDate
-            _dragEvent = dragEvent
+            self.dragEvent = dragEvent
             self.viewFactory = viewFactory
             self.content = content
         }
@@ -80,8 +80,8 @@ extension YoteiDragEventView {
                         hourSlotHeight = height
                     }
             }
-            .onChange(of: dragEvent) { _ in
-                switch dragEvent {
+            .onChange(of: dragEvent) { value in
+                switch value {
                 case let .began(location):
                     guard let date = findActiveDate(under: location) else {
                         return

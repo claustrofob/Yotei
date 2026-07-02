@@ -8,38 +8,38 @@ import SwiftUI
 struct OnChangeModifier<Value: Equatable>: ViewModifier {
     let value: Value
     let initial: Bool
-    let action: () -> Void
+    let action: (Value) -> Void
 
     func body(content: Content) -> some View {
         content
-            .onChange(of: value) { _ in
-                action()
+            .onChange(of: value) { value in
+                action(value)
             }
             .onAppear {
                 if initial {
-                    action()
+                    action(value)
                 }
             }
     }
 }
 
 extension View {
-    func onChange(
-        of value: some Equatable,
+    func onChange<Value: Equatable>(
+        of value: Value,
         initial: Bool,
         isAsync: Bool = false,
-        action: @escaping () -> Void
+        action: @escaping (Value) -> Void
     ) -> some View {
         modifier(OnChangeModifier(
             value: value,
             initial: initial,
-            action: {
+            action: { value in
                 if isAsync {
                     DispatchQueue.main.async {
-                        action()
+                        action(value)
                     }
                 } else {
-                    action()
+                    action(value)
                 }
             }
         ))

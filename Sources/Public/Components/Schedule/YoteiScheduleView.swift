@@ -9,24 +9,24 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol, D
     @Environment(\.calendar) private var calendar
 
     @Binding private var focusedDate: Date
-    @Binding private var data: YoteiEventsInterval<Data>
+    private let data: YoteiEventsInterval<Data>
     private let viewFactory: ViewFactory
 
     @State private var viewData: YoteiScheduleViewData<Data>?
 
     public init(
         focusedDate: Binding<Date>,
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         viewFactory: ViewFactory
     ) {
         _focusedDate = focusedDate
-        _data = data
+        self.data = data
         self.viewFactory = viewFactory
     }
 
     public init(
         focusedDate: Binding<Date>,
-        data: Binding<YoteiEventsInterval<Data>>
+        data: YoteiEventsInterval<Data>
     ) where ViewFactory == YoteiScheduleViewFactory<Data> {
         self.init(
             focusedDate: focusedDate,
@@ -46,7 +46,7 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol, D
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
-        .onChange(of: focusedDate, initial: false, isAsync: true) {
+        .onChange(of: focusedDate, initial: false, isAsync: true) { focusedDate in
             // Updated focusedDate comes before corresponding dateInterval is loaded.
             // This may cause invalid scrolling behavour
             guard
@@ -57,7 +57,7 @@ public struct YoteiScheduleView<ViewFactory: YoteiScheduleViewFactoryProtocol, D
             }
             viewData?.focusedDate = focusedDate
         }
-        .onChange(of: data, initial: true, isAsync: true) {
+        .onChange(of: data, initial: true, isAsync: true) { data in
             viewDidChange(data: data)
         }
         .onChange(of: viewData?.focusedDate) { value in

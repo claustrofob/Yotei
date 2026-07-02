@@ -119,7 +119,7 @@ struct FullCalendarView: View {
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiScheduleView(
                 focusedDate: $viewModel.focusedDate,
-                data: $viewModel.data
+                data: viewModel.data
             )
         }
     }
@@ -130,7 +130,7 @@ struct FullCalendarView: View {
             YoteiWeekdayTitlesView()
             YoteiStripContainerView(focusedDate: $viewModel.focusedDate)
             YoteiDragEventView(
-                data: $viewModel.data,
+                data: viewModel.data,
                 contentOffset: $contentOffset,
                 focusedDate: $viewModel.focusedDate
             ) {
@@ -141,7 +141,7 @@ struct FullCalendarView: View {
                         YoteiAllDayEventsTopView(
                             startDate: date,
                             numberOfDays: 1,
-                            data: $viewModel.data
+                            data: viewModel.data
                         )
                         .padding(EdgeInsets(top: 0, leading: 50, bottom: 0, trailing: 6))
                         .background {
@@ -155,7 +155,7 @@ struct FullCalendarView: View {
                         YoteiDayEventsView(
                             startDate: date,
                             numberOfDays: 1,
-                            data: $viewModel.data,
+                            data: viewModel.data,
                             contentOffset: $contentOffset
                         )
                     }
@@ -171,7 +171,7 @@ struct FullCalendarView: View {
                 .padding(Constants.weekTitlesViewInsets)
 
             YoteiDragEventView(
-                data: $viewModel.data,
+                data: viewModel.data,
                 contentOffset: $contentOffset,
                 focusedDate: $viewModel.focusedDate
             ) {
@@ -185,13 +185,13 @@ struct FullCalendarView: View {
                         YoteiAllDayEventsTopView(
                             startDate: date,
                             numberOfDays: 7,
-                            data: $viewModel.data
+                            data: viewModel.data
                         )
                         .padding(Constants.weekTitlesViewInsets)
                         YoteiDayEventsView(
                             startDate: date,
                             numberOfDays: 7,
-                            data: $viewModel.data,
+                            data: viewModel.data,
                             contentOffset: $contentOffset
                         )
                     }
@@ -209,7 +209,7 @@ struct FullCalendarView: View {
             ) { date in
                 YoteiPagesMonthPageView(
                     selectedDate: $viewModel.focusedDate,
-                    data: $viewModel.data,
+                    data: viewModel.data,
                     dateInMonth: date
                 )
             }

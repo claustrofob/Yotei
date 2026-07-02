@@ -10,20 +10,20 @@ public struct YoteiDragEventView<
     Content: View,
     Data: YoteiEventData
 >: View where ViewFactory.Data == Data {
-    @Binding private var data: YoteiEventsInterval<Data>
+    private let data: YoteiEventsInterval<Data>
     @Binding private var contentOffset: CGPoint?
     @Binding private var focusedDate: Date
     @ViewBuilder private let content: () -> Content
     private let viewFactory: ViewFactory
 
     public init(
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         contentOffset: Binding<CGPoint?>,
         focusedDate: Binding<Date>,
         viewFactory: ViewFactory,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        _data = data
+        self.data = data
         _contentOffset = contentOffset
         _focusedDate = focusedDate
         self.viewFactory = viewFactory
@@ -31,7 +31,7 @@ public struct YoteiDragEventView<
     }
 
     public init(
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         contentOffset: Binding<CGPoint?>,
         focusedDate: Binding<Date>,
         @ViewBuilder content: @escaping () -> Content
@@ -47,7 +47,7 @@ public struct YoteiDragEventView<
 
     public var body: some View {
         ContainerView(
-            data: $data,
+            data: data,
             contentOffset: $contentOffset,
             focusedDate: $focusedDate,
             viewFactory: viewFactory,

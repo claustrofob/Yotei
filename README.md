@@ -456,7 +456,7 @@ var body: some View {
         YoteiWeekdayTitlesView()
         YoteiStripContainerView(focusedDate: $focusedDate)
         YoteiDragEventView(
-            data: $data,
+            data: data,
             contentOffset: $contentOffset,
             focusedDate: $focusedDate
         ) {

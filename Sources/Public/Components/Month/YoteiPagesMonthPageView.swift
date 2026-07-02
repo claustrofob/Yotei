@@ -15,7 +15,7 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
     @Environment(\.yoteiDelegate) private var delegate
 
     @Binding private var selectedDate: Date
-    @Binding private var data: YoteiEventsInterval<Data>
+    private let data: YoteiEventsInterval<Data>
     private let dateInMonth: Date
     private let viewFactory: ViewFactory
 
@@ -26,23 +26,23 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
     public init(
         selectedDate: Binding<Date>,
         dateInMonth: Date,
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         viewFactory: ViewFactory
     ) {
         _selectedDate = selectedDate
         self.dateInMonth = dateInMonth
-        _data = data
+        self.data = data
         self.viewFactory = viewFactory
     }
 
     public init(
         selectedDate: Binding<Date>,
-        data: Binding<YoteiEventsInterval<Data>>,
+        data: YoteiEventsInterval<Data>,
         dateInMonth: Date
     ) where ViewFactory == YoteiPagesMonthViewFactory<Data> {
         _selectedDate = selectedDate
         self.dateInMonth = dateInMonth
-        _data = data
+        self.data = data
         viewFactory = YoteiPagesMonthViewFactory()
     }
 
@@ -88,8 +88,8 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                                     GeometryReader { proxy in
                                         ZStack(alignment: .top) {
                                             Color.clear
-                                                .onChange(of: proxy.size.height, initial: true, isAsync: false) {
-                                                    heightByRow[row] = proxy.size.height
+                                                .onChange(of: proxy.size.height, initial: true, isAsync: false) { height in
+                                                    heightByRow[row] = height
                                                 }
 
                                             let weekStartDate = daysSequence[row * Constants.numberOfDaysPerWeek]
@@ -129,24 +129,24 @@ public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryPro
                 .frame(minHeight: proxy.size.height, maxHeight: .infinity, alignment: .center)
             }
         }
-        .onChange(of: data, initial: false, isAsync: true) {
-            processDataTask(startDate: startDate)
+        .onChange(of: data, initial: false, isAsync: true) { data in
+            processDataTask(startDate: startDate, data: data, heightByRow: heightByRow)
         }
-        .onChange(of: heightByRow, initial: true, isAsync: true) {
-            processDataTask(startDate: startDate)
+        .onChange(of: heightByRow, initial: true, isAsync: true) { heightByRow in
+            processDataTask(startDate: startDate, data: data, heightByRow: heightByRow)
         }
     }
 }
 
 private extension YoteiPagesMonthPageView {
-    private func processDataTask(startDate: Date) {
+    private func processDataTask(startDate: Date, data: YoteiEventsInterval<Data>, heightByRow: [Int: CGFloat]) {
         task?.cancel()
         task = Task {
-            viewData = await processData(startDate: startDate)
+            viewData = await processData(startDate: startDate, data: data, heightByRow: heightByRow)
         }
     }
 
-    func processData(startDate: Date) async -> [Date: AlignedRowEventsData<Data>] {
+    func processData(startDate: Date, data: YoteiEventsInterval<Data>, heightByRow: [Int: CGFloat]) async -> [Date: AlignedRowEventsData<Data>] {
         let numberOfDaysPerWeek = Constants.numberOfDaysPerWeek
         let calendar = calendar
         let data = data

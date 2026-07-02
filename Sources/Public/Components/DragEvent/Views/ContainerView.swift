@@ -7,33 +7,33 @@ import SwiftUI
 
 extension YoteiDragEventView {
     struct ContainerView: UIViewControllerRepresentable {
-        @Binding private var data: YoteiEventsInterval<Data>
+        private let data: YoteiEventsInterval<Data>
         @Binding private var contentOffset: CGPoint?
         @Binding private var focusedDate: Date
         @ViewBuilder private let content: () -> Content
         private let viewFactory: ViewFactory
 
-        @State var dragEvent: DragEvent = .ended
+        @State private var dragEvent: DragEvent = .ended
 
         private var internalView: OverlayView {
             OverlayView(
-                data: $data,
+                data: data,
                 contentOffset: $contentOffset,
                 focusedDate: $focusedDate,
-                dragEvent: $dragEvent,
+                dragEvent: dragEvent,
                 viewFactory: viewFactory,
                 content: content
             )
         }
 
         init(
-            data: Binding<YoteiEventsInterval<Data>>,
+            data: YoteiEventsInterval<Data>,
             contentOffset: Binding<CGPoint?>,
             focusedDate: Binding<Date>,
             viewFactory: ViewFactory,
             @ViewBuilder content: @escaping () -> Content
         ) {
-            _data = data
+            self.data = data
             _contentOffset = contentOffset
             _focusedDate = focusedDate
             self.viewFactory = viewFactory
