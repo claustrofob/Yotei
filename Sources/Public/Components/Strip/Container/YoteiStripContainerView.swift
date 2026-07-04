@@ -104,6 +104,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         .onChange(of: focusedDate) { _ in
             calculateMonthStripHeight()
         }
+        .zIndex(10)
     }
 }
 
