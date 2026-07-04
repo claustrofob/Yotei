@@ -30,11 +30,8 @@ struct ScrollViewPositionModifier: ViewModifier {
                 guard scrollViewStorage.scrollView != nil else {
                     return
                 }
-                // during initialization `.onChange` is called first with the proper value of `contentOffset`,
-                // then `.parentView` is called with an old value of `contentOffset`. This is weird.
-                // To fix it we set `lastContentOffset = contentOffset` in `.onChange` and
-                // in `.parentView` is has the proper value.
-                scrollView.contentOffset = lastContentOffset ?? contentOffset
+
+                scrollView.contentOffset = contentOffset
                 observation = scrollView.observe(\.contentOffset, options: [.new, .initial]) { _, change in
                     // KVO can fire during SwiftUI layout updates
                     // Push the binding update to the next runloop tick
@@ -43,15 +40,16 @@ struct ScrollViewPositionModifier: ViewModifier {
                         guard lastContentOffset != newContentOffset else {
                             return
                         }
-                        contentOffset = newContentOffset
                         lastContentOffset = newContentOffset
+                        contentOffset = newContentOffset
                     }
                 }
             }
-            .onChange(of: contentOffset, initial: false, isAsync: true) { contentOffset in
+            .onChange(of: contentOffset, initial: false) { contentOffset in
                 guard lastContentOffset != contentOffset else {
                     return
                 }
+
                 lastContentOffset = contentOffset
                 scrollViewStorage.scrollView?.contentOffset = contentOffset
             }

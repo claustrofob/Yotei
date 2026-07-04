@@ -93,16 +93,13 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         }
         .frame(height: (isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight()) + expandButtonHeight, alignment: .top)
         .background(.background)
-        .animation(.default, value: monthStripHeight)
         .onAppear {
-            var transaction = Transaction()
-            transaction.disablesAnimations = true
-            withTransaction(transaction) {
-                calculateMonthStripHeight()
-            }
+            calculateMonthStripHeight()
         }
         .onChange(of: focusedDate) { _ in
-            calculateMonthStripHeight()
+            withAnimation {
+                calculateMonthStripHeight()
+            }
         }
         .zIndex(10)
     }

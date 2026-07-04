@@ -21,6 +21,9 @@ struct ParentViewRepresentable<ViewType: UIView>: UIViewRepresentable {
 
         override func didMoveToWindow() {
             super.didMoveToWindow()
+            guard window != nil else {
+                return
+            }
             var targetView = superview
             while !(targetView is ViewType), targetView != nil {
                 targetView = targetView?.superview
