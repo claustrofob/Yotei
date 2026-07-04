@@ -20,8 +20,8 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     private let viewFactory: ViewFactory
 
     @State private var monthStripHeight: CGFloat = 0
-    @State private var expandDragStarted = false
     @State private var isExpanded = false
+    @State private var expandDragStarted = false
     @State private var expandButtonHeight: CGFloat = 0
 
     private var maxMonthStripHeight: CGFloat {
@@ -37,7 +37,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
+        ScrollView {
             VStack(spacing: 0) {
                 ZStack(alignment: .top) {
                     Group {
@@ -65,28 +65,35 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         identity: DummyModifier(isActive: false)
                     )))
                 }
-                .frame(maxWidth: .infinity, alignment: .top)
                 .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
                 .clipped()
-                .contentShape(Rectangle())
 
                 expandStripButton()
             }
-            .background(.background)
-
-            // cover the rest of the screen
-            if isExpanded {
-                PassthroughTouchDetectorView {
-                    withAnimation {
-                        viewDidSelectCollapse()
+            .parentView { (view: UIScrollView) in
+                view.isScrollEnabled = false
+                let gesture = DirectionalPanGestureRecognizer { event in
+                    switch event {
+                    case .began:
+                        ()
+                    case .changed(translation: let translation, location: _):
+                        guard !expandDragStarted else {
+                            return
+                        }
+                        expandDragStarted = true
+                        withAnimation {
+                            translation.y > 0 ? viewDidSelectExpand() : viewDidSelectCollapse()
+                        }
+                    case .ended:
+                        expandDragStarted = false
                     }
                 }
-                .frame(maxWidth: .infinity)
-                // it must cover the rest of the screen
-                .frame(height: 3000)
+                view.addGestureRecognizer(gesture)
             }
         }
-        .frame(height: viewFactory.dayCellViewHeight() + expandButtonHeight, alignment: .top)
+        .frame(height: (isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight()) + expandButtonHeight, alignment: .top)
+        .background(.background)
+        .animation(.default, value: monthStripHeight)
         .onAppear {
             var transaction = Transaction()
             transaction.disablesAnimations = true
@@ -97,26 +104,6 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         .onChange(of: focusedDate) { _ in
             calculateMonthStripHeight()
         }
-        .simultaneousGesture(DragGesture().onChanged { value in
-            guard !expandDragStarted else {
-                return
-            }
-            expandDragStarted = true
-
-            guard abs(value.translation.height) > abs(value.translation.width) else {
-                return
-            }
-
-            withAnimation {
-                value.translation.height > 0
-                    ? viewDidSelectExpand()
-                    : viewDidSelectCollapse()
-            }
-        }.onEnded { _ in
-            expandDragStarted = false
-        })
-        .animation(.default, value: monthStripHeight)
-        .zIndex(10)
     }
 }
 

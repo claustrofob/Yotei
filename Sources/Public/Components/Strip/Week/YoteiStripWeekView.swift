@@ -28,6 +28,7 @@ public struct YoteiStripWeekView<ViewFactory: YoteiStripViewFactoryProtocol>: Vi
                     viewFactory: viewFactory
                 )
                 .frame(maxHeight: .infinity, alignment: .top)
+                .background(.background)
                 .animation(.default, value: focusedDate)
                 .ignoresSafeArea(edges: .all)
                 // Keep the navigation bar explicitly visible
