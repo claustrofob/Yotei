@@ -65,6 +65,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         identity: DummyModifier(isActive: false)
                     )))
                 }
+                .frame(height: maxMonthStripHeight, alignment: .top)
                 .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
                 .clipped()
 
@@ -97,7 +98,9 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
             calculateMonthStripHeight()
         }
         .onChange(of: focusedDate) { _ in
-            withAnimation {
+            // simultaneous UIPageController page switch animation and size change animation breaks page switching and leads to unpredictable behavour,
+            // animation delay serialize the animations and fixes the problem
+            withAnimation(.default.delay(0.3)) {
                 calculateMonthStripHeight()
             }
         }

@@ -24,6 +24,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
     @State private var events: [Date: [YoteiEvent<Data>]] = [:]
     @State private var placeholderEvent: YoteiDayEventsPlaceholderEvent?
     @State private var timelineWidth: CGFloat = 0
+    @State private var initialCurrentDate = Date.now
     private var daySlotWidth: CGFloat {
         timelineWidth / CGFloat(numberOfDays)
     }
@@ -102,7 +103,7 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                 }
                 .padding(viewFactory.insetsForScrollView())
                 .scrollViewPosition(Binding(get: {
-                    contentOffset ?? calculateInitialContentOffset(currentDate: .now, scrollViewHeight: proxy.size.height)
+                    contentOffset ?? calculateInitialContentOffset(currentDate: initialCurrentDate, scrollViewHeight: proxy.size.height)
                 }, set: {
                     contentOffset = $0
                 }))
