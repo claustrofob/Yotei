@@ -6,14 +6,6 @@
 import SwiftUI
 
 public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol>: View {
-    private struct DummyModifier: ViewModifier {
-        let isActive: Bool
-
-        func body(content: Content) -> some View {
-            content.padding(.bottom, isActive ? 1 : 0)
-        }
-    }
-
     @Environment(\.calendar) private var calendar
 
     @Binding private var focusedDate: Date
@@ -21,8 +13,10 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 
     @State private var monthStripHeight: CGFloat = 0
     @State private var isExpanded = false
-    @State private var expandDragStarted = false
     @State private var expandButtonHeight: CGFloat = 0
+    @State private var dragEvent: DragEvent = .ended
+    @State private var frameHeight: CGFloat = 0
+    @State private var animatedFrameHeight: CGFloat = 0
 
     private var maxMonthStripHeight: CGFloat {
         viewFactory.dayCellViewHeight() * 6 + viewFactory.weekInteritemVerticalSpacing() * 5
@@ -40,33 +34,32 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         ScrollView {
             VStack(spacing: 0) {
                 ZStack(alignment: .top) {
-                    Group {
-                        if isExpanded {
-                            YoteiStripMonthView(
-                                focusedDate: $focusedDate,
-                                viewFactory: viewFactory
-                            )
-                            .zIndex(1)
-                        } else {
-                            YoteiStripWeekView(
-                                focusedDate: $focusedDate,
-                                viewFactory: viewFactory
-                            )
-                        }
+                    if
+                        frameHeight > viewFactory.dayCellViewHeight()
+                        || animatedFrameHeight > viewFactory.dayCellViewHeight()
+                        || dragEvent.isActive
+                    {
+                        YoteiStripMonthView(
+                            focusedDate: $focusedDate,
+                            viewFactory: viewFactory
+                        )
+//                        .offset(CGSize(
+//                            width: 0,
+//                            height: isExpanded ? -weekOffset() : weekOffset()
+//                        ))
+                        .zIndex(1)
+                        .transition(.identity)
                     }
-                    .transition(.offset(CGSize(
-                        width: 0,
-                        height: isExpanded ? -weekOffset() : weekOffset()
-                    )).combined(with: .modifier(
-                        // This transition is required for the case, when selected date is in the first week.
-                        // In that case weekOffset() == 0, there is nothing to animate and old view immediately disappears at the start of animation.
-                        // We have to always change something to trigger animation.
-                        active: DummyModifier(isActive: true),
-                        identity: DummyModifier(isActive: false)
-                    )))
+
+                    if !isExpanded {
+                        YoteiStripWeekView(
+                            focusedDate: $focusedDate,
+                            viewFactory: viewFactory
+                        )
+                    }
                 }
                 .frame(height: maxMonthStripHeight, alignment: .top)
-                .frame(height: isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight(), alignment: .top)
+                .frame(height: frameHeight, alignment: .top)
                 .clipped()
 
                 expandStripButton()
@@ -74,28 +67,34 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
             .parentView { (view: UIScrollView) in
                 view.isScrollEnabled = false
                 let gesture = DirectionalPanGestureRecognizer { event in
+                    let prevEvent = dragEvent
+                    dragEvent = event
                     switch event {
                     case .began:
                         ()
-                    case .changed(translation: let translation, location: _):
-                        guard !expandDragStarted else {
-                            return
-                        }
-                        expandDragStarted = true
-                        withAnimation {
-                            translation.y > 0 ? viewDidSelectExpand() : viewDidSelectCollapse()
-                        }
+                    case .changed:
+                        calculateFrameHeight()
                     case .ended:
-                        expandDragStarted = false
+                        switch prevEvent {
+                        case let .changed(_, _, velocity):
+                            withAnimation {
+                                isExpanded = velocity.y > 0
+                                calculateFrameHeight()
+                            }
+                        case .began, .ended:
+                            ()
+                        }
                     }
                 }
                 view.addGestureRecognizer(gesture)
             }
         }
-        .frame(height: (isExpanded ? monthStripHeight : viewFactory.dayCellViewHeight()) + expandButtonHeight, alignment: .top)
+        .animationCompletion(frameHeight, binding: $animatedFrameHeight)
+        .frame(height: frameHeight + expandButtonHeight, alignment: .top)
         .background(.background)
         .onAppear {
             calculateMonthStripHeight()
+            calculateFrameHeight()
         }
         .onChange(of: focusedDate) { _ in
             // simultaneous UIPageController page switch animation and size change animation breaks page switching and leads to unpredictable behavour,
@@ -109,6 +108,20 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 }
 
 private extension YoteiStripContainerView {
+    func calculateFrameHeight() {
+        let minHeight = viewFactory.dayCellViewHeight()
+        let maxHeight = monthStripHeight
+        var height = isExpanded ? maxHeight : minHeight
+        switch dragEvent {
+        case let .changed(translation, _, _):
+            height += translation.y
+        case .began, .ended:
+            ()
+        }
+
+        frameHeight = max(min(height, maxHeight), minHeight)
+    }
+
     func calculateMonthStripHeight() {
         let numberOfWeeks = CGFloat(calendar.range(
             of: .weekOfMonth,
@@ -133,21 +146,33 @@ private extension YoteiStripContainerView {
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()
+                    calculateFrameHeight()
                 }
             }
     }
+}
 
-    func viewDidSelectExpand() {
-        guard !isExpanded else {
-            return
+struct AnimationCompletion: ViewModifier, @MainActor Animatable {
+    var progress: CGFloat
+    @Binding var binding: CGFloat
+
+    var animatableData: CGFloat {
+        get { progress }
+        set {
+            progress = newValue
+            DispatchQueue.main.async { [self] in
+                binding = newValue
+            }
         }
-        isExpanded = true
     }
 
-    func viewDidSelectCollapse() {
-        guard isExpanded else {
-            return
-        }
-        isExpanded = false
+    func body(content: Content) -> some View {
+        content
+    }
+}
+
+extension View {
+    func animationCompletion(_ value: CGFloat, binding: Binding<CGFloat>) -> some View {
+        modifier(AnimationCompletion(progress: value, binding: binding))
     }
 }

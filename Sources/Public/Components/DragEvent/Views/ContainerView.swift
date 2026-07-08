@@ -99,7 +99,8 @@ extension YoteiDragEventView.ContainerView {
             case .changed:
                 let translation = gesture.translation(in: gesture.view)
                 let location = gesture.location(in: gesture.view)
-                dragEvent = .changed(translation: translation, location: location)
+                let velocity = gesture.velocity(in: gesture.view)
+                dragEvent = .changed(translation: translation, location: location, velocity: velocity)
             case .ended, .cancelled:
                 break
             default:

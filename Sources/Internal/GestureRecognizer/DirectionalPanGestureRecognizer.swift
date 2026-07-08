@@ -42,7 +42,8 @@ final class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
         case .changed:
             let translation = translation(in: view)
             let location = location(in: view)
-            onDrag(.changed(translation: translation, location: location))
+            let velocity = velocity(in: view)
+            onDrag(.changed(translation: translation, location: location, velocity: velocity))
         case .ended, .cancelled:
             onDrag(.ended)
         default:

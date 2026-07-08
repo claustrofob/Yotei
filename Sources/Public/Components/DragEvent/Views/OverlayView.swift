@@ -92,7 +92,7 @@ extension YoteiDragEventView {
                         eventFrame = initialEventFrame(event: activeEvent, startOfDay: date)
                     }
                     hapticFeedbackGenerator.selectionChanged()
-                case let .changed(translation, location):
+                case let .changed(translation, location, _):
                     guard activeEvent != nil else {
                         return
                     }
