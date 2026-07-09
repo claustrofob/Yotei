@@ -79,13 +79,13 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                             let diffHeight = monthStripHeight - viewFactory.dayCellViewHeight()
                             let remainingDistance = abs(target - openProgress) * diffHeight
                             let speed = abs(velocity.y)
-                            
+
                             // time to cover the remaining distance at the current finger speed,
                             // clamped so a tiny/huge fling still feels reasonable
                             let duration = speed > 0
-                            ? min(max(Double(remainingDistance / speed), 0.15), 0.5)
-                            : 0.35
-                            
+                                ? min(max(Double(remainingDistance / speed), 0.15), 0.5)
+                                : 0.35
+
                             isWeekViewVisible = velocity.y <= 0
                             withAnimation(.easeOut(duration: duration)) {
                                 openProgress = target
