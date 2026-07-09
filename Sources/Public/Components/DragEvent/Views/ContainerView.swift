@@ -111,7 +111,9 @@ extension YoteiDragEventView.ContainerView {
         // MARK: - UIGestureRecognizerDelegate
 
         func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
-            if gesture === panGesture { return isLongPressActive }
+            if gesture === panGesture {
+                return isLongPressActive
+            }
             return true
         }
 

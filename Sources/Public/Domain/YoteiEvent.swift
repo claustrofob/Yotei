@@ -30,14 +30,14 @@ public struct YoteiEvent<Data: YoteiEventData>: Equatable, Identifiable, Sendabl
     }
 }
 
-// All day event date rules:
-// - It must not depend on timezone. `18.01.2026 00:00:00 UTC` must be displayed on `18.01.2026` in every timezone
-// - Google Calendar always returns all day event date with `00:00:00 UTC`
-// - endDate can be equal to startDate or be greater. If it is greater we must not count the last day.
-//   E.g. `18.01.2026 00:00:00 UTC` - `19.01.2026 00:00:00 UTC` - this interval represents just one day `18.01.2026`
-//        `18.01.2026 00:00:00 UTC` - `20.01.2026 00:00:00 UTC` - this interval represents 2 days `18.01.2026` and `19.01.2026`
+/// All day event date rules:
+/// - It must not depend on timezone. `18.01.2026 00:00:00 UTC` must be displayed on `18.01.2026` in every timezone
+/// - Google Calendar always returns all day event date with `00:00:00 UTC`
+/// - endDate can be equal to startDate or be greater. If it is greater we must not count the last day.
+///   E.g. `18.01.2026 00:00:00 UTC` - `19.01.2026 00:00:00 UTC` - this interval represents just one day `18.01.2026`
+///        `18.01.2026 00:00:00 UTC` - `20.01.2026 00:00:00 UTC` - this interval represents 2 days `18.01.2026` and `19.01.2026`
 extension YoteiEvent {
-    // preserve day when converting to other timezone
+    /// preserve day when converting to other timezone
     private func startOfDay(
         from date: Date,
         inputCalendar: Calendar,
@@ -93,6 +93,11 @@ extension YoteiEvent {
 // MARK: Sortable
 
 public extension YoteiEvent {
-    var isAllDaySortable: Int { isAllDay ? 0 : 1 }
-    var durationSortable: Double { end.timeIntervalSince1970 - start.timeIntervalSince1970 }
+    var isAllDaySortable: Int {
+        isAllDay ? 0 : 1
+    }
+
+    var durationSortable: Double {
+        end.timeIntervalSince1970 - start.timeIntervalSince1970
+    }
 }

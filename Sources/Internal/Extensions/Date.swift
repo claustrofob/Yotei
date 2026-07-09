@@ -35,9 +35,9 @@ extension Date {
         )
     }
 
-    // Calendar.current.component(.weekOfMonth, from: date) depends on Calendar.current.minimumDaysInFirstWeek
-    // and may return different values in different calendars and for different months.
-    // E.g. for 01.08.2025 it will return 0 if minimumDaysInFirstWeek == 4, and 1 if minimumDaysInFirstWeek == 1
+    /// Calendar.current.component(.weekOfMonth, from: date) depends on Calendar.current.minimumDaysInFirstWeek
+    /// and may return different values in different calendars and for different months.
+    /// E.g. for 01.08.2025 it will return 0 if minimumDaysInFirstWeek == 4, and 1 if minimumDaysInFirstWeek == 1
     func weekOfMonth(in calendar: Calendar) -> Int {
         let startOfMonth = calendar.dateInterval(of: .month, for: self)!.start
         let startOfFirstWeek = Calendar.current.dateInterval(of: .weekOfMonth, for: startOfMonth)!.start

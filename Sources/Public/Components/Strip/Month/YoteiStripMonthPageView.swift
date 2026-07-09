@@ -7,7 +7,9 @@ import SwiftUI
 
 public struct YoteiStripMonthPageView<ViewFactory: YoteiStripViewFactoryProtocol>: View {
     private enum Constants {
-        static var numberOfDaysPerWeek: Int { 7 }
+        static var numberOfDaysPerWeek: Int {
+            7
+        }
     }
 
     @Environment(\.calendar) private var calendar

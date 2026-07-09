@@ -12,11 +12,11 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     private let viewFactory: ViewFactory
 
     @State private var monthStripHeight: CGFloat = 0
-    @State private var isExpanded = false
     @State private var expandButtonHeight: CGFloat = 0
     @State private var dragEvent: DragEvent = .ended
-    @State private var frameHeight: CGFloat = 0
-    @State private var animatedFrameHeight: CGFloat = 0
+
+    @State private var dragStartOpenProgress: CGFloat = 0
+    @State private var openProgress: CGFloat = 0
 
     private var maxMonthStripHeight: CGFloat {
         viewFactory.dayCellViewHeight() * 6 + viewFactory.weekInteritemVerticalSpacing() * 5
@@ -34,32 +34,24 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
         ScrollView {
             VStack(spacing: 0) {
                 ZStack(alignment: .top) {
-                    if
-                        frameHeight > viewFactory.dayCellViewHeight()
-                        || animatedFrameHeight > viewFactory.dayCellViewHeight()
-                        || dragEvent.isActive
-                    {
-                        YoteiStripMonthView(
-                            focusedDate: $focusedDate,
-                            viewFactory: viewFactory
-                        )
-//                        .offset(CGSize(
-//                            width: 0,
-//                            height: isExpanded ? -weekOffset() : weekOffset()
-//                        ))
-                        .zIndex(1)
-                        .transition(.identity)
-                    }
+                    YoteiStripMonthView(
+                        focusedDate: $focusedDate,
+                        viewFactory: viewFactory
+                    )
+                    .offset(CGSize(
+                        width: 0,
+                        height: -weekOffset() * (1 - openProgress)
+                    ))
+                    .zIndex(1)
+                    .transition(.identity)
 
-                    if !isExpanded {
-                        YoteiStripWeekView(
-                            focusedDate: $focusedDate,
-                            viewFactory: viewFactory
-                        )
-                    }
+                    YoteiStripWeekView(
+                        focusedDate: $focusedDate,
+                        viewFactory: viewFactory
+                    )
                 }
                 .frame(height: maxMonthStripHeight, alignment: .top)
-                .frame(height: frameHeight, alignment: .top)
+                .frame(height: frameHeight(), alignment: .top)
                 .clipped()
 
                 expandStripButton()
@@ -71,30 +63,25 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                     dragEvent = event
                     switch event {
                     case .began:
-                        ()
+                        dragStartOpenProgress = openProgress
                     case .changed:
-                        calculateFrameHeight()
+                        calculateOpenProgress()
                     case .ended:
-                        switch prevEvent {
-                        case let .changed(_, _, velocity):
+                        if case let .changed(_, _, velocity) = prevEvent {
                             withAnimation {
-                                isExpanded = velocity.y > 0
-                                calculateFrameHeight()
+                                openProgress = velocity.y > 0 ? 1 : 0
                             }
-                        case .began, .ended:
-                            ()
                         }
                     }
                 }
                 view.addGestureRecognizer(gesture)
             }
         }
-        .animationCompletion(frameHeight, binding: $animatedFrameHeight)
-        .frame(height: frameHeight + expandButtonHeight, alignment: .top)
+        // .animationCompletion(frameHeight, binding: $animatedFrameHeight)
+        .frame(height: frameHeight() + expandButtonHeight, alignment: .top)
         .background(.background)
         .onAppear {
             calculateMonthStripHeight()
-            calculateFrameHeight()
         }
         .onChange(of: focusedDate) { _ in
             // simultaneous UIPageController page switch animation and size change animation breaks page switching and leads to unpredictable behavour,
@@ -108,18 +95,24 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 }
 
 private extension YoteiStripContainerView {
-    func calculateFrameHeight() {
+    func frameHeight() -> CGFloat {
         let minHeight = viewFactory.dayCellViewHeight()
         let maxHeight = monthStripHeight
-        var height = isExpanded ? maxHeight : minHeight
-        switch dragEvent {
-        case let .changed(translation, _, _):
-            height += translation.y
-        case .began, .ended:
-            ()
+        let diffHeight = maxHeight - minHeight
+        return minHeight + diffHeight * openProgress
+    }
+
+    func calculateOpenProgress() {
+        let minHeight = viewFactory.dayCellViewHeight()
+        let maxHeight = monthStripHeight
+        let diffHeight = maxHeight - minHeight
+        var currentDiffHeight = diffHeight * dragStartOpenProgress
+
+        if case let .changed(translation, _, _) = dragEvent {
+            currentDiffHeight += translation.y
         }
 
-        frameHeight = max(min(height, maxHeight), minHeight)
+        openProgress = min(max(currentDiffHeight / diffHeight, 0), 1)
     }
 
     func calculateMonthStripHeight() {
@@ -137,7 +130,7 @@ private extension YoteiStripContainerView {
     }
 
     func expandStripButton() -> some View {
-        viewFactory.expandView(isExpanded: isExpanded)
+        viewFactory.expandView(progress: openProgress)
             .onGeometryChange(for: CGFloat.self, of: {
                 $0.size.height
             }) {
@@ -145,8 +138,7 @@ private extension YoteiStripContainerView {
             }
             .onTapGesture {
                 withAnimation {
-                    isExpanded.toggle()
-                    calculateFrameHeight()
+                    openProgress = openProgress > 0 ? 0 : 1
                 }
             }
     }

@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-// font styles that are currently used in default views
+/// font styles that are currently used in default views
 public struct YoteiFontStyle: Sendable {
     public var caption: Font
     public var caption2: Font
@@ -28,16 +28,6 @@ public struct YoteiFontStyle: Sendable {
     }
 }
 
-public enum YoteiFontStyleKey: EnvironmentKey {
-    public static let defaultValue = YoteiFontStyle()
-}
-
 public extension EnvironmentValues {
-    var yoteiFontStyle: YoteiFontStyle {
-        get {
-            self[YoteiFontStyleKey.self]
-        } set {
-            self[YoteiFontStyleKey.self] = newValue
-        }
-    }
+    @Entry var yoteiFontStyle: YoteiFontStyle = .init()
 }

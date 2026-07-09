@@ -7,7 +7,9 @@ import SwiftUI
 
 public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>: View {
     enum Constants {
-        static var numberOfDaysPerWeek: Int { 7 }
+        static var numberOfDaysPerWeek: Int {
+            7
+        }
     }
 
     @Environment(\.calendar) private var calendar

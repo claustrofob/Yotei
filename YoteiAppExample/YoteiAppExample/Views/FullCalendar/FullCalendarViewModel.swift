@@ -9,13 +9,18 @@ import Yotei
 
 final class FullCalendarViewModelModel: ObservableObject {
     private enum Constants {
-        static var monthIntervalMinDay: Int { -7 }
-        static var monthIntervalMaxDay: Int { 12 }
+        static var monthIntervalMinDay: Int {
+            -7
+        }
+
+        static var monthIntervalMaxDay: Int {
+            12
+        }
     }
 
     private let eventsLocalRepository: EventsLocalRepositoryProtocol
     private var monthInterval: DateInterval?
-    // an interval, that was successfully fetched. This is used to determine the next interval to fetch.
+    /// an interval, that was successfully fetched. This is used to determine the next interval to fetch.
     private var lastRemoteLoadedDateInterval: DateInterval?
 
     @Published var focusedDate = Date()

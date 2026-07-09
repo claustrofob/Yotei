@@ -19,18 +19,8 @@ public protocol YoteiDelegate<Data>: AnyObject {
     )
 }
 
-public enum YoteiDelegateKey: EnvironmentKey {
-    public nonisolated(unsafe) static let defaultValue: (any YoteiDelegate)? = nil
-}
-
 public extension EnvironmentValues {
-    var yoteiDelegate: (any YoteiDelegate)? {
-        get {
-            self[YoteiDelegateKey.self]
-        } set {
-            self[YoteiDelegateKey.self] = newValue
-        }
-    }
+    @Entry var yoteiDelegate: (any YoteiDelegate)?
 }
 
 public extension View {

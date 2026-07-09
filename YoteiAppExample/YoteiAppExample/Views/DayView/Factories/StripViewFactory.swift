@@ -7,8 +7,8 @@ import SwiftUI
 import Yotei
 
 struct StripViewFactory: YoteiStripViewFactoryProtocol {
-    func expandView(isExpanded: Bool) -> some View {
-        YoteiStripViewFactory().expandView(isExpanded: isExpanded)
+    func expandView(progress: CGFloat) -> some View {
+        YoteiStripViewFactory().expandView(progress: progress)
             .foregroundStyle(.purple)
     }
 }

@@ -6,16 +6,16 @@
 import SwiftUI
 
 public struct YoteiStripExpandDefaultView: View {
-    private let isExpanded: Bool
+    private let progress: CGFloat
 
-    public init(isExpanded: Bool) {
-        self.isExpanded = isExpanded
+    public init(progress: CGFloat) {
+        self.progress = progress
     }
 
     public var body: some View {
         Image(systemName: "chevron.compact.down")
             .foregroundStyle(.primary)
-            .rotationEffect(.degrees(isExpanded ? 180 : 0))
+            .rotationEffect(.degrees(180 * progress))
             .frame(maxWidth: .infinity)
             .frame(height: 24)
             .contentShape(Rectangle())

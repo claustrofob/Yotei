@@ -52,7 +52,6 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder
     private func titleView(text: String, subtitle: String) -> some View {
         VStack(alignment: .leading) {
             Text(text)
