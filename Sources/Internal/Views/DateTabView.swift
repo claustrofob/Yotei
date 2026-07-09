@@ -51,7 +51,14 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
         )!.start
 
         guard normalizedCurrentPageDate != normalizedSelection else {
-            context.coordinator.refresh(viewControllers: uiViewController.viewControllers ?? [])
+            // The visible page is unchanged. Only rebuild its content when the
+            // selected date actually moved (e.g. a different day was tapped) —
+            // otherwise a parent's unrelated state change (such as an ongoing
+            // open/close animation) would rebuild the whole page every frame.
+            if context.coordinator.lastRefreshedSelection != selection {
+                context.coordinator.lastRefreshedSelection = selection
+                context.coordinator.refresh(viewControllers: uiViewController.viewControllers ?? [])
+            }
             return
         }
 
@@ -61,6 +68,7 @@ struct DateTabView<Content: View>: UIViewControllerRepresentable {
             animated: true
         )
         context.coordinator.currentPageDate = selection
+        context.coordinator.lastRefreshedSelection = selection
     }
 
     func makeCoordinator() -> Coordinator {
@@ -81,6 +89,7 @@ extension DateTabView {
         var component: Calendar.Component
 
         var currentPageDate: Date
+        var lastRefreshedSelection: Date?
 
         init(
             selection: Binding<Date>,

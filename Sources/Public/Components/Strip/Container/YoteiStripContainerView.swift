@@ -12,6 +12,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
     private let viewFactory: ViewFactory
 
     @State private var monthStripHeight: CGFloat = 0
+    @State private var weekOffset: CGFloat = 0
     @State private var expandButtonHeight: CGFloat = 0
     @State private var dragEvent: DragEvent = .ended
 
@@ -41,7 +42,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                     )
                     .offset(CGSize(
                         width: 0,
-                        height: -weekOffset() * (1 - openProgress)
+                        height: -weekOffset * (1 - openProgress)
                     ))
 
                     if isWeekViewVisible {
@@ -52,7 +53,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         .frame(height: viewFactory.dayCellViewHeight())
                         .offset(CGSize(
                             width: 0,
-                            height: weekOffset() * openProgress
+                            height: weekOffset * openProgress
                         ))
                     }
                 }
@@ -79,7 +80,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                             let distance = (target - openProgress) * diffHeight
                             let initialVelocity = distance != 0 ? velocity.y / distance : 0
                             isWeekViewVisible = velocity.y <= 0
-                            withAnimation(.interpolatingSpring(duration: 0.3, bounce: 0, initialVelocity: initialVelocity)) {
+                            withAnimation(.interpolatingSpring(duration: 0.5, bounce: -1, initialVelocity: initialVelocity)) {
                                 openProgress = target
                             }
                         }
@@ -88,17 +89,16 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                 view.addGestureRecognizer(gesture)
             }
         }
-        // .animationCompletion(frameHeight, binding: $animatedFrameHeight)
         .frame(height: frameHeight() + expandButtonHeight, alignment: .top)
         .background(.background)
         .onAppear {
-            calculateMonthStripHeight()
+            recalculateLayout()
         }
         .onChange(of: focusedDate) { _ in
             // simultaneous UIPageController page switch animation and size change animation breaks page switching and leads to unpredictable behavour,
             // animation delay serialize the animations and fixes the problem
             withAnimation(.default.delay(0.3)) {
-                calculateMonthStripHeight()
+                recalculateLayout()
             }
         }
         .zIndex(10)
@@ -126,18 +126,19 @@ private extension YoteiStripContainerView {
         openProgress = min(max(currentDiffHeight / diffHeight, 0), 1)
     }
 
-    func calculateMonthStripHeight() {
+    /// Recomputes the calendar-derived layout values that depend on `focusedDate`.
+    /// Caching them into @State keeps every drag/animation frame — which only
+    /// changes `openProgress` — free of calendar math.
+    func recalculateLayout() {
         let numberOfWeeks = CGFloat(calendar.range(
             of: .weekOfMonth,
             in: .month,
             for: focusedDate
         )!.count)
         monthStripHeight = viewFactory.dayCellViewHeight() * numberOfWeeks + viewFactory.weekInteritemVerticalSpacing() * (numberOfWeeks - 1)
-    }
 
-    func weekOffset() -> CGFloat {
         let week = focusedDate.weekOfMonth(in: calendar)
-        return CGFloat(week) * (viewFactory.dayCellViewHeight() + viewFactory.weekInteritemVerticalSpacing())
+        weekOffset = CGFloat(week) * (viewFactory.dayCellViewHeight() + viewFactory.weekInteritemVerticalSpacing())
     }
 
     func expandStripButton() -> some View {
