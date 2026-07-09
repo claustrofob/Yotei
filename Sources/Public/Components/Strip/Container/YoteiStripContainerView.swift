@@ -17,6 +17,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
 
     @State private var dragStartOpenProgress: CGFloat = 0
     @State private var openProgress: CGFloat = 0
+    @State private var isWeekViewVisible = true
 
     private var maxMonthStripHeight: CGFloat {
         viewFactory.dayCellViewHeight() * 6 + viewFactory.weekInteritemVerticalSpacing() * 5
@@ -42,13 +43,18 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         width: 0,
                         height: -weekOffset() * (1 - openProgress)
                     ))
-                    .zIndex(1)
-                    .transition(.identity)
 
-                    YoteiStripWeekView(
-                        focusedDate: $focusedDate,
-                        viewFactory: viewFactory
-                    )
+                    if isWeekViewVisible {
+                        YoteiStripWeekView(
+                            focusedDate: $focusedDate,
+                            viewFactory: viewFactory
+                        )
+                        .transition(.identity)
+                        .offset(CGSize(
+                            width: 0,
+                            height: weekOffset() * openProgress
+                        ))
+                    }
                 }
                 .frame(height: maxMonthStripHeight, alignment: .top)
                 .frame(height: frameHeight(), alignment: .top)
@@ -72,6 +78,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                             let diffHeight = monthStripHeight - viewFactory.dayCellViewHeight()
                             let distance = (target - openProgress) * diffHeight
                             let initialVelocity = distance != 0 ? velocity.y / distance : 0
+                            isWeekViewVisible = velocity.y <= 0
                             withAnimation(.interpolatingSpring(duration: 0.3, bounce: 0, initialVelocity: initialVelocity)) {
                                 openProgress = target
                             }
@@ -141,34 +148,10 @@ private extension YoteiStripContainerView {
                 expandButtonHeight = $0
             }
             .onTapGesture {
+                isWeekViewVisible = openProgress > 0
                 withAnimation {
                     openProgress = openProgress > 0 ? 0 : 1
                 }
             }
-    }
-}
-
-struct AnimationCompletion: ViewModifier, @MainActor Animatable {
-    var progress: CGFloat
-    @Binding var binding: CGFloat
-
-    var animatableData: CGFloat {
-        get { progress }
-        set {
-            progress = newValue
-            DispatchQueue.main.async { [self] in
-                binding = newValue
-            }
-        }
-    }
-
-    func body(content: Content) -> some View {
-        content
-    }
-}
-
-extension View {
-    func animationCompletion(_ value: CGFloat, binding: Binding<CGFloat>) -> some View {
-        modifier(AnimationCompletion(progress: value, binding: binding))
     }
 }
