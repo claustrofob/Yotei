@@ -6,7 +6,7 @@
 import SwiftUI
 
 final class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
-    private let activationThreshold: CGFloat = 5
+    private let activationThreshold: CGFloat = 8
     private let onDrag: (DragEvent) -> Void
 
     init(onDrag: @escaping (DragEvent) -> Void) {

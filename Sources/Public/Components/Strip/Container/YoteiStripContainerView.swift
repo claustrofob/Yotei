@@ -68,8 +68,12 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         calculateOpenProgress()
                     case .ended:
                         if case let .changed(_, _, velocity) = prevEvent {
-                            withAnimation {
-                                openProgress = velocity.y > 0 ? 1 : 0
+                            let target: CGFloat = velocity.y > 0 ? 1 : 0
+                            let diffHeight = monthStripHeight - viewFactory.dayCellViewHeight()
+                            let distance = (target - openProgress) * diffHeight
+                            let initialVelocity = distance != 0 ? velocity.y / distance : 0
+                            withAnimation(.interpolatingSpring(duration: 0.3, bounce: 0, initialVelocity: initialVelocity)) {
+                                openProgress = target
                             }
                         }
                     }
