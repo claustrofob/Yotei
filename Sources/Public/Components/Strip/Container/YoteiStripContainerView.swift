@@ -77,10 +77,17 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         if case let .changed(_, _, velocity) = prevEvent {
                             let target: CGFloat = velocity.y > 0 ? 1 : 0
                             let diffHeight = monthStripHeight - viewFactory.dayCellViewHeight()
-                            let distance = (target - openProgress) * diffHeight
-                            let initialVelocity = distance != 0 ? velocity.y / distance : 0
+                            let remainingDistance = abs(target - openProgress) * diffHeight
+                            let speed = abs(velocity.y)
+                            
+                            // time to cover the remaining distance at the current finger speed,
+                            // clamped so a tiny/huge fling still feels reasonable
+                            let duration = speed > 0
+                            ? min(max(Double(remainingDistance / speed), 0.15), 0.5)
+                            : 0.35
+                            
                             isWeekViewVisible = velocity.y <= 0
-                            withAnimation(.interpolatingSpring(duration: 0.5, bounce: -1, initialVelocity: initialVelocity)) {
+                            withAnimation(.easeOut(duration: duration)) {
                                 openProgress = target
                             }
                         }
