@@ -49,7 +49,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                             focusedDate: $focusedDate,
                             viewFactory: viewFactory
                         )
-                        .transition(.identity)
+                        .frame(height: viewFactory.dayCellViewHeight())
                         .offset(CGSize(
                             width: 0,
                             height: weekOffset() * openProgress
