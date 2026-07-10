@@ -12,13 +12,14 @@ public struct YoteiStripExpandDefaultView: View {
         self.progress = progress
     }
 
+    private let cornerRadius: CGFloat = 12
+
     public var body: some View {
-        Image(systemName: "chevron.compact.down")
-            .foregroundStyle(.primary)
-            .rotationEffect(.degrees(180 * progress))
+        Capsule()
+            .fill(.tertiary)
+            .frame(width: 36, height: 5)
             .frame(maxWidth: .infinity)
             .frame(height: 24)
             .contentShape(Rectangle())
-            .background(.background)
     }
 }

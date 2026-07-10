@@ -155,11 +155,5 @@ private extension YoteiStripContainerView {
             }) {
                 expandButtonHeight = $0
             }
-            .onTapGesture {
-                isWeekViewVisible = openProgress > 0
-                withAnimation {
-                    openProgress = openProgress > 0 ? 0 : 1
-                }
-            }
     }
 }
