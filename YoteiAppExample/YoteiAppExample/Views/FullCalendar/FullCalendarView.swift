@@ -112,7 +112,6 @@ struct FullCalendarView: View {
         }
     }
 
-    @ViewBuilder
     private func scheduleView() -> some View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
@@ -124,7 +123,6 @@ struct FullCalendarView: View {
         }
     }
 
-    @ViewBuilder
     private func dayView() -> some View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
@@ -164,7 +162,6 @@ struct FullCalendarView: View {
         }
     }
 
-    @ViewBuilder
     private func weekView() -> some View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()
@@ -200,7 +197,6 @@ struct FullCalendarView: View {
         }
     }
 
-    @ViewBuilder
     private func monthView() -> some View {
         VStack(spacing: 0) {
             YoteiWeekdayTitlesView()

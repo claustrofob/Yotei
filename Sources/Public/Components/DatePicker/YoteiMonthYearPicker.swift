@@ -7,9 +7,14 @@ import SwiftUI
 
 public struct YoteiMonthYearPicker: UIViewRepresentable {
     private enum Constants {
-        // imitate infinite scrollable list of months (as Apple does in its )
-        static var numberOfMonths: Int { 12000 }
-        static var numberOfYears: Int { 4000 }
+        /// imitate infinite scrollable list of months (as Apple does in its )
+        static var numberOfMonths: Int {
+            12000
+        }
+
+        static var numberOfYears: Int {
+            4000
+        }
     }
 
     @Environment(\.calendar) private var calendar

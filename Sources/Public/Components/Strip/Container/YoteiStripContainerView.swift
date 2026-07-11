@@ -83,7 +83,7 @@ public struct YoteiStripContainerView<ViewFactory: YoteiStripViewFactoryProtocol
                         }
                         expandDragStarted = true
                         withAnimation {
-                            translation.y > 0 ? viewDidSelectExpand() : viewDidSelectCollapse()
+                            isExpanded = translation.y > 0
                         }
                     case .ended:
                         expandDragStarted = false
@@ -124,30 +124,11 @@ private extension YoteiStripContainerView {
     }
 
     func expandStripButton() -> some View {
-        viewFactory.expandView(isExpanded: isExpanded)
+        viewFactory.expandView(isExpanded: $isExpanded)
             .onGeometryChange(for: CGFloat.self, of: {
                 $0.size.height
             }) {
                 expandButtonHeight = $0
             }
-            .onTapGesture {
-                withAnimation {
-                    isExpanded.toggle()
-                }
-            }
-    }
-
-    func viewDidSelectExpand() {
-        guard !isExpanded else {
-            return
-        }
-        isExpanded = true
-    }
-
-    func viewDidSelectCollapse() {
-        guard isExpanded else {
-            return
-        }
-        isExpanded = false
     }
 }

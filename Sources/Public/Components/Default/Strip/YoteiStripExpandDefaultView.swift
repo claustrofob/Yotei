@@ -6,19 +6,18 @@
 import SwiftUI
 
 public struct YoteiStripExpandDefaultView: View {
-    private let isExpanded: Bool
+    @Binding private var isExpanded: Bool
 
-    public init(isExpanded: Bool) {
-        self.isExpanded = isExpanded
+    public init(isExpanded: Binding<Bool>) {
+        _isExpanded = isExpanded
     }
 
     public var body: some View {
-        Image(systemName: "chevron.compact.down")
-            .foregroundStyle(.primary)
-            .rotationEffect(.degrees(isExpanded ? 180 : 0))
+        Capsule()
+            .fill(.tertiary)
+            .frame(width: 36, height: 5)
             .frame(maxWidth: .infinity)
             .frame(height: 24)
             .contentShape(Rectangle())
-            .background(.background)
     }
 }

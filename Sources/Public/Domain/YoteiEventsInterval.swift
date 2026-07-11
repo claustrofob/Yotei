@@ -6,9 +6,9 @@
 import Foundation
 
 public struct YoteiEventsInterval<Data: YoteiEventData>: Equatable, Sendable {
-    // active month interval
+    /// active month interval
     public var monthInterval: DateInterval?
-    // full interval: [a few prev days + monthInterval + a few next days]
+    /// full interval: [a few prev days + monthInterval + a few next days]
     public var dateInterval: DateInterval?
     // interval that is currently loading and for which to display preloader
     public var dateLoadingInterval: DateInterval?

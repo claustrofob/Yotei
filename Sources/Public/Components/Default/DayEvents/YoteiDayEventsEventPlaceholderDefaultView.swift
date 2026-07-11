@@ -7,7 +7,9 @@ import SwiftUI
 
 public struct YoteiDayEventsEventPlaceholderDefaultView: View {
     private enum Constants {
-        static var paddingCoefficient: CGFloat { 0.033 }
+        static var paddingCoefficient: CGFloat {
+            0.033
+        }
     }
 
     public init() {}

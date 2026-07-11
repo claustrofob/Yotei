@@ -8,7 +8,7 @@ import SwiftUI
 @MainActor
 public protocol YoteiStripViewFactoryProtocol {
     associatedtype ExpandView: View
-    func expandView(isExpanded: Bool) -> ExpandView
+    func expandView(isExpanded: Binding<Bool>) -> ExpandView
 
     associatedtype DayCellView: View
     func dayCellView(
@@ -23,7 +23,7 @@ public protocol YoteiStripViewFactoryProtocol {
 }
 
 public extension YoteiStripViewFactoryProtocol {
-    func expandView(isExpanded: Bool) -> some View {
+    func expandView(isExpanded: Binding<Bool>) -> some View {
         YoteiStripExpandDefaultView(isExpanded: isExpanded)
     }
 

@@ -7,7 +7,7 @@ import SwiftUI
 import Yotei
 
 struct StripViewFactory: YoteiStripViewFactoryProtocol {
-    func expandView(isExpanded: Bool) -> some View {
+    func expandView(isExpanded: Binding<Bool>) -> some View {
         YoteiStripViewFactory().expandView(isExpanded: isExpanded)
             .foregroundStyle(.purple)
     }

@@ -7,8 +7,13 @@ import SwiftUI
 
 public struct YoteiPagesMonthPageView<ViewFactory: YoteiPagesMonthViewFactoryProtocol<Data>, Data: YoteiEventData>: View {
     enum Constants {
-        static var numberOfDaysPerWeek: Int { 7 }
-        static var numberOfRows: Int { 6 }
+        static var numberOfDaysPerWeek: Int {
+            7
+        }
+
+        static var numberOfRows: Int {
+            6
+        }
     }
 
     @Environment(\.calendar) private var calendar
@@ -176,7 +181,6 @@ private extension YoteiPagesMonthPageView {
         }
     }
 
-    @ViewBuilder
     func eventsGridView(viewData: AlignedRowEventsData<Data>) -> some View {
         Grid(
             horizontalSpacing: viewFactory.interitemHorizontalSpacing(),
@@ -201,7 +205,6 @@ private extension YoteiPagesMonthPageView {
         }
     }
 
-    @ViewBuilder
     func verticalDelimitersView() -> some View {
         HStack(spacing: 0) {
             ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in

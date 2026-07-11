@@ -11,7 +11,9 @@ import FoundationModels
 final class DailyRandomFactsPageViewModel: ObservableObject {
     struct UnavailableError: LocalizedError {
         let text: String
-        var errorDescription: String? { text }
+        var errorDescription: String? {
+            text
+        }
     }
 
     enum State {

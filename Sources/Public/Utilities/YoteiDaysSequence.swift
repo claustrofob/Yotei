@@ -9,8 +9,11 @@ public struct YoteiDaysSequence: RandomAccessCollection {
     private let calendar: Calendar
     private let startDate: Date
 
-    public var startIndex: Int { 0 }
-    // `count` = `endIndex - 1`
+    public var startIndex: Int {
+        0
+    }
+
+    /// `count` = `endIndex - 1`
     public let endIndex: Int
 
     public func index(after i: Int) -> Int {

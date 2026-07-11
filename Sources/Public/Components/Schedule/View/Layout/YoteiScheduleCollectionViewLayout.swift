@@ -5,9 +5,9 @@
 
 import UIKit
 
-// it is possible to implement this layout with CompositionalLayout,
-// but for calendar scroll to work properly, it is required that inside `targetContentOffsetForProposedContentOffset` delegate method
-// we can get updated `layoutAttributesForSupplementaryElement`. Compositional layout returns old attributes in that case.
+/// it is possible to implement this layout with CompositionalLayout,
+/// but for calendar scroll to work properly, it is required that inside `targetContentOffsetForProposedContentOffset` delegate method
+/// we can get updated `layoutAttributesForSupplementaryElement`. Compositional layout returns old attributes in that case.
 final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
     private var lastWidth: CGFloat = -1
     private var attributeSectionIndexOffset: [Int] = []
@@ -141,7 +141,7 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
         return layoutAttributes[index]
     }
 
-    // this should always be true for `invalidationContext(forBoundsChange newBounds: CGRect)` to be called
+    /// this should always be true for `invalidationContext(forBoundsChange newBounds: CGRect)` to be called
     override func shouldInvalidateLayout(forBoundsChange _: CGRect) -> Bool {
         true
     }
@@ -172,8 +172,8 @@ final class YoteiScheduleCollectionViewLayout: UICollectionViewLayout {
         }
     }
 
-    // `layoutAttributesForSupplementaryView` returns sticky header position, which may differ from the absolute section position
-    // Absolute position is required for setting proper contentOffset when focusedDate is updated.
+    /// `layoutAttributesForSupplementaryView` returns sticky header position, which may differ from the absolute section position
+    /// Absolute position is required for setting proper contentOffset when focusedDate is updated.
     func absoluteLayoutAttributesForSupplementaryView(
         ofKind _: String,
         at indexPath: IndexPath

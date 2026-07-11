@@ -8,10 +8,21 @@ import SwiftUI
 extension YoteiDragEventView {
     struct OverlayView: View {
         private enum Constants {
-            static var autoScrollEdgeThreshold: CGFloat { 80 }
-            static var maxAutoScrollVelocity: CGFloat { 8 }
-            static var pageFlipEdgeThreshold: CGFloat { 40 }
-            static var pageFlipCooldown: TimeInterval { 0.6 }
+            static var autoScrollEdgeThreshold: CGFloat {
+                80
+            }
+
+            static var maxAutoScrollVelocity: CGFloat {
+                8
+            }
+
+            static var pageFlipEdgeThreshold: CGFloat {
+                40
+            }
+
+            static var pageFlipCooldown: TimeInterval {
+                0.6
+            }
         }
 
         @Environment(\.calendar) private var calendar
