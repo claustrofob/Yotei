@@ -33,7 +33,7 @@ extension YoteiDragEventView {
         @Binding private var focusedDate: Date
         private let dragEvent: DragEvent
         private let viewFactory: ViewFactory
-        @ViewBuilder private let content: () -> Content
+        private let content: Content
 
         @State private var timelineDayFrames = [Date: CGRect]()
         @State private var timelineDayEventFrames = [Date: [EventFrame]]()
@@ -62,7 +62,7 @@ extension YoteiDragEventView {
             focusedDate: Binding<Date>,
             dragEvent: DragEvent,
             viewFactory: ViewFactory,
-            @ViewBuilder content: @escaping () -> Content
+            content: Content
         ) {
             self.data = data
             _contentOffset = contentOffset
@@ -74,7 +74,7 @@ extension YoteiDragEventView {
 
         var body: some View {
             GeometryReader { proxy in
-                content()
+                content
                     .onPreferenceChange(DayTimelineAnchorKey.self) { timelineAnchors in
                         timelineDayFrames = timelineAnchors.mapValues { proxy[$0] }
                     }

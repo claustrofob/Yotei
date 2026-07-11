@@ -10,7 +10,7 @@ extension YoteiDragEventView {
         private let data: YoteiEventsInterval<Data>
         @Binding private var contentOffset: CGPoint?
         @Binding private var focusedDate: Date
-        @ViewBuilder private let content: () -> Content
+        private let content: Content
         private let viewFactory: ViewFactory
 
         @State private var dragEvent: DragEvent = .ended
@@ -31,7 +31,7 @@ extension YoteiDragEventView {
             contentOffset: Binding<CGPoint?>,
             focusedDate: Binding<Date>,
             viewFactory: ViewFactory,
-            @ViewBuilder content: @escaping () -> Content
+            content: Content
         ) {
             self.data = data
             _contentOffset = contentOffset
