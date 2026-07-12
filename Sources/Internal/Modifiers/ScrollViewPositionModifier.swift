@@ -7,13 +7,13 @@ import SwiftUI
 import UIKit
 
 struct ScrollViewPositionModifier: ViewModifier {
-    private final class ScrollViewWeakStrorage {
+    private final class ScrollViewWeakStrorage: ObservableObject {
         weak var scrollView: UIScrollView?
     }
 
-    @Binding var contentOffset: CGPoint
+    @Binding var contentOffset: CGPoint?
     @State private var lastContentOffset: CGPoint?
-    @State private var scrollViewStorage = ScrollViewWeakStrorage()
+    @StateObject private var scrollViewStorage = ScrollViewWeakStrorage()
     @State private var observation: NSKeyValueObservation?
 
     func body(content: Content) -> some View {
@@ -31,7 +31,7 @@ struct ScrollViewPositionModifier: ViewModifier {
                     return
                 }
 
-                scrollView.contentOffset = contentOffset
+                scrollView.contentOffset = contentOffset ?? .zero
                 observation = scrollView.observe(\.contentOffset, options: [.new, .initial]) { _, change in
                     // KVO can fire during SwiftUI layout updates
                     // Push the binding update to the next runloop tick
@@ -51,13 +51,13 @@ struct ScrollViewPositionModifier: ViewModifier {
                 }
 
                 lastContentOffset = contentOffset
-                scrollViewStorage.scrollView?.contentOffset = contentOffset
+                scrollViewStorage.scrollView?.contentOffset = contentOffset ?? .zero
             }
     }
 }
 
 extension View {
-    func scrollViewPosition(_ contentOffset: Binding<CGPoint>) -> some View {
+    func scrollViewPosition(_ contentOffset: Binding<CGPoint?>) -> some View {
         modifier(ScrollViewPositionModifier(contentOffset: contentOffset))
     }
 }
