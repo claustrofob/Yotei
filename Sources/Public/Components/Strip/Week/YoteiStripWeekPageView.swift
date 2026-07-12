@@ -35,20 +35,16 @@ public struct YoteiStripWeekPageView<ViewFactory: YoteiStripViewFactoryProtocol>
 
     public var body: some View {
         TimelineView(.everyMinute) { context in
-            Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
-                GridRow {
-                    ForEach(daysSequence, id: \.self) { date in
-                        Button(action: {
-                            focusedDate = date
-                        }, label: {
-                            viewFactory.dayCellView(
-                                date: date,
-                                todayDate: context.date,
-                                focusedDate: focusedDate,
-                                isEnabled: true
-                            )
-                        })
-                    }
+            HStack(spacing: 0) {
+                ForEach(daysSequence, id: \.self) { date in
+                    viewFactory.dayCellView(
+                        date: date,
+                        todayDate: context.date,
+                        focusedDate: focusedDate,
+                        isEnabled: true
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture { focusedDate = date }
                 }
             }
             .buttonStyle(.plain)

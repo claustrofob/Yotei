@@ -46,24 +46,25 @@ public struct YoteiStripMonthPageView<ViewFactory: YoteiStripViewFactoryProtocol
         )
 
         TimelineView(.everyMinute) { context in
-            Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
+            VStack(spacing: viewFactory.weekInteritemVerticalSpacing()) {
                 ForEach(0 ..< numberOfWeeks, id: \.self) { row in
-                    GridRow {
+                    HStack(spacing: 0) {
                         ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
                             let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
                             // monthInterval.end equals the start date of the next day
                             let isEnabled = monthInterval.contains(date) && monthInterval.end != date
-                            Button(action: {
-                                focusedDate = date
-                            }, label: {
-                                viewFactory.dayCellView(
-                                    date: date,
-                                    todayDate: context.date,
-                                    focusedDate: focusedDate,
-                                    isEnabled: isEnabled
-                                )
-                            })
-                            .disabled(!isEnabled)
+                            viewFactory.dayCellView(
+                                date: date,
+                                todayDate: context.date,
+                                focusedDate: focusedDate,
+                                isEnabled: isEnabled
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                if isEnabled {
+                                    focusedDate = date
+                                }
+                            }
                         }
                     }
                 }

@@ -102,11 +102,6 @@ public struct YoteiDayEventsView<ViewFactory: YoteiDayEventsViewFactoryProtocol,
                     .padding(viewFactory.insetsForViewsLayout())
                 }
                 .padding(viewFactory.insetsForScrollView())
-//                .scrollViewPosition(Binding(get: {
-//                    contentOffset ?? calculateInitialContentOffset(currentDate: initialCurrentDate, scrollViewHeight: proxy.size.height)
-//                }, set: {
-//                    contentOffset = $0
-//                }))
                 .scrollViewPosition($contentOffset)
                 .onAppear {
                     contentOffset = calculateInitialContentOffset(currentDate: initialCurrentDate, scrollViewHeight: proxy.size.height)

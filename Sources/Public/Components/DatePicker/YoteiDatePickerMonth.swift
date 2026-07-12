@@ -58,15 +58,23 @@ public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>:
         )
 
         let todayDate = Date.now
-        Grid(horizontalSpacing: 0, verticalSpacing: viewFactory.weekInteritemVerticalSpacing()) {
+        VStack(spacing: viewFactory.weekInteritemVerticalSpacing()) {
             ForEach(0 ..< numberOfWeeks, id: \.self) { row in
-                GridRow {
+                HStack(spacing: 0) {
                     ForEach(0 ..< Constants.numberOfDaysPerWeek, id: \.self) { col in
                         let date = daysSequence[row * Constants.numberOfDaysPerWeek + col]
                         if monthInterval.contains(date), monthInterval.end != date {
                             let isEnabled = (minDate.flatMap { $0 <= date } ?? true)
                                 && (maxDate.flatMap { $0 >= date } ?? true)
-                            Button(action: {
+                            viewFactory.dayCellView(
+                                date: date,
+                                todayDate: todayDate,
+                                focusedDate: selectedDate,
+                                isEnabled: isEnabled
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                guard isEnabled else { return }
                                 let selectedDateComponents = calendar.dateComponents(
                                     [.hour, .minute, .second],
                                     from: selectedDate
@@ -78,15 +86,7 @@ public struct YoteiDatePickerMonth<ViewFactory: YoteiDatePickerFactoryProtocol>:
                                     of: date
                                 )!
                                 selectedDate = newDate
-                            }, label: {
-                                viewFactory.dayCellView(
-                                    date: date,
-                                    todayDate: todayDate,
-                                    focusedDate: selectedDate,
-                                    isEnabled: isEnabled
-                                )
-                            })
-                            .disabled(!isEnabled)
+                            }
                         } else {
                             Color.clear.frame(height: 1)
                         }
